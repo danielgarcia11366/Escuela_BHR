@@ -36,7 +36,7 @@
                         <ul class="dropdown-menu  dropdown-menu-dark " id="dropwdownRevision" style="margin: 0;">
                             <!-- <h6 class="dropdown-header">Información</h6> -->
                             <li>
-                                <a class="dropdown-item nav-link text-white " href="/Escuela_BHR/cursos"><i class="bi bi-eye-fill"></i> Crear / Ver Cursos</a>
+                                <a class="dropdown-item nav-link text-white " href="/Escuela_BHR/cursos"><i class="bi bi-eye-fill"></i> Gestión de Cursos</a>
                             </li>
 
                         </ul>
