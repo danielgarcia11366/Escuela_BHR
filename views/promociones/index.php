@@ -27,10 +27,10 @@
                 <button type="submit" form="formularioCursos" id="btnGuardar" class="btn btn-success w-100"> <i class="bi bi-save"></i> Guardar</button>
             </div>
             <div class="col">
-                <button type="button" id="btnModificar" class="btn btn-warning w-100" title="Modificar">Modificar</button>
+                <button type="button" id="btnModificar" class="btn btn-warning w-100">Modificar</button>
             </div>
             <div class="col">
-                <button type="button" id="btnCancelar" class="btn btn-danger w-100" title="Cancelar">Cancelar</button>
+                <button type="button" id="btnCancelar" class="btn btn-danger w-100">Cancelar</button>
             </div>
         </div>
     </form>
@@ -43,4 +43,4 @@
         </table>
     </div>
 </div>
-<script src="<?= asset('./build/js/cursos/index.js') ?>"></script>
+<script src="<?= asset('./build/js/promociones/index.js') ?>"></script>

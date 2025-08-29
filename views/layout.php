@@ -43,27 +43,12 @@
                     </div>
                     <div class="nav-item dropdown ">
                         <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown">
-                            <i class="bi bi-person-raised-hand"></i> Promociones
-                        </a>
-                        <ul class="dropdown-menu  dropdown-menu-dark " id="dropwdownRevision" style="margin: 0;">
-                            <!-- <h6 class="dropdown-header">Información</h6> -->
-                            <li>
-                                <a class="dropdown-item nav-link text-white " href="/Escuela_BHR/nueva"><i class="bi bi-person-fill-add"></i> Crear Nueva Promocion</a>
-                            </li>
-                            <li>
-                                <a class="dropdown-item nav-link text-white " href="/Escuela_BHR/nueva"><i class="bi bi-book-half"></i> Historial de Promociones</a>
-                            </li>
-
-                        </ul>
-                    </div>
-                    <div class="nav-item dropdown ">
-                        <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown">
                             <i class="bi bi-mortarboard-fill"></i> Alumnos
                         </a>
                         <ul class="dropdown-menu  dropdown-menu-dark " id="dropwdownRevision" style="margin: 0;">
                             <!-- <h6 class="dropdown-header">Información</h6> -->
                             <li>
-                                <a class="dropdown-item nav-link text-white " href="/Escuela_BHR/alumnos"><i class="bi bi-person-plus"></i> Agregar Nuevo Alumno</a>
+                                <a class="dropdown-item nav-link text-white " href="/Escuela_BHR/nuevoalumno"><i class="bi bi-person-plus"></i> Agregar Nuevo Alumno</a>
                             </li>
                             <li>
                                 <a class="dropdown-item nav-link text-white " href="/Escuela_BHR/alumnos"><i class="bi bi-person-video2"></i> Inscribir a Promoción</a>
@@ -71,8 +56,20 @@
                             <li>
                                 <a class="dropdown-item nav-link text-white " href="/Escuela_BHR/alumnos"><i class="bi bi-person-lines-fill"></i> Historial de Cursos</a>
                             </li>
-
-
+                        </ul>
+                    </div>
+                    <div class="nav-item dropdown ">
+                        <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown">
+                            <i class="bi bi-person-raised-hand"></i> Promociones
+                        </a>
+                        <ul class="dropdown-menu  dropdown-menu-dark " id="dropwdownRevision" style="margin: 0;">
+                            <!-- <h6 class="dropdown-header">Información</h6> -->
+                            <li>
+                                <a class="dropdown-item nav-link text-white " href="/Escuela_BHR/promociones"><i class="bi bi-person-fill-add"></i> Crear Nueva Promocion</a>
+                            </li>
+                            <li>
+                                <a class="dropdown-item nav-link text-white " href="/Escuela_BHR/nueva"><i class="bi bi-book-half"></i> Historial de Promociones</a>
+                            </li>
 
                         </ul>
                     </div>
