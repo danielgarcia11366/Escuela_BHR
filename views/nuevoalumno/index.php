@@ -1,8 +1,11 @@
 <h1 class="text-center">Registro de Alumnos</h1>
 <div class="row justify-content-center mb-5">
     <form id="formularioAlumnos" class="border shadow p-4 col-lg-10">
-        <input type="hidden" name="per_catalogo" id="per_catalogo">
         <div class="row mb-3">
+            <div class="col">
+                <label for="per_catalogo"> Catalogo</label>
+                <input type="text" name="per_catalogo" id="per_catalogo" class="form-control">
+            </div>
             <div class="col">
                 <label for="per_nom1">Primer Nombre</label>
                 <input type="text" name="per_nom1" id="per_nom1" class="form-control">
@@ -23,15 +26,24 @@
             </div>
             <div class="col">
                 <label for="per_grado">Grado</label>
-                <input type="text" name="per_grado" id="per_grado" class="form-control">
+                <select name="per_grado" id="per_grado" class="form-control">
+                    <option value="#">Seleccione...</option>
+                    <?php foreach ($grados as $grado) : ?>
+                        <option value="<?= $grado['gra_codigo'] ?>"> <?= $grado['gra_desc_lg'] ?></option>';
+                    <?php endforeach ?>
+                </select>
             </div>
             <div class="col">
                 <label for="per_arma">Arma</label>
-                <input type="text" name="per_arma" id="per_arma" class="form-control">
+                <select name="per_arma" id="per_arma" class="form-control">
+                    <option value="#">Seleccione...</option>
+                    <?php foreach ($armas as $arma) : ?>
+                        <option value="<?= $arma['arm_codigo'] ?>"> <?= $arma['arm_desc_lg'] ?></option>';
+                    <?php endforeach ?>
+                </select>
             </div>
         </div>
         <div class="row mb-3">
-
             <div class="col">
                 <label for="per_telefono">Telefono</label>
                 <input type="text" name="per_telefono" id="per_telefono" class="form-control">
@@ -42,7 +54,7 @@
             </div>
             <div class="col">
                 <label for="per_fec_nac">Fecha de Nacimiento</label>
-                <input type="text" name="per_fec_nac" id="per_fec_nac" class="form-control">
+                <input type="date" name="per_fec_nac" id="per_fec_nac" class="form-control">
             </div>
         </div>
         <div class="row mb-3">
@@ -57,7 +69,7 @@
         </div>
         <div class="row mb-3">
             <div class="col">
-                <button type="submit" form="formularioCursos" id="btnGuardar" class="btn btn-success w-100"> <i class="bi bi-save"></i> Guardar</button>
+                <button type="submit" form="formularioAlumnos" id="btnGuardar" class="btn btn-success w-100"> <i class="bi bi-save"></i> Guardar</button>
             </div>
             <div class="col">
                 <button type="button" id="btnModificar" class="btn btn-warning w-100">Modificar</button>

@@ -14,7 +14,7 @@ let contador = 1;
 btnModificar.disabled = true;
 btnModificar.parentElement.style.display = 'none';
 btnCancelar.disabled = true;
-    
+
 
 const datatable = new DataTable('#tablaAlumnos', {
     data: null,
@@ -32,51 +32,39 @@ const datatable = new DataTable('#tablaAlumnos', {
             }
         },
         {
-            title: 'Primer Nombre',
-            data: 'per_nom1'
+            title: 'Grado y Arma',
+            data: 'grado_arma'
         },
         {
-            title: 'Segundo Nombre',
-            data: 'per_nom2'
+            title: 'Nombre Completo',
+            data: 'nombre_completo'
         }, {
-            title: 'Primer Apellido',
-            data: 'per_ape1'
-        },
-        {
-            title: 'Segundo Apellido',
-            data: 'per_ape2'
-        },
-        {
-            title: 'Grado',
-            data: 'per_grado'
-        },
-        {
-            title: 'Arma',
-            data: 'per_arma'
+            title: 'Catalogo',
+            data: 'per_catalogo'
         },
         {
             title: 'Telefono',
-            data: 'per_telefono'
+            data: 'telefono'
         },
         {
             title: 'Sexo',
-            data: 'per_sexo'
+            data: 'sexo'
         },
         {
-            title: 'Fecha Nacimiento',
-            data: 'per_fec_nac'
+            title: 'Fecha de Nacimiento',
+            data: 'fecha_nacimiento'
         },
         {
-            title: 'Lugar Nacimiento',
-            data: 'per_nac_lugar'
+            title: 'Lugar de Nacimiento',
+            data: 'lugar_nacimiento'
         },
         {
-            title: 'Numero DPI',
-            data: 'per_dpi'
+            title: 'Numero de DPI',
+            data: 'numero_dpi'
         },
         {
             title: 'Acciones',
-            data: 'cur_codigo',
+            data: 'per_catalogo',
             searchable: false,
             orderable: false,
             render: (data, type, row, meta) => {
@@ -88,7 +76,7 @@ const datatable = new DataTable('#tablaAlumnos', {
                   <i class='bi bi-trash'></i> 
                 </button>
             `;
-            
+
                 return html;
             }
         },
@@ -105,59 +93,82 @@ btnCancelar.disabled = true
 
 
 
+// MODIFICAR la función guardar existente:
 const guardar = async (e) => {
-    btnGuardar.disabled = true,
-    e.preventDefault()
+    btnGuardar.disabled = true;
+    e.preventDefault();
 
+    // Validación básica de formulario
     if (!validarFormulario(formulario, ['per_catalogo'])) {
         Swal.fire({
-            title: "Campos vacios",
+            title: "Campos vacíos",
             text: "Debe llenar todos los campos",
             icon: "info"
-        })
-        btnGuardar.disabled = false
-        return
+        });
+        btnGuardar.disabled = false;
+        return;
+    }
+
+    // Validación específica de fecha de nacimiento
+    const fechaNac = formulario.per_fec_nac.value;
+    const validacionFecha = validarFechaNacimiento(fechaNac);
+
+    if (!validacionFecha.valida) {
+        Swal.fire({
+            title: "Error en fecha de nacimiento",
+            text: validacionFecha.mensaje,
+            icon: "error"
+        });
+        formulario.per_fec_nac.focus();
+        btnGuardar.disabled = false;
+        return;
     }
 
     try {
-        const body = new FormData(formulario)
-        const url = "/Escuela_BHR/API/alumnonuevo/guardar"
+        const body = new FormData(formulario);
+        const url = "/Escuela_BHR/API/nuevoalumno/guardar";
         const config = {
             method: 'POST',
             body
-        }
+        };
 
         const respuesta = await fetch(url, config);
         const data = await respuesta.json();
         const { codigo, mensaje, detalle } = data;
-        let icon = 'info'
+
+        let icon = 'info';
         if (codigo == 1) {
-            icon = 'success'
+            icon = 'success';
             formulario.reset();
             buscar();
-            btnGuardar.disabled = false
         } else {
-            btnGuardar.disabled = false
-            icon = 'error'
-            console.log(detalle);
+            icon = 'error';
+            console.log('Error detallado:', detalle);
         }
 
         Toast.fire({
             icon: icon,
             title: mensaje
-        })
+        });
 
     } catch (error) {
-        console.log(error);
+        console.log('Error en fetch:', error);
+        Toast.fire({
+            icon: 'error',
+            title: 'Error de conexión'
+        });
     }
-    btnGuardar.disabled = false
-}
+
+    btnGuardar.disabled = false;
+};
+
+
 
 
 
 const buscar = async () => {
     try {
-        const url = "/Escuela_BHR/API/alumnonuevo/buscar";
+        const url = "/Escuela_BHR/API/nuevoalumno/buscar";
         const config = {
             method: 'GET'
         };
@@ -215,55 +226,70 @@ const cancelar = () => {
 
 
 
+// MODIFICAR la función modificar existente:
 const modificar = async (e) => {
-    e.preventDefault()
+    e.preventDefault();
 
     if (!validarFormulario(formulario)) {
         Swal.fire({
-            title: "Campos vacios",
+            title: "Campos vacíos",
             text: "Debe llenar todos los campos",
             icon: "info"
-        })
-        return
+        });
+        return;
+    }
+
+    // Validación específica de fecha de nacimiento
+    const fechaNac = formulario.per_fec_nac.value;
+    const validacionFecha = validarFechaNacimiento(fechaNac);
+    
+    if (!validacionFecha.valida) {
+        Swal.fire({
+            title: "Error en fecha de nacimiento",
+            text: validacionFecha.mensaje,
+            icon: "error"
+        });
+        formulario.per_fec_nac.focus();
+        return;
     }
 
     try {
-        const body = new FormData(formulario)
-        const url = "/Escuela_BHR/API/alumnonuevo/modificar"
+        const body = new FormData(formulario);
+        const url = "/Escuela_BHR/API/nuevoalumno/modificar";
         const config = {
             method: 'POST',
             body
-        }
+        };
 
         const respuesta = await fetch(url, config);
         const data = await respuesta.json();
         const { codigo, mensaje, detalle } = data;
-        console.log(data);
-        let icon = 'info'
+        
+        let icon = 'info';
         if (codigo == 1) {
-            icon = 'success'
+            icon = 'success';
             formulario.reset();
             buscar();
             cancelar();
         } else {
-            icon = 'error'
-            console.log(detalle);
+            icon = 'error';
+            console.log('Error detallado:', detalle);
         }
 
         Toast.fire({
             icon: icon,
             title: mensaje
-        })
+        });
 
     } catch (error) {
-        console.log(error);
+        console.log('Error en fetch:', error);
     }
-}
+};
 
 
 const eliminar = async (e) => {
-    const cur_codigo = e.currentTarget.dataset.cur_codigo
-    console.log("ID a eliminar:", cur_codigo); // Agrega esta línea
+    const per_catalogo = e.currentTarget.dataset.per_catalogo
+    console.log("ID a eliminar:", per_catalogo); // Agrega esta línea
     let confirmacion = await Swal.fire({
         icon: 'question',
         title: 'Confirmacion',
@@ -279,8 +305,8 @@ const eliminar = async (e) => {
     if (confirmacion.isConfirmed) {
         try {
             const body = new FormData()
-            body.append('cur_codigo', cur_codigo)
-            const url = "/Escuela_BHR/API/alumnonuevo/eliminar"
+            body.append('per_catalogo', per_catalogo)
+            const url = "/Escuela_BHR/API/nuevoalumno/eliminar"
             const config = {
                 method: 'POST',
                 body
@@ -307,8 +333,44 @@ const eliminar = async (e) => {
             console.log(error);
         }
     }
-
 }
+
+
+const validarFechaNacimiento = (fecha) => {
+    if (!fecha) {
+        return { valida: false, mensaje: "La fecha de nacimiento es obligatoria" };
+    }
+
+    const fechaNac = new Date(fecha);
+    const hoy = new Date();
+
+    // Verificar que la fecha sea válida
+    if (isNaN(fechaNac.getTime())) {
+        return { valida: false, mensaje: "Fecha de nacimiento inválida" };
+    }
+
+    // Verificar que no sea futura
+    if (fechaNac > hoy) {
+        return { valida: false, mensaje: "La fecha de nacimiento no puede ser futura" };
+    }
+
+    // Verificar edad mínima (ejemplo: mayor de 10 años)
+    const hace10Anos = new Date();
+    hace10Anos.setFullYear(hoy.getFullYear() - 10);
+    if (fechaNac > hace10Anos) {
+        return { valida: false, mensaje: "La edad mínima es 10 años" };
+    }
+
+    // Verificar edad máxima (ejemplo: menor de 120 años)
+    const hace120Anos = new Date();
+    hace120Anos.setFullYear(hoy.getFullYear() - 120);
+    if (fechaNac < hace120Anos) {
+        return { valida: false, mensaje: "La fecha de nacimiento no puede ser mayor a 120 años" };
+    }
+
+    return { valida: true, mensaje: "" };
+}
+
 
 formulario.addEventListener('submit', guardar)
 btnCancelar.addEventListener('click', cancelar)
