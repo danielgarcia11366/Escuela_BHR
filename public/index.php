@@ -7,11 +7,17 @@ use Controllers\AppController;
 use Controllers\CursosController;
 use Controllers\NuevoAlumnoController;
 use Controllers\PromocionesController;
+use Controllers\PruebaController;
 
 $router = new Router();
 $router->setBaseURL('/' . $_ENV['APP_NAME']);
 
 $router->get('/', [AppController::class,'index']);
+
+
+//prueba
+$router->get('/prueba', [PruebaController::class,'index']);
+
 
 //CURSOS
 $router->get('/cursos', [CursosController::class,'index']);
