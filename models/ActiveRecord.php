@@ -3,31 +3,34 @@
 namespace Model;
 
 use PDO;
+use PDOException;
 
 class ActiveRecord
 {
-
-    // Base DE DATOS
+    /** @var PDO */
     protected static $db;
     protected static $tabla = '';
     protected static $columnasDB = [];
-
     protected static $idTabla = '';
 
-    // Alertas y Mensajes
     protected static $alertas = [];
 
-    // Definir la conexión a la BD - includes/database.php
+    /** ===============================
+     *   CONFIGURACIÓN GENERAL
+     *  =============================== */
+
+    // Asignar conexión PDO
     public static function setDB($database)
     {
         self::$db = $database;
     }
 
+    // Manejo de alertas (mensajes)
     public static function setAlerta($tipo, $mensaje)
     {
         static::$alertas[$tipo][] = $mensaje;
     }
-    // Validación
+
     public static function getAlertas()
     {
         return static::$alertas;
@@ -39,188 +42,179 @@ class ActiveRecord
         return static::$alertas;
     }
 
-    // Registros - CRUD
+    /** ===============================
+     *   CRUD PRINCIPAL
+     *  =============================== */
+
     public function guardar()
     {
-        $resultado = '';
-        $id = static::$idTabla ?? 'id';
-        if (!is_null($this->$id)) {
-            // actualizar
-            $resultado = $this->actualizar();
-        } else {
-            // Creando un nuevo registro
-            $resultado = $this->crear();
-        }
-        return $resultado;
+        $id = static::$idTabla ?: 'id';
+        return isset($this->$id) && !empty($this->$id)
+            ? $this->actualizar()
+            : $this->crear();
     }
 
     public static function all()
     {
         $query = "SELECT * FROM " . static::$tabla;
-        $resultado = self::consultarSQL($query);
-
-        // debuguear($resultado);
-        return $resultado;
+        return self::consultarSQL($query);
     }
 
-    // Busca un registro por su id
-    public static function find($id = [])
+    public static function find($id)
     {
-        $idQuery = static::$idTabla ?? 'id';
+        $idCampos = static::$idTabla ?: 'id';
         $query = "SELECT * FROM " . static::$tabla;
 
-        if (is_array(static::$idTabla)) {
-            foreach (static::$idTabla as $key => $value) {
-                if ($value == reset(static::$idTabla)) {
-                    $query .= " WHERE $value = " . self::$db->quote($id[$value]);
-                } else {
-                    $query .= " AND $value = " . self::$db->quote($id[$value]);
-                }
-            }
+        if (is_array($idCampos)) {
+            $query .= " WHERE " . implode(" AND ", array_map(function ($campo) use ($id) {
+                return "$campo = " . self::$db->quote($id[$campo] ?? null);
+            }, $idCampos));
         } else {
-
-            $query .= " WHERE $idQuery = $id";
+            $query .= " WHERE $idCampos = " . self::$db->quote($id);
         }
 
         $resultado = self::consultarSQL($query);
-        return array_shift($resultado);
+        return $resultado ? array_shift($resultado) : null;
     }
 
-    // Obtener Registro
     public static function get($limite)
     {
-        $query = "SELECT * FROM " . static::$tabla . " LIMIT ${limite}";
+        $limite = (int)$limite;
+        $query = "SELECT * FROM " . static::$tabla . " LIMIT $limite";
         $resultado = self::consultarSQL($query);
-        return array_shift($resultado);
+        return $resultado ? array_shift($resultado) : null;
     }
 
-    // Busqueda Where con Columna 
     public static function where($columna, $valor, $condicion = '=')
     {
-        $query = "SELECT * FROM " . static::$tabla . " WHERE ${columna} ${condicion} '${valor}'";
-        $resultado = self::consultarSQL($query);
-        return  $resultado;
+        $query = "SELECT * FROM " . static::$tabla . " WHERE {$columna} {$condicion} " . self::$db->quote($valor);
+        return self::consultarSQL($query);
     }
 
-    // SQL para Consultas Avanzadas.
     public static function SQL($consulta)
     {
-        $query = $consulta;
-        $resultado = self::$db->query($query);
-        return $resultado;
+        return self::$db->query($consulta);
     }
 
-    // crea un nuevo registro
+    /** ===============================
+     *   CREAR / ACTUALIZAR / ELIMINAR
+     *  =============================== */
+
     public function crear()
     {
-        // Sanitizar los datos
-        $atributos = $this->sanitizarAtributos();
+        try {
+            $atributos = $this->sanitizarAtributos();
+            $query = "INSERT INTO " . static::$tabla . " (";
+            $query .= join(', ', array_keys($atributos)) . ") VALUES (";
+            $query .= join(', ', array_values($atributos)) . ")";
 
-        // Insertar en la base de datos
-        $query = " INSERT INTO " . static::$tabla . " ( ";
-        $query .= join(', ', array_keys($atributos));
-        $query .= " ) VALUES (";
-        $query .= join(", ", array_values($atributos));
-        $query .= " ) ";
+            $resultado = self::$db->exec($query);
 
-
-        // debuguear($query);
-
-        // Resultado de la consulta
-        $resultado = self::$db->exec($query);
-
-        return [
-            'resultado' =>  $resultado,
-            'id' => self::$db->lastInsertId(static::$tabla)
-        ];
+            return [
+                'resultado' => $resultado,
+                'id' => self::$db->lastInsertId(static::$tabla)
+            ];
+        } catch (PDOException $e) {
+            self::setAlerta('error', 'Error al crear registro: ' . $e->getMessage());
+            return false;
+        }
     }
 
     public function actualizar()
     {
-        // Sanitizar los datos
-        $atributos = $this->sanitizarAtributos();
+        try {
+            $atributos = $this->sanitizarAtributos();
+            $idCampos = static::$idTabla ?: 'id';
 
-        // Iterar para ir agregando cada campo de la BD
-        $valores = [];
-        foreach ($atributos as $key => $value) {
-            $valores[] = "{$key}={$value}";
-        }
-        $id = static::$idTabla ?? 'id';
-
-        $query = "UPDATE " . static::$tabla . " SET ";
-        $query .=  join(', ', $valores);
-
-        if (is_array(static::$idTabla)) {
-
-            foreach (static::$idTabla as $key => $value) {
-                if ($value == reset(static::$idTabla)) {
-                    $query .= " WHERE $value = " . self::$db->quote($this->$value);
-                } else {
-                    $query .= " AND $value = " . self::$db->quote($this->$value);
-                }
+            $valores = [];
+            foreach ($atributos as $key => $value) {
+                $valores[] = "{$key} = {$value}";
             }
-        } else {
-            $query .= " WHERE " . $id . " = " . self::$db->quote($this->$id) . " ";
+
+            $query = "UPDATE " . static::$tabla . " SET " . join(', ', $valores);
+
+            if (is_array($idCampos)) {
+                $query .= " WHERE " . implode(" AND ", array_map(function ($campo) {
+                    return "$campo = " . self::$db->quote($this->$campo);
+                }, $idCampos));
+            } else {
+                $query .= " WHERE $idCampos = " . self::$db->quote($this->$idCampos);
+            }
+
+            $resultado = self::$db->exec($query);
+
+            return ['resultado' => $resultado];
+        } catch (PDOException $e) {
+            self::setAlerta('error', 'Error al actualizar registro: ' . $e->getMessage());
+            return false;
         }
-
-        // debuguear($query);
-
-        $resultado = self::$db->exec($query);
-        return [
-            'resultado' =>  $resultado,
-        ];
     }
 
-    // Eliminar un registro - Toma el ID de Active Record
     public function eliminar()
     {
+        try {
+            $idCampos = static::$idTabla ?: 'id';
+            $query = "DELETE FROM " . static::$tabla;
 
-        $idQuery = static::$idTabla ?? 'id';
-        $query = "DELETE FROM "  . static::$tabla . " WHERE $idQuery = " . self::$db->quote($this->$idQuery);
-        $resultado = self::$db->exec($query);
-        return $resultado;
+            if (is_array($idCampos)) {
+                $query .= " WHERE " . implode(" AND ", array_map(function ($campo) {
+                    return "$campo = " . self::$db->quote($this->$campo);
+                }, $idCampos));
+            } else {
+                $query .= " WHERE $idCampos = " . self::$db->quote($this->$idCampos);
+            }
+
+            return self::$db->exec($query);
+        } catch (PDOException $e) {
+            self::setAlerta('error', 'Error al eliminar registro: ' . $e->getMessage());
+            return false;
+        }
     }
 
-    public static function consultarSQL($query)
+    /** ===============================
+     *   CONSULTAS GENERALES
+     *  =============================== */
+
+    protected static function consultarSQL($query)
     {
-        // Consultar la base de datos
-        $resultado = self::$db->query($query);
+        try {
+            $resultado = self::$db->query($query);
+            if (!$resultado) return [];
 
-        // Iterar los resultados
-        $array = [];
-        while ($registro = $resultado->fetch(PDO::FETCH_ASSOC)) {
-            $array[] = static::crearObjeto($registro);
+            $array = [];
+            while ($registro = $resultado->fetch(PDO::FETCH_ASSOC)) {
+                $array[] = static::crearObjeto($registro);
+            }
+
+            $resultado->closeCursor();
+            return $array;
+        } catch (PDOException $e) {
+            self::setAlerta('error', 'Error en consulta SQL: ' . $e->getMessage());
+            return [];
         }
-
-        // liberar la memoria
-        $resultado->closeCursor();
-
-        // retornar los resultados
-        return $array;
     }
 
     public static function fetchArray($query)
     {
         $resultado = self::$db->query($query);
         $respuesta = $resultado->fetchAll(PDO::FETCH_ASSOC);
-        foreach ($respuesta as $value) {
-            $data[] = array_change_key_case(array_map('utf8_encode', $value));
+        $data = [];
+
+        foreach ($respuesta as $fila) {
+            $data[] = array_change_key_case(array_map('utf8_encode', $fila));
         }
+
         $resultado->closeCursor();
         return $data;
     }
 
-
     public static function fetchFirst($query)
     {
         $resultado = self::$db->query($query);
-        $respuesta = $resultado->fetchAll(PDO::FETCH_ASSOC);
-        $data = [];
-        foreach ($respuesta as $value) {
-            $data[] = array_change_key_case(array_map('utf8_encode', $value));
-        }
+        $fila = $resultado->fetch(PDO::FETCH_ASSOC);
         $resultado->closeCursor();
-        return array_shift($data);
+
+        return $fila ? array_change_key_case(array_map('utf8_encode', $fila)) : null;
     }
 
     protected static function crearObjeto($registro)
@@ -228,25 +222,26 @@ class ActiveRecord
         $objeto = new static;
 
         foreach ($registro as $key => $value) {
-            $key = strtolower($key);
-            if (property_exists($objeto, $key)) {
-                $objeto->$key = utf8_encode($value);
+            $prop = strtolower($key);
+            if (property_exists($objeto, $prop)) {
+                $objeto->$prop = is_string($value) ? utf8_encode($value) : $value;
             }
         }
 
         return $objeto;
     }
 
+    /** ===============================
+     *   UTILIDADES DE ATRIBUTOS
+     *  =============================== */
 
-
-    // Identificar y unir los atributos de la BD
     public function atributos()
     {
         $atributos = [];
         foreach (static::$columnasDB as $columna) {
             $columna = strtolower($columna);
             if ($columna === 'id' || $columna === static::$idTabla) continue;
-            $atributos[$columna] = $this->$columna;
+            $atributos[$columna] = $this->$columna ?? null;
         }
         return $atributos;
     }
@@ -255,16 +250,20 @@ class ActiveRecord
     {
         $atributos = $this->atributos();
         $sanitizado = [];
+
         foreach ($atributos as $key => $value) {
-            $sanitizado[$key] = self::$db->quote($value);
+            $sanitizado[$key] = is_null($value)
+                ? 'NULL'
+                : self::$db->quote(trim($value));
         }
+
         return $sanitizado;
     }
 
     public function sincronizar($args = [])
     {
         foreach ($args as $key => $value) {
-            if (property_exists($this, $key) && !is_null($value)) {
+            if (property_exists($this, $key)) {
                 $this->$key = $value;
             }
         }
