@@ -5,28 +5,33 @@ namespace Model;
 class Cursos extends ActiveRecord
 {
     protected static $tabla = 'cursos';
-    // Si no vas a enviar fecha manualmente, quítala del array
-    protected static $columnasDB = ['cur_nombre', 'cur_desc_lg', 'cur_duracion', 'cur_estado'];
-    protected static $idTabla = 'cur_codigo';
+    protected static $columnasDB = ['codigo_curso', 'nombre_curso', 'descripcion', 'duracion_horas', 'requisitos', 'tipo_curso', 'area_especialidad', 'estado_curso'];
+    protected static $idTabla = 'id_curso';
 
-    public $cur_codigo;
-    public $cur_nombre;
-    public $cur_desc_lg;
-    public $cur_duracion;
-    public $cur_estado;
-    public $cur_fec_creacion;
+    public $id_curso;
+    public $codigo_curso;
+    public $nombre_curso;
+    public $descripcion;
+    public $duracion_horas;
+    public $requisitos;
+    public $tipo_curso;
+    public $area_especialidad;
+    public $estado_curso;
+    public $fecha_creacion;
 
     public function __construct($args = [])
     {
-        $this->cur_codigo = $args['cur_codigo'] ?? null;
-        $this->cur_nombre = $args['cur_nombre'] ?? '';
-        $this->cur_desc_lg = $args['cur_desc_lg'] ?? '';
-        $this->cur_duracion = $args['cur_duracion'] ?? 0; // Cambié a 0 para SMALLINT
-        $this->cur_estado = $args['cur_estado'] ?? 'A';
-        $this->cur_fec_creacion = $args['cur_fec_creacion'] ?? null; // null para usar DEFAULT
+        $this->id_curso = $args['id_curso'] ?? null;
+        $this->codigo_curso = $args['codigo_curso'] ?? '';
+        $this->nombre_curso = $args['nombre_curso'] ?? '';
+        $this->descripcion = $args['descripcion'] ?? '';
+        $this->duracion_horas = $args['duracion_horas'] ?? 0;
+        $this->requisitos = $args['requisitos'] ?? '';
+        $this->tipo_curso = $args['tipo_curso'] ?? '';
+        $this->area_especialidad = $args['area_especialidad'] ?? '';
+        $this->estado_curso = $args['estado_curso'] ?? 'A';
+        $this->fecha_creacion = $args['fecha_creacion'] ?? null;
     }
-
-
 
     public static function obtenerCursos()
     {

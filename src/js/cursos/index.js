@@ -24,15 +24,6 @@ const contenedorBtnCancelar = document.getElementById('contenedorBtnCancelar');
 contenedorBtnModificar.style.display = 'none';
 contenedorFormulario.style.display = 'none';
 
-// Establecer fecha actual automáticamente al cargar la página
-const establecerFechaActual = () => {
-    const fechaActual = new Date().toISOString().split('T')[0];
-    formulario.cur_fec_creacion.value = fechaActual;
-};
-
-// Establecer fecha actual al cargar
-establecerFechaActual();
-
 // Función para mostrar formulario con animación
 const mostrarFormulario = (esModificacion = false) => {
     // Cambiar título según el modo
@@ -63,9 +54,6 @@ const mostrarFormulario = (esModificacion = false) => {
     
     // Ocultar botón flotante
     btnFlotante.style.display = 'none';
-    
-    // Establecer fecha actual siempre (tanto para nuevo como para modificar)
-    establecerFechaActual();
 };
 
 // Función para ocultar formulario con animación
@@ -87,9 +75,8 @@ const ocultarFormulario = () => {
         // Mostrar botón flotante
         btnFlotante.style.display = 'block';
         
-        // Limpiar formulario y resetear fecha
+        // Limpiar formulario
         formulario.reset();
-        establecerFechaActual();
         
         // Resetear estado de botones
         contenedorBtnGuardar.style.display = 'block';
@@ -111,32 +98,58 @@ const datatable = new DataTable('#tablaCursos', {
     columns: [
         {
             title: 'No.',
-            data: 'cur_codigo',
+            data: 'id_curso',
             render: (data, type, row, meta) => meta.row + 1,
             width: '5%',
             className: 'text-center'
         },
         { 
-            title: 'Nombre del Curso', 
-            data: 'cur_nombre',
+            title: 'Código', 
+            data: 'codigo_curso',
             className: 'fw-bold'
         },
         { 
+            title: 'Nombre del Curso', 
+            data: 'nombre_curso'
+        },
+        { 
             title: 'Descripción', 
-            data: 'cur_desc_lg',
+            data: 'descripcion',
             render: (data) => {
-                return data && data.length > 50 ? data.substring(0, 50) + '...' : data;
+                return data && data.length > 50 ? data.substring(0, 50) + '...' : (data || '');
             }
         },
         { 
             title: 'Duración', 
-            data: 'cur_duracion',
-            render: (data) => `${data} días`,
+            data: 'duracion_horas',
+            render: (data) => `${data} horas`,
+            className: 'text-center'
+        },
+        { 
+            title: 'Tipo', 
+            data: 'tipo_curso',
+            className: 'text-center'
+        },
+        { 
+            title: 'Área', 
+            data: 'area_especialidad',
+            render: (data) => {
+                return data && data.length > 30 ? data.substring(0, 30) + '...' : (data || '');
+            }
+        },
+        { 
+            title: 'Estado', 
+            data: 'estado_curso',
+            render: (data) => {
+                const badge = data === 'A' ? 'success' : 'danger';
+                const texto = data === 'A' ? 'Activo' : 'Inactivo';
+                return `<span class="badge bg-${badge}">${texto}</span>`;
+            },
             className: 'text-center'
         },
         { 
             title: 'Fecha Creación', 
-            data: 'cur_fec_creacion',
+            data: 'fecha_creacion',
             render: (data) => {
                 if (data) {
                     const fecha = new Date(data);
@@ -148,24 +161,28 @@ const datatable = new DataTable('#tablaCursos', {
         },
         {
             title: 'Acciones',
-            data: 'cur_codigo',
+            data: 'id_curso',
             orderable: false,
             searchable: false,
             className: 'text-center',
-            width: '15%',
+            width: '10%',
             render: (data, type, row) => `
                 <div class="btn-group" role="group">
                     <button class='btn btn-outline-warning btn-sm modificar'
-                        data-cur_codigo="${data}"
-                        data-cur_nombre="${row.cur_nombre}"
-                        data-cur_desc_lg="${row.cur_desc_lg}"
-                        data-cur_duracion="${row.cur_duracion}"
-                        data-cur_fec_creacion="${row.cur_fec_creacion}"
+                        data-id_curso="${data}"
+                        data-codigo_curso="${row.codigo_curso}"
+                        data-nombre_curso="${row.nombre_curso}"
+                        data-descripcion="${row.descripcion || ''}"
+                        data-duracion_horas="${row.duracion_horas}"
+                        data-requisitos="${row.requisitos || ''}"
+                        data-tipo_curso="${row.tipo_curso || ''}"
+                        data-area_especialidad="${row.area_especialidad || ''}"
+                        data-estado_curso="${row.estado_curso}"
                         title="Modificar curso">
                         <i class='bi bi-pencil-square'></i>
                     </button>
                     <button class='btn btn-outline-danger btn-sm eliminar' 
-                        data-cur_codigo="${data}"
+                        data-id_curso="${data}"
                         title="Eliminar curso">
                         <i class='bi bi-trash'></i>
                     </button>
@@ -173,7 +190,7 @@ const datatable = new DataTable('#tablaCursos', {
             `
         }
     ],
-    order: [[4, 'desc']], // Ordenar por fecha de creación descendente
+    order: [[8, 'desc']], // Ordenar por fecha de creación descendente
     dom: '<"row"<"col-md-6"l><"col-md-6"f>>rtip'
 });
 
@@ -210,7 +227,7 @@ const guardar = async (e) => {
     btnGuardar.innerHTML = '<i class="bi bi-hourglass-split"></i> Guardando...';
 
     // Validar formulario
-    if (!validarFormulario(formulario, ['cur_codigo'])) {
+    if (!validarFormulario(formulario, ['id_curso'])) {
         Swal.fire({ 
             title: "Campos incompletos", 
             text: "Por favor, complete todos los campos requeridos", 
@@ -266,11 +283,15 @@ const traerDatos = (e) => {
     const dataset = e.currentTarget.dataset;
     
     // Llenar campos del formulario
-    formulario.cur_codigo.value = dataset.cur_codigo;
-    formulario.cur_nombre.value = dataset.cur_nombre;
-    formulario.cur_desc_lg.value = dataset.cur_desc_lg;
-    formulario.cur_duracion.value = dataset.cur_duracion;
-    // NO establecer la fecha desde los datos - siempre usar fecha actual
+    formulario.id_curso.value = dataset.id_curso;
+    formulario.codigo_curso.value = dataset.codigo_curso;
+    formulario.nombre_curso.value = dataset.nombre_curso;
+    formulario.descripcion.value = dataset.descripcion;
+    formulario.duracion_horas.value = dataset.duracion_horas;
+    formulario.requisitos.value = dataset.requisitos;
+    formulario.tipo_curso.value = dataset.tipo_curso;
+    formulario.area_especialidad.value = dataset.area_especialidad;
+    formulario.estado_curso.value = dataset.estado_curso;
     
     // Mostrar formulario en modo modificación
     mostrarFormulario(true);
@@ -337,7 +358,7 @@ btnModificar.addEventListener('click', modificar);
 
 // Función para eliminar curso
 const eliminar = async (e) => {
-    const cur_codigo = e.currentTarget.dataset.cur_codigo;
+    const id_curso = e.currentTarget.dataset.id_curso;
 
     // Confirmación mejorada
     const confirmacion = await Swal.fire({
@@ -357,7 +378,7 @@ const eliminar = async (e) => {
     if (confirmacion.isConfirmed) {
         try {
             const body = new FormData();
-            body.append('cur_codigo', cur_codigo);
+            body.append('id_curso', id_curso);
             
             const respuesta = await fetch("/Escuela_BHR/API/cursos/eliminar", { 
                 method: 'POST', 
