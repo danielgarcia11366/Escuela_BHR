@@ -31,7 +31,8 @@ const datatable = new DataTable('#tablaCursos', {
         },
         {
             title: 'Curso',
-            data: 'cur_nombre'
+            data: 'cur_nombre',
+            width: '20%',
         },
         {
             title: 'Nombre Corto',
@@ -43,11 +44,11 @@ const datatable = new DataTable('#tablaCursos', {
         },
         {
             title: 'Nivel',
-            data: 'cur_nivel'
+            data: 'nivel_nombre'
         },
         {
             title: 'Tipo',
-            data: 'cur_tipo'
+            data: 'tipo_nombre'
         },
         {
             title: 'Certificación',
@@ -55,14 +56,8 @@ const datatable = new DataTable('#tablaCursos', {
         },
         {
             title: 'Institución',
-            data: 'cur_institucion_certifica'
-        },
-        {
-            title: 'Estado',
-            data: 'cur_activo',
-            render: (data) => {
-                return data === 'S' ? '<span class="badge bg-success">Activo</span>' : '<span class="badge bg-danger">Inactivo</span>';
-            }
+            data: 'institucion_nombre',
+            width: '20%'
         },
         {
             title: 'Acciones',
@@ -80,8 +75,7 @@ const datatable = new DataTable('#tablaCursos', {
                         data-cur_tipo="${row.cur_tipo}"
                         data-cur_certificado="${row.cur_certificado}"
                         data-cur_institucion_certifica="${row.cur_institucion_certifica}"
-                        data-cur_descripcion="${row.cur_descripcion}"
-                        data-cur_activo="${row.cur_activo}">
+                        data-cur_descripcion="${row.cur_descripcion}">
                         <i class='bi bi-pencil-square'></i> 
                     </button>
                     <button class='btn btn-danger btn-sm eliminar' data-cur_codigo="${data}">
@@ -224,7 +218,6 @@ const traerDatos = (e) => {
     formulario.cur_certificado.value = elemento.cur_certificado;
     formulario.cur_institucion_certifica.value = elemento.cur_institucion_certifica;
     formulario.cur_descripcion.value = elemento.cur_descripcion;
-    formulario.cur_activo.value = elemento.cur_activo;
 
     // Mostrar formulario y cambiar título
     contenedorFormulario.style.display = '';

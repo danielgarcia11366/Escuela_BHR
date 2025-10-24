@@ -69,6 +69,56 @@ CREATE TABLE `grados` (
   CHECK (`gra_clase` IN ('1', '2', '3', '4', '5', '6'))
 ) ENGINE=InnoDB COMMENT='Catálogo de grados militares';
 
+
+
+
+-- ============================================
+-- INSERTS para la tabla ARMAS
+-- ============================================
+INSERT INTO `armas` (`arm_desc_lg`, `arm_desc_md`, `arm_desc_ct`, `estado`) VALUES
+('Infantería', 'Infantería', 'INF', 'A'),
+('Artillería', 'Artillería', 'ART', 'A'),
+('Caballería', 'Caballería', 'CAB', 'A'),
+('Aviación', 'Aviación', 'AVI', 'A'),
+('Ingenieros', 'Ingenieros', 'ING', 'A'),
+('Transmisiones Militares', 'Transmisiones', 'TRANS', 'A'),
+('Material de Guerra', 'Mat. Guerra', 'MAT', 'A'),
+('Sanidad Militar', 'Sanidad', 'SAN', 'A'),
+('Policía Militar', 'Policía Mil.', 'PM', 'A'),
+('Intendencia', 'Intendencia', 'INT', 'A');
+
+-- ============================================
+-- INSERTS para la tabla GRADOS
+-- ============================================
+-- Clase 1: Tropa
+INSERT INTO `grados` (`gra_desc_lg`, `gra_desc_md`, `gra_desc_ct`, `gra_asc`, `gra_tiempo`, `gra_clase`, `gra_demeritos`, `estado`) VALUES
+('Soldado de Segunda', 'Sold. 2da.', 'S2', 2, 6, '1', 5, 'A'),
+('Soldado de Primera', 'Sold. 1ra.', 'S1', 3, 12, '1', 5, 'A'),
+
+-- Clase 2: Clases (Cabos y Sargentos)
+('Cabo', 'Cabo', 'CBO', 4, 12, '2', 4, 'A'),
+('Sargento Segundo', 'Sgto. 2do.', 'S2do', 5, 18, '2', 4, 'A'),
+('Sargento Primero', 'Sgto. 1ro.', 'S1ro', 6, 24, '2', 3, 'A'),
+('Sargento Técnico', 'Sgto. Téc.', 'STec', 7, 24, '2', 3, 'A'),
+('Sargento Mayor', 'Sgto. Mayor', 'SMay', 8, 36, '2', 2, 'A'),
+
+-- Clase 3: Oficiales Subalternos
+('Subteniente', 'Subteniente', 'SBTE', 9, 12, '3', 2, 'A'),
+('Teniente', 'Teniente', 'TTE', 10, 24, '3', 2, 'A'),
+
+-- Clase 4: Oficiales Superiores (Capitanes)
+('Capitán Segunda', 'Cap. 2do.', 'CAP2', 11, 24, '4', 1, 'A'),
+('Capitán Primera', 'Cap. 1ro.', 'CAP1', 12, 36, '4', 1, 'A'),
+
+-- Clase 5: Jefes
+('Mayor', 'Mayor', 'MAY', 13, 48, '5', 1, 'A'),
+('Teniente Coronel', 'TC', 'TC', 14, 48, '5', 0, 'A'),
+('Coronel', 'Coronel', 'CRL', 15, 60, '5', 0, 'A'),
+
+-- Clase 6: Generales
+('General de Brigada', 'Gral. Brig.', 'GB', 16, NULL, '6', 0, 'A'),
+('General de División', 'Gral. Div.', 'GD', NULL, NULL, '6', 0, 'A');
+
 -- =====================================================
 -- TABLAS PRINCIPALES DEL SISTEMA DE CURSOS
 -- =====================================================
@@ -167,6 +217,55 @@ CREATE TABLE `participantes` (
   CONSTRAINT `participantes_ibfk_2` FOREIGN KEY (`par_catalogo`) REFERENCES `mper` (`per_catalogo`),
   CONSTRAINT `participantes_chk_1` CHECK ((`par_estado` in (_utf8mb4'G',_utf8mb4'C',_utf8mb4'R',_utf8mb4'D')))
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+
+
+
+
+
+
+-- Tabla de Niveles
+CREATE TABLE niveles (
+    niv_codigo SMALLINT PRIMARY KEY AUTO_INCREMENT,
+    niv_nombre VARCHAR(20) NOT NULL
+);
+
+-- Tabla de Tipos
+CREATE TABLE tipos (
+    tip_codigo SMALLINT PRIMARY KEY AUTO_INCREMENT,
+    tip_nombre VARCHAR(20) NOT NULL
+);
+
+-- Datos para Niveles
+INSERT INTO niveles (niv_nombre) VALUES
+('Básico'),
+('Intermedio'),
+('Avanzado');
+
+-- Datos para Tipos
+INSERT INTO tipos (tip_nombre) VALUES
+('Teórico'),
+('Práctico'),
+('Taller');
+
+-- Modificar tabla cursos para usar números en lugar de texto
+ALTER TABLE cursos 
+    MODIFY COLUMN cur_nivel SMALLINT,
+    MODIFY COLUMN cur_tipo SMALLINT;
+
+-- Crear las relaciones (llaves foráneas)
+ALTER TABLE cursos
+    ADD FOREIGN KEY (cur_nivel) REFERENCES niveles(niv_codigo),
+    ADD FOREIGN KEY (cur_tipo) REFERENCES tipos(tip_codigo);
+
+
+
+
+
+
+
+
+
 
 -- =====================================================
 -- VISTAS ÚTILES

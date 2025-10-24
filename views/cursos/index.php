@@ -79,7 +79,7 @@
 </style>
 
 <div class="container mt-4">
-    <h1 class="text-center mb-5 text-primary">Gestión de Cursos</h1>
+    <h1 class="text-center mb-5 text-danger">Gestión de Cursos</h1>
 
     <!-- Botón flotante circular -->
     <button id="btnFlotante" class="floating-btn" title="Nuevo Curso">
@@ -130,73 +130,69 @@
                         </label>
                         <input type="number" name="cur_duracion_dias" id="cur_duracion_dias" class="form-control" min="1" required>
                     </div>
-                    <div class="col-md-4">
-                        <label for="cur_nivel" class="form-label">
-                            <i class="bi bi-bar-chart-steps"></i> Nivel *
-                        </label>
-                        <select name="cur_nivel" id="cur_nivel" class="form-select" required>
-                            <option value="">Seleccione...</option>
-                            <option value="Básico">Básico</option>
-                            <option value="Intermedio">Intermedio</option>
-                            <option value="Avanzado">Avanzado</option>
+                    <div class="col">
+                        <label for="cur_nivel" class="form-label">Nivel de Curso</label>
+                        <select name="cur_nivel" id="cur_nivel" class="form-select">
+                            <option value="#">Seleccione...</option>
+                            <?php foreach ($niveles as $nivel) : ?>
+                                <option value="<?= $nivel['niv_codigo'] ?>">
+                                    <?= $nivel['niv_nombre'] ?>
+                                </option>
+                            <?php endforeach ?>
                         </select>
                     </div>
-                    <div class="col-md-4">
-                        <label for="cur_tipo" class="form-label">
-                            <i class="bi bi-layers"></i> Tipo de Curso *
-                        </label>
-                        <select name="cur_tipo" id="cur_tipo" class="form-select" required>
-                            <option value="">Seleccione...</option>
-                            <option value="Teórico">Teórico</option>
-                            <option value="Práctico">Práctico</option>
-                            <option value="Mixto">Mixto</option>
+                    <div class="col">
+                        <label for="cur_tipo" class="form-label">Tipo de Curso</label>
+                        <select name="cur_tipo" id="cur_tipo" class="form-select">
+                            <option value="#">Seleccione...</option>
+                            <?php foreach ($tipos as $tipo) : ?>
+                                <option value="<?= $tipo['tip_codigo'] ?>">
+                                    <?= $tipo['tip_nombre'] ?>
+                                </option>
+                            <?php endforeach ?>
                         </select>
                     </div>
                 </div>
-
                 <div class="row mb-3">
+                    <!-- Columna para Otorga Certificado -->
                     <div class="col-md-6">
                         <label for="cur_certificado" class="form-label">
                             <i class="bi bi-award"></i> Otorga Certificado *
                         </label>
                         <select name="cur_certificado" id="cur_certificado" class="form-select" required>
                             <option value="">Seleccione...</option>
-                            <option value="S">Sí</option>
-                            <option value="N">No</option>
+                            <option value="SI">Sí</option>
+                            <option value="NO">No</option>
                         </select>
                     </div>
+
+                    <!-- Columna para Institución -->
                     <div class="col-md-6">
-                        <label for="cur_institucion_certifica" class="form-label">
-                            <i class="bi bi-building"></i> Institución que Certifica
-                        </label>
-                        <input type="text" name="cur_institucion_certifica" id="cur_institucion_certifica" class="form-control">
+                        <label for="cur_institucion_certifica" class="form-label">Institución</label>
+                        <select name="cur_institucion_certifica" id="cur_institucion_certifica" class="form-select">
+                            <option value="#">Seleccione...</option>
+                            <?php foreach ($instituciones as $institucion) : ?>
+                                <option value="<?= $institucion['inst_codigo'] ?>">
+                                    <?= $institucion['inst_nombre'] ?>
+                                </option>
+                            <?php endforeach ?>
+                        </select>
                     </div>
                 </div>
 
-                <div class="row mb-3">
-                    <div class="col-md-12">
-                        <label for="cur_activo" class="form-label">
-                            <i class="bi bi-toggle-on"></i> Estado *
-                        </label>
-                        <select name="cur_activo" id="cur_activo" class="form-select" required>
-                            <option value="S">Activo</option>
-                            <option value="N">Inactivo</option>
-                        </select>
-                    </div>
-                </div>
 
                 <div class="row mb-4">
-                    <div class="col-6" id="contenedorBtnGuardar">
+                    <div class="col" id="contenedorBtnGuardar">
                         <button type="submit" form="formularioCursos" id="btnGuardar" class="btn btn-success w-100">
                             <i class="bi bi-save"></i> Guardar
                         </button>
                     </div>
-                    <div class="col-6" id="contenedorBtnModificar" style="display:none;">
+                    <div class="col" id="contenedorBtnModificar" style="display:none;">
                         <button type="button" id="btnModificar" class="btn btn-warning w-100">
                             <i class="bi bi-pencil-square"></i> Modificar
                         </button>
                     </div>
-                    <div class="col-6" id="contenedorBtnCancelar">
+                    <div class="col" id="contenedorBtnCancelar">
                         <button type="button" id="btnCancelar" class="btn btn-outline-danger w-100">
                             <i class="bi bi-x-circle"></i> Cancelar
                         </button>

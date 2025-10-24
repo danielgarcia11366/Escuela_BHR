@@ -5,19 +5,18 @@ namespace Model;
 class Cursos extends ActiveRecord
 {
     protected static $tabla = 'cursos';
-    protected static $columnasDB = [
-        'cur_nombre', 
-        'cur_nombre_corto', 
-        'cur_duracion_dias', 
-        'cur_nivel', 
-        'cur_tipo', 
-        'cur_certificado', 
-        'cur_institucion_certifica', 
-        'cur_descripcion', 
-        'cur_activo', 
-        'fecha_registro'
-    ];
     protected static $idTabla = 'cur_codigo';
+    protected static $columnasDB = [
+        'cur_codigo', // <-- agregar
+        'cur_nombre',
+        'cur_nombre_corto',
+        'cur_duracion_dias',
+        'cur_nivel',
+        'cur_tipo',
+        'cur_certificado',
+        'cur_institucion_certifica',
+        'cur_descripcion'
+    ];
 
     public $cur_codigo;
     public $cur_nombre;
@@ -28,8 +27,6 @@ class Cursos extends ActiveRecord
     public $cur_certificado;
     public $cur_institucion_certifica;
     public $cur_descripcion;
-    public $cur_activo;
-    public $fecha_registro;
 
     public function __construct($args = [])
     {
@@ -42,8 +39,6 @@ class Cursos extends ActiveRecord
         $this->cur_certificado = $args['cur_certificado'] ?? '';
         $this->cur_institucion_certifica = $args['cur_institucion_certifica'] ?? '';
         $this->cur_descripcion = $args['cur_descripcion'] ?? '';
-        $this->cur_activo = $args['cur_activo'] ?? 'S';
-        $this->fecha_registro = $args['fecha_registro'] ?? date('Y-m-d H:i:s');
     }
 
     public static function obtenerCursos()
@@ -52,9 +47,27 @@ class Cursos extends ActiveRecord
         return self::fetchArray($sql);
     }
 
-    public static function obtenerCursosActivos()
+
+    public static function obtenerCursos1()
     {
-        $sql = "SELECT * FROM cursos WHERE cur_activo = 'S' ORDER BY cur_nombre ASC";
+        $sql = "SELECT 
+                c.cur_codigo,
+                c.cur_nombre,
+                c.cur_nombre_corto,
+                c.cur_duracion_dias,
+                c.cur_nivel,
+                n.niv_nombre AS nivel_nombre,
+                c.cur_tipo,
+                t.tip_nombre AS tipo_nombre,
+                c.cur_certificado,
+                c.cur_institucion_certifica,
+                i.inst_nombre AS institucion_nombre,
+                c.cur_descripcion
+            FROM cursos c
+            LEFT JOIN niveles n ON c.cur_nivel = n.niv_codigo
+            LEFT JOIN tipos t ON c.cur_tipo = t.tip_codigo
+            LEFT JOIN instituciones i ON c.cur_institucion_certifica = i.inst_codigo";
+
         return self::fetchArray($sql);
     }
 }
