@@ -1,7 +1,7 @@
 <?php
 
 try {
-    $host = $_ENV['DB_HOST'] ?? 'localhost';
+    $host = $_ENV['DB_HOST'] ?? $_ENV['DB_SERVER'] ?? 'db';
     $port = $_ENV['DB_PORT'] ?? '3306';
     $user = $_ENV['DB_USER'] ?? 'root';
     $pass = $_ENV['DB_PASS'] ?? '';
@@ -13,7 +13,7 @@ try {
     header('Content-Type: application/json');
     echo json_encode([
         "detalle" => $e->getMessage(),
-        "mensaje" => "Error de conexion bd",
+        "mensaje" => "Error de conexión a la base de datos",
         "codigo" => 5
     ]);
     exit;

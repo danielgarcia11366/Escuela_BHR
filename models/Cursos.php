@@ -5,37 +5,56 @@ namespace Model;
 class Cursos extends ActiveRecord
 {
     protected static $tabla = 'cursos';
-    protected static $columnasDB = ['codigo_curso', 'nombre_curso', 'descripcion', 'duracion_horas', 'requisitos', 'tipo_curso', 'area_especialidad', 'estado_curso'];
-    protected static $idTabla = 'id_curso';
+    protected static $columnasDB = [
+        'cur_nombre', 
+        'cur_nombre_corto', 
+        'cur_duracion_dias', 
+        'cur_nivel', 
+        'cur_tipo', 
+        'cur_certificado', 
+        'cur_institucion_certifica', 
+        'cur_descripcion', 
+        'cur_activo', 
+        'fecha_registro'
+    ];
+    protected static $idTabla = 'cur_codigo';
 
-    public $id_curso;
-    public $codigo_curso;
-    public $nombre_curso;
-    public $descripcion;
-    public $duracion_horas;
-    public $requisitos;
-    public $tipo_curso;
-    public $area_especialidad;
-    public $estado_curso;
-    public $fecha_creacion;
+    public $cur_codigo;
+    public $cur_nombre;
+    public $cur_nombre_corto;
+    public $cur_duracion_dias;
+    public $cur_nivel;
+    public $cur_tipo;
+    public $cur_certificado;
+    public $cur_institucion_certifica;
+    public $cur_descripcion;
+    public $cur_activo;
+    public $fecha_registro;
 
     public function __construct($args = [])
     {
-        $this->id_curso = $args['id_curso'] ?? null;
-        $this->codigo_curso = $args['codigo_curso'] ?? '';
-        $this->nombre_curso = $args['nombre_curso'] ?? '';
-        $this->descripcion = $args['descripcion'] ?? '';
-        $this->duracion_horas = $args['duracion_horas'] ?? 0;
-        $this->requisitos = $args['requisitos'] ?? '';
-        $this->tipo_curso = $args['tipo_curso'] ?? '';
-        $this->area_especialidad = $args['area_especialidad'] ?? '';
-        $this->estado_curso = $args['estado_curso'] ?? 'A';
-        $this->fecha_creacion = $args['fecha_creacion'] ?? null;
+        $this->cur_codigo = $args['cur_codigo'] ?? null;
+        $this->cur_nombre = $args['cur_nombre'] ?? '';
+        $this->cur_nombre_corto = $args['cur_nombre_corto'] ?? '';
+        $this->cur_duracion_dias = $args['cur_duracion_dias'] ?? 0;
+        $this->cur_nivel = $args['cur_nivel'] ?? '';
+        $this->cur_tipo = $args['cur_tipo'] ?? '';
+        $this->cur_certificado = $args['cur_certificado'] ?? '';
+        $this->cur_institucion_certifica = $args['cur_institucion_certifica'] ?? '';
+        $this->cur_descripcion = $args['cur_descripcion'] ?? '';
+        $this->cur_activo = $args['cur_activo'] ?? 'S';
+        $this->fecha_registro = $args['fecha_registro'] ?? date('Y-m-d H:i:s');
     }
 
     public static function obtenerCursos()
     {
         $sql = "SELECT * FROM cursos";
+        return self::fetchArray($sql);
+    }
+
+    public static function obtenerCursosActivos()
+    {
+        $sql = "SELECT * FROM cursos WHERE cur_activo = 'S' ORDER BY cur_nombre ASC";
         return self::fetchArray($sql);
     }
 }

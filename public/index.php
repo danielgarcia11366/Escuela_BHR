@@ -5,8 +5,6 @@ require_once __DIR__ . '/../includes/app.php';
 use MVC\Router;
 use Controllers\AppController;
 use Controllers\CursosController;
-use Controllers\NuevoAlumnoController;
-use Controllers\PromocionesController;
 use Controllers\PruebaController;
 
 $router = new Router();
