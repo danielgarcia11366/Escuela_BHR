@@ -13,13 +13,10 @@ class CursosController
 {
     public static function index(Router $router)
     {
-        // Usar el método del modelo para obtener los tutores
         $instituciones = Instituciones::obtenerinstitucionQuery();
         $niveles = Niveles::obtenerNivelesConQuery();
         $tipos = Tipos::obtenerTiposConQuery();
-        $instituciones = Instituciones::obtenerinstitucionQuery();
 
-        // Pasar los tutores a la vista
         $router->render('cursos/index', [
             'instituciones' => $instituciones,
             'niveles' => $niveles,
@@ -29,7 +26,8 @@ class CursosController
 
     public static function guardarAPI()
     {
-        // Sanitizar datos
+        header('Content-Type: application/json; charset=UTF-8'); // ⭐ AÑADIR ESTA LÍNEA
+
         $_POST['cur_nombre'] = htmlspecialchars($_POST['cur_nombre']);
         $_POST['cur_nombre_corto'] = htmlspecialchars($_POST['cur_nombre_corto']);
         $_POST['cur_descripcion'] = htmlspecialchars($_POST['cur_descripcion'] ?? '');
@@ -42,19 +40,21 @@ class CursosController
             echo json_encode([
                 'codigo' => 1,
                 'mensaje' => 'Curso registrado exitosamente',
-            ]);
+            ], JSON_UNESCAPED_UNICODE); // ⭐ AÑADIR JSON_UNESCAPED_UNICODE
         } catch (Exception $e) {
             http_response_code(500);
             echo json_encode([
                 'codigo' => 0,
                 'mensaje' => 'Error al registrar Curso',
                 'detalle' => $e->getMessage(),
-            ]);
+            ], JSON_UNESCAPED_UNICODE);
         }
     }
 
     public static function buscarAPI()
     {
+        header('Content-Type: application/json; charset=UTF-8'); // ⭐ AÑADIR ESTA LÍNEA
+
         try {
             $cursos = Cursos::obtenerCursos1();
 
@@ -64,82 +64,70 @@ class CursosController
                 'mensaje' => 'Datos encontrados',
                 'detalle' => '',
                 'datos' => $cursos
-            ]);
+            ], JSON_UNESCAPED_UNICODE); // ⭐ AÑADIR JSON_UNESCAPED_UNICODE
         } catch (Exception $e) {
             http_response_code(500);
             echo json_encode([
                 'codigo' => 0,
                 'mensaje' => 'Error al buscar Cursos',
                 'detalle' => $e->getMessage(),
-            ]);
+            ], JSON_UNESCAPED_UNICODE);
         }
     }
 
     public static function modificarAPI()
     {
-        // DEBUG: Ver qué datos llegan
-        error_log("POST recibido: " . print_r($_POST, true));
+        header('Content-Type: application/json; charset=UTF-8'); // ⭐ AÑADIR ESTA LÍNEA
 
-        // Sanitizar datos
         $_POST['cur_nombre'] = htmlspecialchars($_POST['cur_nombre']);
         $_POST['cur_nombre_corto'] = htmlspecialchars($_POST['cur_nombre_corto']);
         $_POST['cur_descripcion'] = htmlspecialchars($_POST['cur_descripcion'] ?? '');
 
         $id = filter_var($_POST['cur_codigo'], FILTER_SANITIZE_NUMBER_INT);
 
-        error_log("ID extraído: " . $id);
-
         if (!$id) {
             http_response_code(400);
             echo json_encode([
                 'codigo' => 0,
                 'mensaje' => 'ID de curso no válido',
-            ]);
+            ], JSON_UNESCAPED_UNICODE);
             return;
         }
 
         try {
             $curso = Cursos::find($id);
 
-            error_log("Curso encontrado: " . print_r($curso, true));
-
             if (!$curso) {
                 http_response_code(404);
                 echo json_encode([
                     'codigo' => 0,
                     'mensaje' => 'Curso no encontrado',
-                ]);
+                ], JSON_UNESCAPED_UNICODE);
                 return;
             }
 
-            // Sincronizar los datos del POST con el objeto
             $curso->sincronizar($_POST);
-
-            error_log("Curso después de sincronizar: " . print_r($curso, true));
-
-            // Actualizar en base de datos
             $resultado = $curso->actualizar();
-
-            error_log("Resultado de actualización: " . print_r($resultado, true));
 
             http_response_code(200);
             echo json_encode([
                 'codigo' => 1,
                 'mensaje' => 'Datos del Curso Modificados Exitosamente',
-            ]);
+            ], JSON_UNESCAPED_UNICODE);
         } catch (Exception $e) {
-            error_log("Error en modificar: " . $e->getMessage());
             http_response_code(500);
             echo json_encode([
                 'codigo' => 0,
                 'mensaje' => 'Error al Modificar Datos',
                 'detalle' => $e->getMessage(),
-            ]);
+            ], JSON_UNESCAPED_UNICODE);
         }
     }
 
     public static function eliminarAPI()
     {
+        header('Content-Type: application/json; charset=UTF-8'); // ⭐ AÑADIR ESTA LÍNEA
+
         $id = filter_var($_POST['cur_codigo'], FILTER_SANITIZE_NUMBER_INT);
 
         if (!$id) {
@@ -147,7 +135,7 @@ class CursosController
             echo json_encode([
                 'codigo' => 0,
                 'mensaje' => 'ID de curso no válido',
-            ]);
+            ], JSON_UNESCAPED_UNICODE);
             return;
         }
 
@@ -159,7 +147,7 @@ class CursosController
                 echo json_encode([
                     'codigo' => 0,
                     'mensaje' => 'Curso no encontrado',
-                ]);
+                ], JSON_UNESCAPED_UNICODE);
                 return;
             }
 
@@ -169,14 +157,14 @@ class CursosController
             echo json_encode([
                 'codigo' => 1,
                 'mensaje' => 'Curso Eliminado Exitosamente',
-            ]);
+            ], JSON_UNESCAPED_UNICODE);
         } catch (Exception $e) {
             http_response_code(500);
             echo json_encode([
                 'codigo' => 0,
                 'mensaje' => 'Error al Eliminar Curso',
                 'detalle' => $e->getMessage(),
-            ]);
+            ], JSON_UNESCAPED_UNICODE);
         }
     }
 }

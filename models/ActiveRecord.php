@@ -201,7 +201,7 @@ class ActiveRecord
         $data = [];
 
         foreach ($respuesta as $fila) {
-            $data[] = array_change_key_case(array_map('utf8_encode', $fila));
+            $data[] = array_change_key_case($fila); // ⭐ QUITA utf8_encode
         }
 
         $resultado->closeCursor();
@@ -214,7 +214,7 @@ class ActiveRecord
         $fila = $resultado->fetch(PDO::FETCH_ASSOC);
         $resultado->closeCursor();
 
-        return $fila ? array_change_key_case(array_map('utf8_encode', $fila)) : null;
+        return $fila ? array_change_key_case($fila) : null; // ⭐ QUITA utf8_encode
     }
 
     protected static function crearObjeto($registro)
@@ -224,7 +224,7 @@ class ActiveRecord
         foreach ($registro as $key => $value) {
             $prop = strtolower($key);
             if (property_exists($objeto, $prop)) {
-                $objeto->$prop = is_string($value) ? utf8_encode($value) : $value;
+                $objeto->$prop = $value; // ⭐ QUITA utf8_encode, solo asigna directo
             }
         }
 

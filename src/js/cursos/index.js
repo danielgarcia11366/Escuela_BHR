@@ -112,16 +112,22 @@ const mostrarFormulario = () => {
     contenedorTabla.style.display = 'none';
     tituloFormulario.textContent = 'Nuevo Curso';
     formulario.reset();
+
+    // ⭐ ESTABLECER "NO" por defecto y restablecer select a "Seleccione..."
+    radioCertificadoNo.checked = true;
+    selectInstitucion.value = '#'; // Restablecer a "Seleccione..."
+    manejarCambioCertificado(); // Esto ocultará la institución y pondrá "SIN INSTITUCION"
+
     btnGuardar.parentElement.style.display = '';
     btnGuardar.disabled = false;
     btnModificar.parentElement.style.display = 'none';
     btnModificar.disabled = true;
 
-    // Cambiar el botón flotante a modo "cerrar"
     btnFlotante.classList.add('activo');
     btnFlotante.innerHTML = '<i class="bi bi-skip-backward"></i>';
     btnFlotante.setAttribute('title', 'Volver a la tabla');
 };
+
 
 const ocultarFormulario = () => {
     contenedorFormulario.classList.remove('slide-down');
@@ -229,9 +235,20 @@ const traerDatos = (e) => {
     formulario.cur_duracion_dias.value = elemento.cur_duracion_dias;
     formulario.cur_nivel.value = elemento.cur_nivel;
     formulario.cur_tipo.value = elemento.cur_tipo;
-    formulario.cur_certificado.value = elemento.cur_certificado;
-    formulario.cur_institucion_certifica.value = elemento.cur_institucion_certifica;
     formulario.cur_descripcion.value = elemento.cur_descripcion;
+
+    // ⭐ MARCAR EL RADIO BUTTON CORRECTO
+    if (elemento.cur_certificado === 'SI') {
+        radioCertificadoSi.checked = true;
+    } else {
+        radioCertificadoNo.checked = true;
+    }
+
+    // ⭐ ESTABLECER LA INSTITUCIÓN ANTES de ejecutar la lógica
+    formulario.cur_institucion_certifica.value = elemento.cur_institucion_certifica;
+
+    // ⭐ EJECUTAR LA LÓGICA DE MOSTRAR/OCULTAR INSTITUCIÓN
+    manejarCambioCertificado();
 
     // Mostrar formulario y cambiar título
     contenedorFormulario.style.display = '';
@@ -363,6 +380,44 @@ btnCancelar.addEventListener('click', cancelar);
 btnModificar.addEventListener('click', modificar);
 datatable.on('click', '.modificar', traerDatos);
 datatable.on('click', '.eliminar', eliminar);
+
+
+// Al final del archivo, antes de buscar()
+
+// Referencias a los elementos
+const radioCertificadoSi = document.getElementById('certificado_si');
+const radioCertificadoNo = document.getElementById('certificado_no');
+const contenedorInstitucion = document.getElementById('contenedorInstitucion');
+const selectInstitucion = document.getElementById('cur_institucion_certifica');
+
+// Función para manejar el cambio de certificado
+const manejarCambioCertificado = () => {
+    if (radioCertificadoSi.checked) {
+        // Mostrar el select de institución
+        contenedorInstitucion.style.display = '';
+        selectInstitucion.required = true;
+    } else {
+        // Ocultar el select
+        contenedorInstitucion.style.display = 'none';
+        selectInstitucion.required = false;
+
+        // SIEMPRE establecer "SIN INSTITUCION" cuando se selecciona NO
+        // Ya sea nuevo o editando
+        const opciones = Array.from(selectInstitucion.options);
+        const sinInstitucion = opciones.find(opt => opt.text === 'SIN INSTITUCION');
+
+        if (sinInstitucion) {
+            selectInstitucion.value = sinInstitucion.value;
+        }
+    }
+};
+
+// Escuchar cambios en los radio buttons
+radioCertificadoSi.addEventListener('change', manejarCambioCertificado);
+radioCertificadoNo.addEventListener('change', manejarCambioCertificado);
+
+// Ejecutar al cargar para establecer el estado inicial
+manejarCambioCertificado();
 
 // Cargar datos al inicio
 buscar();

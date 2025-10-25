@@ -168,21 +168,33 @@
                 </div>
                 <div class="row mb-3">
                     <!-- Columna para Otorga Certificado -->
-                    <div class="col-md-6">
-                        <label for="cur_certificado" class="form-label">
+                    <div class="col-md-4">
+                        <label class="form-label">
                             <i class="bi bi-award"></i> Otorga Certificado *
                         </label>
-                        <select name="cur_certificado" id="cur_certificado" class="form-select" required>
-                            <option value="">Seleccione...</option>
-                            <option value="SI">Sí</option>
-                            <option value="NO">No</option>
-                        </select>
+                        <div class="d-flex gap-4 mt-2">
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="cur_certificado"
+                                    id="certificado_si" value="SI" required>
+                                <label class="form-check-label" for="certificado_si">
+                                    Sí
+                                </label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="cur_certificado"
+                                    id="certificado_no" value="NO" checked required>
+                                <label class="form-check-label" for="certificado_no">
+                                    No
+                                </label>
+                            </div>
+                        </div>
                     </div>
 
-                    <!-- Columna para Institución -->
-                    <div class="col-md-6">
+                    <!-- Columna para Institución (inicialmente oculta) -->
+                    <div class="col-md-8" id="contenedorInstitucion" style="display: none;">
                         <label for="cur_institucion_certifica" class="form-label">
-                            <i class="bi bi-buildings"></i> Institución</label>
+                            <i class="bi bi-buildings"></i> Institución *
+                        </label>
                         <select name="cur_institucion_certifica" id="cur_institucion_certifica" class="form-select">
                             <option value="#">Seleccione...</option>
                             <?php foreach ($instituciones as $institucion) : ?>
