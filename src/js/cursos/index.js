@@ -66,7 +66,8 @@ const datatable = new DataTable('#tablaCursos', {
             orderable: false,
             render: (data, type, row) => {
                 return `
-                    <button class='btn btn-warning btn-sm modificar' 
+                    <button class='btn btn-outline-warning modificar' 
+                        title='Modificar curso'
                         data-cur_codigo="${data}" 
                         data-cur_nombre="${row.cur_nombre}"
                         data-cur_nombre_corto="${row.cur_nombre_corto}"
@@ -78,12 +79,15 @@ const datatable = new DataTable('#tablaCursos', {
                         data-cur_descripcion="${row.cur_descripcion}">
                         <i class='bi bi-pencil-square'></i> 
                     </button>
-                    <button class='btn btn-danger btn-sm eliminar' data-cur_codigo="${data}">
+                    <button class='btn btn-outline-danger eliminar' 
+                        title='Eliminar curso'
+                        data-cur_codigo="${data}">
                         <i class='bi bi-trash'></i> 
                     </button>
                 `;
             }
         }
+
     ]
 });
 
@@ -112,6 +116,11 @@ const mostrarFormulario = () => {
     btnGuardar.disabled = false;
     btnModificar.parentElement.style.display = 'none';
     btnModificar.disabled = true;
+
+    // Cambiar el botón flotante a modo "cerrar"
+    btnFlotante.classList.add('activo');
+    btnFlotante.innerHTML = '<i class="bi bi-skip-backward"></i>';
+    btnFlotante.setAttribute('title', 'Volver a la tabla');
 };
 
 const ocultarFormulario = () => {
@@ -122,6 +131,11 @@ const ocultarFormulario = () => {
         contenedorFormulario.classList.remove('slide-up');
         contenedorTabla.style.display = '';
     }, 300);
+
+    // Restaurar el botón flotante a modo "agregar"
+    btnFlotante.classList.remove('activo');
+    btnFlotante.innerHTML = '<i class="bi bi-plus"></i>';
+    btnFlotante.setAttribute('title', 'Nuevo Curso');
 };
 
 const guardar = async (e) => {
@@ -149,7 +163,7 @@ const guardar = async (e) => {
         const respuesta = await fetch(url, config);
         const data = await respuesta.json();
         const { codigo, mensaje, detalle } = data;
-        
+
         let icon = 'info';
         if (codigo == 1) {
             icon = 'success';
@@ -186,10 +200,10 @@ const buscar = async () => {
         console.log('Buscando cursos...');
         const respuesta = await fetch(url, config);
         console.log('Respuesta recibida:', respuesta);
-        
+
         const data = await respuesta.json();
         console.log('Datos recibidos:', data);
-        
+
         const { datos } = data;
         console.log('Array de cursos:', datos);
 
@@ -232,6 +246,11 @@ const traerDatos = (e) => {
     btnModificar.disabled = false;
     btnCancelar.parentElement.style.display = '';
     btnCancelar.disabled = false;
+
+    // Cambiar el botón flotante a modo "cerrar"
+    btnFlotante.classList.add('activo');
+    btnFlotante.innerHTML = '<i class="bi bi-x"></i>';
+    btnFlotante.setAttribute('title', 'Cerrar formulario');
 };
 
 const cancelar = () => {
@@ -268,7 +287,7 @@ const modificar = async (e) => {
         const respuesta = await fetch(url, config);
         const data = await respuesta.json();
         const { codigo, mensaje, detalle } = data;
-        
+
         let icon = 'info';
         if (codigo == 1) {
             icon = 'success';
@@ -317,7 +336,7 @@ const eliminar = async (e) => {
             const respuesta = await fetch(url, config);
             const data = await respuesta.json();
             const { codigo, mensaje, detalle } = data;
-            
+
             let icon = 'info';
             if (codigo == 1) {
                 icon = 'success';

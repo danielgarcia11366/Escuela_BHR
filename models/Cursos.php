@@ -37,7 +37,7 @@ class Cursos extends ActiveRecord
         $this->cur_nivel = $args['cur_nivel'] ?? '';
         $this->cur_tipo = $args['cur_tipo'] ?? '';
         $this->cur_certificado = $args['cur_certificado'] ?? '';
-        $this->cur_institucion_certifica = $args['cur_institucion_certifica'] ?? '';
+        $this->cur_institucion_certifica = $args['cur_institucion_certifica'] ?? 'NULL';
         $this->cur_descripcion = $args['cur_descripcion'] ?? '';
     }
 

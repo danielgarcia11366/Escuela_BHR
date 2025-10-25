@@ -18,7 +18,18 @@
     .floating-btn:hover {
         transform: translateY(-3px);
         box-shadow: 0 6px 25px rgba(0, 123, 255, 0.6);
-        background: linear-gradient(45deg, #0056b3, #004085);
+    }
+
+    /* Estado cuando el formulario está abierto */
+    .floating-btn.activo {
+        background: linear-gradient(45deg, #dc3545, #c82333);
+        box-shadow: 0 4px 20px rgba(220, 53, 69, 0.4);
+    }
+
+    .floating-btn.activo:hover {
+        background: linear-gradient(45deg, #c82333, #bd2130);
+        box-shadow: 0 6px 25px rgba(220, 53, 69, 0.6);
+        transform: translateY(-3px);
     }
 
     .slide-down {
@@ -131,7 +142,8 @@
                         <input type="number" name="cur_duracion_dias" id="cur_duracion_dias" class="form-control" min="1" required>
                     </div>
                     <div class="col">
-                        <label for="cur_nivel" class="form-label">Nivel de Curso</label>
+                        <label for="cur_nivel" class="form-label">
+                            <i class="bi bi-journals"></i> Nivel de Curso</label>
                         <select name="cur_nivel" id="cur_nivel" class="form-select">
                             <option value="#">Seleccione...</option>
                             <?php foreach ($niveles as $nivel) : ?>
@@ -142,7 +154,8 @@
                         </select>
                     </div>
                     <div class="col">
-                        <label for="cur_tipo" class="form-label">Tipo de Curso</label>
+                        <label for="cur_tipo" class="form-label">
+                            <i class="bi bi-check2-square"></i> Tipo de Curso</label>
                         <select name="cur_tipo" id="cur_tipo" class="form-select">
                             <option value="#">Seleccione...</option>
                             <?php foreach ($tipos as $tipo) : ?>
@@ -168,7 +181,8 @@
 
                     <!-- Columna para Institución -->
                     <div class="col-md-6">
-                        <label for="cur_institucion_certifica" class="form-label">Institución</label>
+                        <label for="cur_institucion_certifica" class="form-label">
+                            <i class="bi bi-buildings"></i> Institución</label>
                         <select name="cur_institucion_certifica" id="cur_institucion_certifica" class="form-select">
                             <option value="#">Seleccione...</option>
                             <?php foreach ($instituciones as $institucion) : ?>
