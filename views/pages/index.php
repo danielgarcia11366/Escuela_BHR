@@ -10,8 +10,8 @@
           Formando profesionales en rescate y asistencia humanitaria con los más altos estándares de calidad
         </p>
         <div class="d-flex gap-3">
-          <a href="/Escuela_BHR/nuevoalumno" class="btn btn-light btn-lg">
-            <i class="bi bi-person-plus"></i> Nuevo Alumno
+          <a href="/Escuela_BHR/cursos" class="btn btn-light btn-lg">
+            <i class="bi bi-journal-plus"></i> Nuevo Curso
           </a>
           <a href="/Escuela_BHR/promociones" class="btn btn-outline-light btn-lg">
             <i class="bi bi-calendar-plus"></i> Nueva Promoción
@@ -19,7 +19,7 @@
         </div>
       </div>
       <div class="col-lg-4 text-center">
-        <img src="./images/ESCUELA.png" class="hero-logo" alt="Escuela BHR">
+        <img src="./images/NEW.png" class="hero-logo" alt="Escuela BHR">
       </div>
     </div>
   </div>

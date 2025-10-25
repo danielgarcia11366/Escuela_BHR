@@ -42,12 +42,12 @@
 
                     <li class="nav-item dropdown modern-dropdown">
                         <a class="nav-link dropdown-toggle modern-nav-link" href="#" data-bs-toggle="dropdown">
-                            <i class="bi bi-journals"></i>Cursos
+                            <i class="bi bi-journals"></i> Cursos
                         </a>
                         <ul class="dropdown-menu modern-dropdown-menu">
                             <li>
                                 <a class="dropdown-item modern-dropdown-item" href="/Escuela_BHR/cursos">
-                                    <i class="bi bi-eye-fill"></i>Gestión de Cursos
+                                    <i class="bi bi-eye-fill"></i> Gestión de Cursos
                                 </a>
                             </li>
                         </ul>
