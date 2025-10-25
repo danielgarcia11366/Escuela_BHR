@@ -220,11 +220,11 @@
 <style>
   /* Hero Section */
   .hero-section {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 50%, #404040 100%);
     padding: 4rem 0;
     border-radius: 20px;
     margin-top: 1rem;
-    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
   }
 
   .hero-logo {
@@ -404,7 +404,7 @@
 
   .activity-header,
   .info-header {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
     padding: 1.5rem;
     color: white;
   }
@@ -486,7 +486,7 @@
 
   .info-item i {
     font-size: 1.5rem;
-    color: #667eea;
+    color: #2563eb;
   }
 
   .info-item strong {
