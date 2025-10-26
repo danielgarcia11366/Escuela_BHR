@@ -11,7 +11,7 @@
     <!-- NUEVO: CSS del navbar moderno -->
     <link rel="stylesheet" href="<?= asset('build/css/navbar-modern.css') ?>">
 
-    <link rel="shortcut icon" href="<?= asset('images/bhr.jpeg') ?>" type="image/x-icon">
+    <link rel="shortcut icon" href="<?= asset('images/LIMPIO.png') ?>" type="image/x-icon">
 
     <!-- Tus archivos JS existentes -->
     <script src="build/js/app.js"></script>
@@ -24,7 +24,7 @@
     <nav class="navbar navbar-expand-lg modern-navbar">
         <div class="container-fluid px-4">
             <a class="navbar-brand" href="/Escuela_BHR/">
-                <img src="<?= asset('images/bhr.jpeg') ?>" alt="BHR Logo" class="brand-logo">
+                <img src="<?= asset('images/LIMPIO.png') ?>" alt="BHR Logo" class="brand-logo">
                 <span>Escuela BHR</span>
             </a>
 
