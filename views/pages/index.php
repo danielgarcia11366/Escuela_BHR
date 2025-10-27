@@ -106,8 +106,8 @@
         <div class="quick-icon bg-primary">
           <i class="bi bi-person-plus-fill"></i>
         </div>
-        <h5>Registrar Alumno</h5>
-        <p>Agregar nuevo estudiante al sistema</p>
+        <h5>Registrar Persona</h5>
+        <p>Agregar nuevo Instructor o Alumno</p>
       </a>
     </div>
 
@@ -194,7 +194,7 @@
             <i class="bi bi-telephone-fill"></i>
             <div>
               <strong>Contacto</strong>
-              <p>+502 0000-0000</p>
+              <p>+502 5833-9248</p>
             </div>
           </div>
           <div class="info-item">
@@ -208,7 +208,7 @@
             <i class="bi bi-geo-alt-fill"></i>
             <div>
               <strong>Ubicación</strong>
-              <p>Base Militar, Guatemala</p>
+              <p>Brigada Militar Mariscal Zavala, Guatemala</p>
             </div>
           </div>
         </div>

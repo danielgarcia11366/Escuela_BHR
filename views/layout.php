@@ -64,6 +64,23 @@
                             </li>
                         </ul>
                     </li>
+                    <li class="nav-item dropdown modern-dropdown">
+                        <a class="nav-link dropdown-toggle modern-nav-link" href="#" data-bs-toggle="dropdown">
+                            <i class="bi bi-person-raised-hand"></i>Promociones
+                        </a>
+                        <ul class="dropdown-menu modern-dropdown-menu">
+                            <li>
+                                <a class="dropdown-item modern-dropdown-item" href="/Escuela_BHR/promociones">
+                                    <i class="bi bi-person-fill-add"></i>Crear Nueva Promoción
+                                </a>
+                            </li>
+                            <li>
+                                <a class="dropdown-item modern-dropdown-item" href="/Escuela_BHR/nueva">
+                                    <i class="bi bi-book-half"></i>Historial de Promociones
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
 
                     <li class="nav-item dropdown modern-dropdown">
                         <a class="nav-link dropdown-toggle modern-nav-link" href="#" data-bs-toggle="dropdown">
@@ -78,24 +95,6 @@
                             <li>
                                 <a class="dropdown-item modern-dropdown-item" href="/Escuela_BHR/alumnos">
                                     <i class="bi bi-person-lines-fill"></i>Historial de Cursos
-                                </a>
-                            </li>
-                        </ul>
-                    </li>
-
-                    <li class="nav-item dropdown modern-dropdown">
-                        <a class="nav-link dropdown-toggle modern-nav-link" href="#" data-bs-toggle="dropdown">
-                            <i class="bi bi-person-raised-hand"></i>Promociones
-                        </a>
-                        <ul class="dropdown-menu modern-dropdown-menu">
-                            <li>
-                                <a class="dropdown-item modern-dropdown-item" href="/Escuela_BHR/promociones">
-                                    <i class="bi bi-person-fill-add"></i>Crear Nueva Promoción
-                                </a>
-                            </li>
-                            <li>
-                                <a class="dropdown-item modern-dropdown-item" href="/Escuela_BHR/nueva">
-                                    <i class="bi bi-book-half"></i>Historial de Promociones
                                 </a>
                             </li>
                         </ul>
