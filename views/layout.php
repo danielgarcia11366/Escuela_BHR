@@ -39,6 +39,18 @@
                             <i class="bi bi-house-fill"></i>Inicio
                         </a>
                     </li>
+                    <li class="nav-item dropdown modern-dropdown">
+                        <a class="nav-link dropdown-toggle modern-nav-link" href="#" data-bs-toggle="dropdown">
+                            <i class="bi bi-claude"></i> Administración
+                        </a>
+                        <ul class="dropdown-menu modern-dropdown-menu">
+                            <li>
+                                <a class="dropdown-item modern-dropdown-item" href="/Escuela_BHR/personal">
+                                    <i class="bi bi-person-raised-hand"></i> Gestión de Personal
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
 
                     <li class="nav-item dropdown modern-dropdown">
                         <a class="nav-link dropdown-toggle modern-nav-link" href="#" data-bs-toggle="dropdown">
@@ -58,11 +70,6 @@
                             <i class="bi bi-mortarboard-fill"></i>Alumnos
                         </a>
                         <ul class="dropdown-menu modern-dropdown-menu">
-                            <li>
-                                <a class="dropdown-item modern-dropdown-item" href="/Escuela_BHR/nuevoalumno">
-                                    <i class="bi bi-person-plus"></i>Agregar Nuevo Alumno
-                                </a>
-                            </li>
                             <li>
                                 <a class="dropdown-item modern-dropdown-item" href="/Escuela_BHR/alumnos">
                                     <i class="bi bi-person-video2"></i>Inscribir a Promoción

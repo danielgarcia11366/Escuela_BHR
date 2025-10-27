@@ -128,23 +128,41 @@ class ActiveRecord
 
             $valores = [];
             foreach ($atributos as $key => $value) {
+                // No actualizar el campo ID en el SET
+                if ($key === $idCampos) {
+                    continue;
+                }
                 $valores[] = "{$key} = {$value}";
+            }
+
+            // Si no hay valores para actualizar, retornar
+            if (empty($valores)) {
+                error_log("⚠️ No hay valores para actualizar");
+                return false;
             }
 
             $query = "UPDATE " . static::$tabla . " SET " . join(', ', $valores);
 
             if (is_array($idCampos)) {
-                $query .= " WHERE " . implode(" AND ", array_map(function ($campo) {
-                    return "$campo = " . self::$db->quote($this->$campo);
-                }, $idCampos));
+                $condiciones = [];
+                foreach ($idCampos as $campo) {
+                    $condiciones[] = "$campo = " . self::$db->quote($this->$campo);
+                }
+                $query .= " WHERE " . implode(" AND ", $condiciones);
             } else {
                 $query .= " WHERE $idCampos = " . self::$db->quote($this->$idCampos);
             }
 
+            error_log("🔍 SQL UPDATE: " . $query);
+
             $resultado = self::$db->exec($query);
 
+            error_log("✅ Filas afectadas: " . $resultado);
+
             return ['resultado' => $resultado];
-        } catch (PDOException $e) {
+        } catch (\PDOException $e) {
+            error_log("❌ Error en actualizar(): " . $e->getMessage());
+            error_log("SQL State: " . $e->getCode());
             self::setAlerta('error', 'Error al actualizar registro: ' . $e->getMessage());
             return false;
         }
@@ -240,7 +258,13 @@ class ActiveRecord
         $atributos = [];
         foreach (static::$columnasDB as $columna) {
             $columna = strtolower($columna);
-            if ($columna === 'id' || $columna === static::$idTabla) continue;
+
+            // Para actualizar, incluir todos los campos
+            // Para insertar, excluir solo si es auto-increment y está vacío
+            if ($columna === 'id' && empty($this->$columna)) {
+                continue;
+            }
+
             $atributos[$columna] = $this->$columna ?? null;
         }
         return $atributos;
@@ -252,9 +276,13 @@ class ActiveRecord
         $sanitizado = [];
 
         foreach ($atributos as $key => $value) {
-            $sanitizado[$key] = is_null($value)
-                ? 'NULL'
-                : self::$db->quote(trim($value));
+            // Manejar valores nulos
+            if (is_null($value) || $value === '') {
+                $sanitizado[$key] = 'NULL';
+            } else {
+                // Usar quote() de PDO para escapar correctamente
+                $sanitizado[$key] = self::$db->quote(trim($value));
+            }
         }
 
         return $sanitizado;
