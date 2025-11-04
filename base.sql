@@ -116,6 +116,16 @@ CREATE TABLE `paises` (
   PRIMARY KEY (`pais_codigo`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci
 
+
+
+INSERT INTO paises (pais_nombre, pais_codigo_iso) VALUES
+('Guatemala', 'GTM'),
+('El Salvador', 'SLV'),
+('Honduras', 'HND'),
+('Nicaragua', 'NIC'),
+('República Dominicana', 'DOM');
+
+
 --==================PARTICIPANTES===================================
 CREATE TABLE `participantes` (
   `par_codigo` int NOT NULL AUTO_INCREMENT,
