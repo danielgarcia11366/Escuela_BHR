@@ -6,6 +6,7 @@ use MVC\Router;
 use Controllers\AppController;
 use Controllers\CursosController;
 use Controllers\InicioController;
+use Controllers\ParticipantesController;
 use Controllers\PersonalController;
 use Controllers\PromocionesController;
 use Controllers\PruebaController;
@@ -38,12 +39,19 @@ $router->post('/API/promociones/guardar', [PromocionesController::class, 'guarda
 $router->post('/API/promociones/modificar', [PromocionesController::class, 'modificarAPI']);
 $router->post('/API/promociones/eliminar', [PromocionesController::class, 'eliminarAPI']);
 
-
 //PERSONAL
 $router->get('/personal', [PersonalController::class, 'index']);
 $router->get('/API/personal/buscar', [PersonalController::class, 'buscarAPI']);
 $router->post('/API/personal/guardar', [PersonalController::class, 'guardarAPI']);
 $router->post('/API/personal/modificar', [PersonalController::class, 'modificarAPI']);
 $router->post('/API/personal/eliminar', [PersonalController::class, 'eliminarAPI']);
+
+
+//PERSONAL
+$router->get('/participantes', [ParticipantesController::class, 'index']);
+$router->get('/API/participantes/buscar', [ParticipantesController::class, 'buscarAPI']);
+$router->post('/API/participantes/guardar', [ParticipantesController::class, 'guardarAPI']);
+$router->post('/API/participantes/modificar', [ParticipantesController::class, 'modificarAPI']);
+$router->post('/API/participantes/eliminar', [ParticipantesController::class, 'eliminarAPI']);
 // Comprueba y valida las rutas, que existan y les asigna las funciones del Controlador
 $router->comprobarRutas();

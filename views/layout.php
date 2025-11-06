@@ -88,7 +88,7 @@
                         </a>
                         <ul class="dropdown-menu modern-dropdown-menu">
                             <li>
-                                <a class="dropdown-item modern-dropdown-item" href="/Escuela_BHR/alumnos">
+                                <a class="dropdown-item modern-dropdown-item" href="/Escuela_BHR/participantes">
                                     <i class="bi bi-person-video2"></i>Inscribir a Promoción
                                 </a>
                             </li>
