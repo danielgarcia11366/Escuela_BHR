@@ -397,8 +397,10 @@
                                 <option value="">Seleccione Promoción y Curso...</option>
                                 <?php foreach ($promociones as $promo): ?>
                                     <option value="<?= $promo['pro_codigo'] ?>">
+                                        Promoción
                                         <?= $promo['pro_numero'] ?>
                                         <?= $promo['pro_anio'] ?>
+                                        -
                                         <?= $promo['curso_nombre'] ?>
                                     </option>
                                 <?php endforeach ?>

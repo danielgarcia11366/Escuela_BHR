@@ -376,7 +376,7 @@
                                 <option value="">Seleccione un curso...</option>
                                 <?php foreach ($cursos as $curso) : ?>
                                     <option value="<?= $curso['cur_codigo'] ?>">
-                                        <?= $curso['cur_nombre'] ?>
+                                        <?= $curso['cur_nombre'] . ' - ' . $curso['nivel_nombre'] ?>
                                     </option>
                                 <?php endforeach ?>
                             </select>

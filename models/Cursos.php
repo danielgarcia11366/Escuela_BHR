@@ -51,22 +51,23 @@ class Cursos extends ActiveRecord
     public static function obtenerCursos1()
     {
         $sql = "SELECT 
-            c.cur_codigo,
-            c.cur_nombre,
-            c.cur_nombre_corto,
-            c.cur_duracion_dias,
-            c.cur_nivel,
-            n.niv_nombre AS nivel_nombre,
-            c.cur_tipo,
-            t.tip_nombre AS tipo_nombre,
-            c.cur_certificado,
-            c.cur_institucion_certifica,
-            i.inst_nombre AS institucion_nombre,
-            c.cur_descripcion
-        FROM cursos c
-        LEFT JOIN niveles n ON c.cur_nivel = n.niv_codigo
-        LEFT JOIN tipos t ON c.cur_tipo = t.tip_codigo
-        LEFT JOIN instituciones i ON c.cur_institucion_certifica = i.inst_codigo";
+    c.cur_codigo,
+    c.cur_nombre,
+    CONCAT(c.cur_nombre, ' - ', COALESCE(n.niv_nombre, 'Sin nivel')) AS curso_completo,
+    c.cur_nombre_corto,
+    c.cur_duracion_dias,
+    c.cur_nivel,
+    n.niv_nombre AS nivel_nombre,
+    c.cur_tipo,
+    t.tip_nombre AS tipo_nombre,
+    c.cur_certificado,
+    c.cur_institucion_certifica,
+    i.inst_nombre AS institucion_nombre,
+    c.cur_descripcion
+FROM cursos c
+LEFT JOIN niveles n ON c.cur_nivel = n.niv_codigo
+LEFT JOIN tipos t ON c.cur_tipo = t.tip_codigo
+LEFT JOIN instituciones i ON c.cur_institucion_certifica = i.inst_codigo";
 
         $resultado = self::fetchArray($sql);
 

@@ -55,28 +55,32 @@ class Promociones extends ActiveRecord
     public static function obtenerPromocionesConDetalles()
     {
         $sql = "SELECT 
-                p.pro_codigo,
-                p.pro_numero,
-                p.pro_anio,
-                CONCAT(p.pro_numero, '-', p.pro_anio) as numero_anio,
-                p.pro_fecha_inicio,
-                p.pro_fecha_fin,
-                p.pro_fecha_graduacion,
-                p.pro_lugar,
-                p.pro_cantidad_graduados,
-                p.pro_observaciones,
-                p.pro_activa,
-                p.pro_curso,
-                p.pro_pais,
-                p.pro_institucion_imparte,
-                c.cur_nombre as curso_nombre,
-                COALESCE(pa.pais_nombre, 'Guatemala') as pais_nombre,
-                COALESCE(i.inst_nombre, 'Sin institución') as institucion_nombre
-            FROM promociones p
-            INNER JOIN cursos c ON p.pro_curso = c.cur_codigo
-            LEFT JOIN paises pa ON p.pro_pais = pa.pais_codigo
-            LEFT JOIN instituciones i ON p.pro_institucion_imparte = i.inst_codigo
-            ORDER BY p.pro_anio DESC, p.pro_numero DESC";
+    p.pro_codigo,
+    p.pro_numero,
+    p.pro_anio,
+    CONCAT(p.pro_numero, '-', p.pro_anio) as numero_anio,
+    p.pro_fecha_inicio,
+    p.pro_fecha_fin,
+    p.pro_fecha_graduacion,
+    p.pro_lugar,
+    p.pro_cantidad_graduados,
+    p.pro_observaciones,
+    p.pro_activa,
+    p.pro_curso,
+    p.pro_pais,
+    p.pro_institucion_imparte,
+    c.cur_nombre as curso_nombre,
+    c.cur_nivel,
+    COALESCE(n.niv_nombre, 'Sin nivel') as nivel_nombre,
+    CONCAT(c.cur_nombre, ' - ', COALESCE(n.niv_nombre, 'Sin nivel')) as curso_completo,
+    COALESCE(pa.pais_nombre, 'Guatemala') as pais_nombre,
+    COALESCE(i.inst_nombre, 'Sin institución') as institucion_nombre
+FROM promociones p
+INNER JOIN cursos c ON p.pro_curso = c.cur_codigo
+LEFT JOIN niveles n ON c.cur_nivel = n.niv_codigo
+LEFT JOIN paises pa ON p.pro_pais = pa.pais_codigo
+LEFT JOIN instituciones i ON p.pro_institucion_imparte = i.inst_codigo
+ORDER BY p.pro_anio DESC, p.pro_numero DESC";
 
         return self::fetchArray($sql);
     }

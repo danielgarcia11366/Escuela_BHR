@@ -32,11 +32,14 @@ const datatable = new DataTable('#tablaPromociones', {
         },
         {
             title: 'Promoción',
-            data: 'numero_anio'
+            data: 'numero_anio',
+            width: '5%',
+
         },
         {
             title: 'Curso',
-            data: 'curso_nombre'
+            data: 'curso_completo',
+            width: '30%',
         },
         {
             title: 'Fecha Inicio',

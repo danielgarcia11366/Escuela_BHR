@@ -31,8 +31,8 @@ const datatable = new DataTable('#tablaCursos', {
         },
         {
             title: 'Curso',
-            data: 'cur_nombre',
-            width: '20%',
+            data: 'curso_completo',
+            width: '30%',
         },
         {
             title: 'Nombre Corto',
@@ -41,10 +41,6 @@ const datatable = new DataTable('#tablaCursos', {
         {
             title: 'Duración (días)',
             data: 'cur_duracion_dias'
-        },
-        {
-            title: 'Nivel',
-            data: 'nivel_nombre'
         },
         {
             title: 'Tipo',
