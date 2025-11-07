@@ -4,6 +4,8 @@ namespace Model;
 
 class Participantes extends ActiveRecord
 {
+
+
     // Nombre de la tabla y su llave primaria
     protected static $tabla = 'participantes';
     protected static $idTabla = 'par_codigo';

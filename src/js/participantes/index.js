@@ -127,8 +127,13 @@ const guardar = async (e) => {
     e.preventDefault();
     btnGuardar.disabled = true;
 
+    // Validación de campos obligatorios
     if (!validarFormulario(formulario, ['par_codigo'])) {
-        Swal.fire("Campos vacíos", "Debe llenar todos los campos obligatorios", "info");
+        Swal.fire({
+            icon: "info",
+            title: "Campos vacíos",
+            text: "Debe llenar todos los campos obligatorios"
+        });
         btnGuardar.disabled = false;
         return;
     }
@@ -136,23 +141,70 @@ const guardar = async (e) => {
     try {
         const body = new FormData(formulario);
         const url = "/Escuela_BHR/API/participantes/guardar";
-        const resp = await fetch(url, { method: 'POST', body });
-        const data = await resp.json();
-        const { codigo, mensaje } = data;
 
-        Toast.fire({ icon: codigo == 1 ? 'success' : 'error', title: mensaje });
-        if (codigo == 1) {
+        console.log("=== DATOS A ENVIAR ===");
+        for (const [key, value] of body.entries()) {
+            console.log(`${key}: ${value}`);
+        }
+
+        const resp = await fetch(url, { method: 'POST', body });
+
+        console.log("=== RESPUESTA CRUDA ===");
+        console.log(resp);
+
+        const data = await resp.json();
+        console.log("=== RESPUESTA DEL SERVIDOR ===");
+        console.log(data);
+
+        const { codigo, mensaje, campo } = data;
+
+        if (codigo === 1) {
+            // Éxito al guardar
+            Swal.fire({
+                position: "top-end",
+                icon: "success",
+                title: "Éxito",
+                text: mensaje,
+                timer: 2000,
+                showConfirmButton: false
+            });
+
             formulario.reset();
             buscar();
             ocultarFormulario();
+
+        } else if (codigo === 0 && campo === "par_certificado_numero") {
+            // Certificado duplicado
+            Swal.fire({
+                icon: "warning",
+                title: "Número de certificado duplicado",
+                text: mensaje
+            });
+
+            const campoDuplicado = document.getElementById(campo);
+            if (campoDuplicado) campoDuplicado.focus();
+
+        } else {
+            // Otro tipo de error
+            Toast.fire({
+                icon: "error",
+                title: mensaje || "Ocurrió un error al guardar el participante"
+            });
         }
+
     } catch (err) {
-        console.error(err);
-        Toast.fire({ icon: 'error', title: 'Error al guardar el participante' });
+        console.error("Error en guardar():", err);
+        Toast.fire({
+            icon: "error",
+            title: "Error al guardar el participante (catch)"
+        });
     }
 
     btnGuardar.disabled = false;
 };
+
+
+
 
 // BUSCAR
 const buscar = async () => {
