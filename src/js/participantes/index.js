@@ -15,6 +15,7 @@ const contenedorFormulario = document.getElementById('contenedorFormulario');
 const contenedorTabla = document.getElementById('contenedorTabla');
 const tituloFormulario = document.getElementById('tituloFormulario');
 
+
 const datatable = new DataTable('#tablaParticipantes', {
     language: lenguaje,
     pageLength: 15,
@@ -29,34 +30,44 @@ const datatable = new DataTable('#tablaParticipantes', {
         {
             title: 'Información del Alumno',
             data: 'participante_nombre',
-            width: '30%',
-
+            width: '40%',
+            render: (data) => {
+                // Poner en negrita el nivel (Básico, Intermedio, Avanzado)
+                return data.replace(/(Básico|Intermedio|Avanzado)/gi, '<strong>$1</strong>');
+            }
         },
         {
             title: 'Promoción y Curso',
             data: 'promocion_info',
-
+            width: '30%',
+            render: (data) => {
+                // Poner en negrita la promoción y el nivel
+                return data.replace(/(Promoción \d+ \d+)/g, '<strong>$1</strong>')
+                    .replace(/(Básico|Intermedio|Avanzado)/gi, '<strong>$1</strong>');
+            }
         },
         {
             title: 'Calificación',
-            data: 'par_calificacion'
+            data: 'par_calificacion',
+            render: (data) => {
+                if (!data) return '-';
+                const nota = parseFloat(data);
+                const color = nota >= 80 ? 'text-success' : nota >= 60 ? 'text-warning' : 'text-danger';
+                return `<strong class="${color}">${nota.toFixed(2)}</strong>`;
+            }
         },
         {
             title: 'Estado',
             data: 'par_estado',
             render: (data) => {
                 const estados = {
-                    'C': 'Cursando',
-                    'G': 'Graduado',
-                    'R': 'Retirado',
-                    'D': 'Desertor'
+                    'C': '<span class="badge bg-primary">Cursando</span>',
+                    'G': '<span class="badge bg-success">Graduado</span>',
+                    'R': '<span class="badge bg-warning">Retirado</span>',
+                    'D': '<span class="badge bg-danger">Desertor</span>'
                 };
                 return estados[data] || data;
             }
-        },
-        {
-            title: 'Certificado',
-            data: 'par_certificado_numero'
         },
         {
             title: 'Acciones',
@@ -122,6 +133,7 @@ const ocultarFormulario = () => {
     btnFlotante.setAttribute('title', 'Nuevo Participante');
 };
 
+
 // GUARDAR
 const guardar = async (e) => {
     e.preventDefault();
@@ -130,9 +142,11 @@ const guardar = async (e) => {
     // Validación de campos obligatorios
     if (!validarFormulario(formulario, ['par_codigo'])) {
         Swal.fire({
-            icon: "info",
-            title: "Campos vacíos",
-            text: "Debe llenar todos los campos obligatorios"
+            icon: "warning",
+            title: "Campos incompletos",
+            text: "Debe llenar todos los campos obligatorios marcados con (*)",
+            confirmButtonText: 'Entendido',
+            confirmButtonColor: '#f39c12'
         });
         btnGuardar.disabled = false;
         return;
@@ -142,30 +156,18 @@ const guardar = async (e) => {
         const body = new FormData(formulario);
         const url = "/Escuela_BHR/API/participantes/guardar";
 
-        console.log("=== DATOS A ENVIAR ===");
-        for (const [key, value] of body.entries()) {
-            console.log(`${key}: ${value}`);
-        }
-
         const resp = await fetch(url, { method: 'POST', body });
-
-        console.log("=== RESPUESTA CRUDA ===");
-        console.log(resp);
-
         const data = await resp.json();
-        console.log("=== RESPUESTA DEL SERVIDOR ===");
-        console.log(data);
 
         const { codigo, mensaje, campo } = data;
 
         if (codigo === 1) {
-            // Éxito al guardar
+            // ✅ Éxito al guardar
             Swal.fire({
-                position: "top-end",
                 icon: "success",
-                title: "Éxito",
+                title: "¡Registro exitoso!",
                 text: mensaje,
-                timer: 2000,
+                timer: 2500,
                 showConfirmButton: false
             });
 
@@ -173,30 +175,34 @@ const guardar = async (e) => {
             buscar();
             ocultarFormulario();
 
-        } else if (codigo === 0 && campo === "par_certificado_numero") {
-            // Certificado duplicado
-            Swal.fire({
-                icon: "warning",
-                title: "Número de certificado duplicado",
-                text: mensaje
-            });
-
-            const campoDuplicado = document.getElementById(campo);
-            if (campoDuplicado) campoDuplicado.focus();
-
         } else {
-            // Otro tipo de error
-            Toast.fire({
+            // ❌ Error de validación
+            Swal.fire({
                 icon: "error",
-                title: mensaje || "Ocurrió un error al guardar el participante"
+                title: "No se pudo guardar",
+                text: mensaje,
+                confirmButtonText: 'Entendido',
+                confirmButtonColor: '#dc3545'
             });
+
+            // Enfocar el campo con error
+            if (campo) {
+                const campoDuplicado = document.getElementById(campo);
+                if (campoDuplicado) {
+                    campoDuplicado.focus();
+                    campoDuplicado.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                }
+            }
         }
 
     } catch (err) {
         console.error("Error en guardar():", err);
-        Toast.fire({
+        Swal.fire({
             icon: "error",
-            title: "Error al guardar el participante (catch)"
+            title: "Error del sistema",
+            text: "Ocurrió un error inesperado. Por favor intenta nuevamente.",
+            confirmButtonText: 'Entendido',
+            confirmButtonColor: '#dc3545'
         });
     }
 
@@ -251,7 +257,13 @@ const modificar = async (e) => {
     e.preventDefault();
 
     if (!validarFormulario(formulario)) {
-        Swal.fire("Campos vacíos", "Debe llenar todos los campos", "info");
+        Swal.fire({
+            icon: "warning",
+            title: "Campos incompletos",
+            text: "Debe llenar todos los campos obligatorios",
+            confirmButtonText: 'Entendido',
+            confirmButtonColor: '#f39c12'
+        });
         return;
     }
 
@@ -260,16 +272,45 @@ const modificar = async (e) => {
         const url = "/Escuela_BHR/API/participantes/modificar";
         const resp = await fetch(url, { method: 'POST', body });
         const data = await resp.json();
-        const { codigo, mensaje } = data;
+        const { codigo, mensaje, campo } = data;
 
-        Toast.fire({ icon: codigo == 1 ? 'success' : 'error', title: mensaje });
         if (codigo == 1) {
+            Swal.fire({
+                icon: "success",
+                title: "¡Actualizado!",
+                text: mensaje,
+                timer: 2500,
+                showConfirmButton: false
+            });
             formulario.reset();
             buscar();
             cancelar();
+        } else {
+            Swal.fire({
+                icon: "error",
+                title: "No se pudo modificar",
+                text: mensaje,
+                confirmButtonText: 'Entendido',
+                confirmButtonColor: '#dc3545'
+            });
+
+            if (campo) {
+                const campoError = document.getElementById(campo);
+                if (campoError) {
+                    campoError.focus();
+                    campoError.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                }
+            }
         }
     } catch (err) {
         console.error(err);
+        Swal.fire({
+            icon: "error",
+            title: "Error del sistema",
+            text: "Error al modificar el participante",
+            confirmButtonText: 'Entendido',
+            confirmButtonColor: '#dc3545'
+        });
     }
 };
 
@@ -278,14 +319,15 @@ const eliminar = async (e) => {
     const par_codigo = e.currentTarget.dataset.par_codigo;
 
     const confirmacion = await Swal.fire({
-        icon: 'question',
-        title: 'Confirmación',
-        text: '¿Desea eliminar este participante?',
+        title: '¿Estás seguro?',
+        text: "Esta acción no se puede revertir. El participante será eliminado permanentemente.",
+        icon: 'warning',
         showCancelButton: true,
+        confirmButtonColor: '#dc3545',
+        cancelButtonColor: '#6c757d',
         confirmButtonText: 'Sí, eliminar',
-        cancelButtonText: 'No, cancelar',
-        confirmButtonColor: '#3085d6',
-        cancelButtonColor: '#d33'
+        cancelButtonText: 'Cancelar',
+        reverseButtons: true
     });
 
     if (!confirmacion.isConfirmed) return;
@@ -299,10 +341,27 @@ const eliminar = async (e) => {
         const data = await resp.json();
         const { codigo, mensaje } = data;
 
-        Toast.fire({ icon: codigo == 1 ? 'success' : 'error', title: mensaje });
-        if (codigo == 1) buscar();
+        if (codigo == 1) {
+            Swal.fire({
+                icon: 'success',
+                title: '¡Eliminado!',
+                text: mensaje,
+                timer: 2000,
+                showConfirmButton: false
+            });
+            buscar();
+        } else {
+            Toast.fire({
+                icon: 'error',
+                title: mensaje
+            });
+        }
     } catch (err) {
         console.error(err);
+        Toast.fire({
+            icon: 'error',
+            title: 'Error al eliminar el participante'
+        });
     }
 };
 
