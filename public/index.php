@@ -6,6 +6,7 @@ use MVC\Router;
 use Controllers\AppController;
 use Controllers\CursosController;
 use Controllers\InicioController;
+use Controllers\LoginController;
 use Controllers\ParticipantesController;
 use Controllers\PersonalController;
 use Controllers\PromocionesController;
@@ -15,15 +16,24 @@ use Model\Promociones;
 $router = new Router();
 $router->setBaseURL('/' . $_ENV['APP_NAME']);
 
-// ❌ COMENTA O ELIMINA ESTA LÍNEA
-// $router->get('/', [AppController::class, 'index']);
+// RUTAS DE AUTENTICACIÓN
+$router->get('/', [LoginController::class, 'login']);
+$router->get('/registro', [LoginController::class, 'registro']);
+$router->post('/API/login', [LoginController::class, 'loginAPI']);
+//$router->post('/API/registro', [LoginController::class, 'registroAPI']);
+$router->get('/logout', [LoginController::class, 'logout']);
+// ============================================
+// RUTAS PROTEGIDAS (REQUIEREN LOGIN)
+// ============================================
+$router->get('/menu', [LoginController::class, 'menu']);
 
-//prueba
-$router->get('/prueba', [PruebaController::class, 'index']);
 
-// ✅ Rutas de Inicio
-$router->get('/', [InicioController::class, 'index']);
-$router->get('/api/estadisticas', [InicioController::class, 'estadisticasAPI']);
+// API DE ESTADÍSTICAS (PROTEGIDA)
+$router->get('/API/estadisticas', [InicioController::class, 'estadisticasAPI']);
+
+// GESTIÓN DE USUARIOS (Solo Administrador)
+$router->get('/usuarios', [LoginController::class, 'usuarios']);
+$router->post('/API/usuarios/crear', [LoginController::class, 'crearUsuarioAPI']);
 
 //CURSOS
 $router->get('/cursos', [CursosController::class, 'index']);

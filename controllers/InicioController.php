@@ -15,6 +15,9 @@ class InicioController
 
     public static function estadisticasAPI()
     {
+        // IMPORTANTE: Verificar autenticación (pero session_start ya está en functions.php)
+        isAuthApi();
+
         header('Content-Type: application/json; charset=UTF-8');
 
         try {
@@ -30,7 +33,7 @@ class InicioController
                 $resultAlumnos = ActiveRecord::fetchFirst($sqlAlumnos);
                 $totalAlumnos = $resultAlumnos ? (int)$resultAlumnos['total'] : 0;
             } catch (Exception $e) {
-                // Si falla, deja en 0
+                error_log("Error al contar alumnos: " . $e->getMessage());
             }
 
             // Total de cursos activos
@@ -39,7 +42,7 @@ class InicioController
                 $resultCursos = ActiveRecord::fetchFirst($sqlCursos);
                 $cursosActivos = $resultCursos ? (int)$resultCursos['total'] : 0;
             } catch (Exception $e) {
-                // Si falla, deja en 0
+                error_log("Error al contar cursos: " . $e->getMessage());
             }
 
             // Total de promociones activas
@@ -48,7 +51,7 @@ class InicioController
                 $resultPromociones = ActiveRecord::fetchFirst($sqlPromociones);
                 $promocionesActivas = $resultPromociones ? (int)$resultPromociones['total'] : 0;
             } catch (Exception $e) {
-                // Si falla, deja en 0
+                error_log("Error al contar promociones: " . $e->getMessage());
             }
 
             // Total de graduados
@@ -57,7 +60,7 @@ class InicioController
                 $resultGraduados = ActiveRecord::fetchFirst($sqlGraduados);
                 $graduados = $resultGraduados ? (int)$resultGraduados['total'] : 0;
             } catch (Exception $e) {
-                // Si falla, deja en 0
+                error_log("Error al contar graduados: " . $e->getMessage());
             }
 
             // Obtener actividades recientes
@@ -74,7 +77,7 @@ class InicioController
                 ";
                 $actividades = ActiveRecord::fetchArray($sqlActividad);
             } catch (Exception $e) {
-                // Si falla, deja array vacío
+                error_log("Error al obtener actividades: " . $e->getMessage());
             }
 
             http_response_code(200);
@@ -90,6 +93,7 @@ class InicioController
                 ]
             ], JSON_UNESCAPED_UNICODE);
         } catch (Exception $e) {
+            error_log("Error general en estadisticasAPI: " . $e->getMessage());
             http_response_code(500);
             echo json_encode([
                 'codigo' => 0,

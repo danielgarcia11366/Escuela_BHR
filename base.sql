@@ -7,11 +7,7 @@ CREATE TABLE `armas` (
   `estado` char(1) DEFAULT 'A' COMMENT 'A=Activo, I=Inactivo',
   `fecha_creacion` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`arm_codigo`)
-) ENGINE = InnoDB AUTO_INCREMENT = 12 DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = 'Catálogo de armas y especialidades militares' 
-
-
-
---==================CURSOS===================================
+) ENGINE = InnoDB AUTO_INCREMENT = 12 DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = 'Catálogo de armas y especialidades militares' --==================CURSOS===================================
 CREATE TABLE `cursos` (
   `cur_codigo` int NOT NULL AUTO_INCREMENT,
   `cur_nombre` varchar(150) NOT NULL COMMENT 'Ej: Bombero Rescatista Básico',
@@ -31,12 +27,7 @@ CREATE TABLE `cursos` (
   CONSTRAINT `cursos_ibfk_1` FOREIGN KEY (`cur_institucion_certifica`) REFERENCES `instituciones` (`inst_codigo`),
   CONSTRAINT `cursos_ibfk_2` FOREIGN KEY (`cur_nivel`) REFERENCES `niveles` (`niv_codigo`),
   CONSTRAINT `cursos_ibfk_3` FOREIGN KEY (`cur_tipo`) REFERENCES `tipos` (`tip_codigo`)
-) ENGINE=InnoDB AUTO_INCREMENT=34 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci
-
-
-
-
---==================GRADOS===================================
+) ENGINE = InnoDB AUTO_INCREMENT = 34 DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci --==================GRADOS===================================
 CREATE TABLE `grados` (
   `gra_codigo` smallint NOT NULL AUTO_INCREMENT,
   `gra_desc_lg` varchar(30) NOT NULL COMMENT 'Descripción larga',
@@ -51,13 +42,19 @@ CREATE TABLE `grados` (
   PRIMARY KEY (`gra_codigo`),
   KEY `gra_asc` (`gra_asc`),
   CONSTRAINT `grados_ibfk_1` FOREIGN KEY (`gra_asc`) REFERENCES `grados` (`gra_codigo`),
-  CONSTRAINT `grados_chk_1` CHECK ((`gra_clase` in (_utf8mb4'1',_utf8mb4'2',_utf8mb4'3',_utf8mb4'4',_utf8mb4'5',_utf8mb4'6')))
-) ENGINE=InnoDB AUTO_INCREMENT=17 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='Catálogo de grados militares'
-
-
-
---==================INSTITUCIONES===================================
-
+  CONSTRAINT `grados_chk_1` CHECK (
+    (
+      `gra_clase` in (
+        _utf8mb4 '1',
+        _utf8mb4 '2',
+        _utf8mb4 '3',
+        _utf8mb4 '4',
+        _utf8mb4 '5',
+        _utf8mb4 '6'
+      )
+    )
+  )
+) ENGINE = InnoDB AUTO_INCREMENT = 17 DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = 'Catálogo de grados militares' --==================INSTITUCIONES===================================
 CREATE TABLE `instituciones` (
   `inst_codigo` smallint NOT NULL AUTO_INCREMENT,
   `inst_nombre` varchar(100) NOT NULL COMMENT 'Cruz Roja, CONRED, etc.',
@@ -65,12 +62,9 @@ CREATE TABLE `instituciones` (
   `inst_tipo` char(1) NOT NULL COMMENT 'M=Militar, C=Civil',
   `inst_activa` char(1) DEFAULT 'S' COMMENT 'S=Sí, N=No',
   PRIMARY KEY (`inst_codigo`),
-  CONSTRAINT `inst_chk_1` CHECK ((`inst_tipo` in (_utf8mb4'M',_utf8mb4'C'))),
-  CONSTRAINT `inst_chk_2` CHECK ((`inst_activa` in (_utf8mb4'S',_utf8mb4'N')))
-) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci
-
---==================MPER===================================
-
+  CONSTRAINT `inst_chk_1` CHECK ((`inst_tipo` in (_utf8mb4 'M', _utf8mb4 'C'))),
+  CONSTRAINT `inst_chk_2` CHECK ((`inst_activa` in (_utf8mb4 'S', _utf8mb4 'N')))
+) ENGINE = InnoDB AUTO_INCREMENT = 10 DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci --==================MPER===================================
 CREATE TABLE `mper` (
   `per_catalogo` int NOT NULL,
   `per_serie` varchar(8) DEFAULT NULL COMMENT 'Serie o código adicional',
@@ -97,41 +91,40 @@ CREATE TABLE `mper` (
   UNIQUE KEY `per_dpi` (`per_dpi`),
   KEY `per_grado` (`per_grado`),
   KEY `per_arma` (`per_arma`),
-  KEY `idx_nombre_completo` (`per_ape1`,`per_ape2`,`per_nom1`,`per_nom2`),
+  KEY `idx_nombre_completo` (`per_ape1`, `per_ape2`, `per_nom1`, `per_nom2`),
   KEY `idx_dpi` (`per_dpi`),
   KEY `idx_tipo` (`per_tipo`),
   KEY `idx_estado` (`per_estado`),
   CONSTRAINT `mper_ibfk_1` FOREIGN KEY (`per_grado`) REFERENCES `grados` (`gra_codigo`),
   CONSTRAINT `mper_ibfk_2` FOREIGN KEY (`per_arma`) REFERENCES `armas` (`arm_codigo`),
-  CONSTRAINT `mper_chk_1` CHECK ((`per_sexo` in (_utf8mb4'M',_utf8mb4'F'))),
-  CONSTRAINT `mper_chk_2` CHECK ((`per_tipo` in (_utf8mb4'A',_utf8mb4'I',_utf8mb4'J',_utf8mb4'O')))
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='Tabla maestra de personas'
-
---==================PAISES===================================
-
+  CONSTRAINT `mper_chk_1` CHECK ((`per_sexo` in (_utf8mb4 'M', _utf8mb4 'F'))),
+  CONSTRAINT `mper_chk_2` CHECK (
+    (
+      `per_tipo` in (_utf8mb4 'A', _utf8mb4 'I', _utf8mb4 'J', _utf8mb4 'O')
+    )
+  )
+) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = 'Tabla maestra de personas' --==================PAISES===================================
 CREATE TABLE `paises` (
   `pais_codigo` smallint NOT NULL AUTO_INCREMENT,
   `pais_nombre` varchar(100) NOT NULL,
   `pais_codigo_iso` char(3) DEFAULT NULL COMMENT 'Código ISO 3166',
   PRIMARY KEY (`pais_codigo`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci
-
-
-
-INSERT INTO paises (pais_nombre, pais_codigo_iso) VALUES
-('Guatemala', 'GTM'),
-('El Salvador', 'SLV'),
-('Honduras', 'HND'),
-('Nicaragua', 'NIC'),
-('República Dominicana', 'DOM');
-
+) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci
+INSERT INTO
+  paises (pais_nombre, pais_codigo_iso)
+VALUES
+  ('Guatemala', 'GTM'),
+  ('El Salvador', 'SLV'),
+  ('Honduras', 'HND'),
+  ('Nicaragua', 'NIC'),
+  ('República Dominicana', 'DOM');
 
 --==================PARTICIPANTES===================================
 CREATE TABLE `participantes` (
   `par_codigo` int NOT NULL AUTO_INCREMENT,
   `par_promocion` int NOT NULL,
   `par_catalogo` int NOT NULL COMMENT 'Catálogo del personal (de mper)',
-  `par_calificacion` decimal(5,2) DEFAULT NULL COMMENT 'Calificación final',
+  `par_calificacion` decimal(5, 2) DEFAULT NULL COMMENT 'Calificación final',
   `par_posicion` smallint DEFAULT NULL COMMENT 'Posición en la promoción',
   `par_certificado_numero` varchar(50) DEFAULT NULL COMMENT 'Número de certificado emitido',
   `par_certificado_fecha` date DEFAULT NULL COMMENT 'Fecha de emisión del certificado',
@@ -139,19 +132,19 @@ CREATE TABLE `participantes` (
   `par_observaciones` text,
   `fecha_registro` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`par_codigo`),
-  UNIQUE KEY `par_promocion_catalogo` (`par_promocion`,`par_catalogo`),
+  UNIQUE KEY `par_promocion_catalogo` (`par_promocion`, `par_catalogo`),
   UNIQUE KEY `par_certificado_numero` (`par_certificado_numero`),
   KEY `idx_catalogo` (`par_catalogo`),
   KEY `idx_promocion` (`par_promocion`),
   KEY `idx_certificado` (`par_certificado_numero`),
   CONSTRAINT `participantes_ibfk_1` FOREIGN KEY (`par_promocion`) REFERENCES `promociones` (`pro_codigo`),
   CONSTRAINT `participantes_ibfk_2` FOREIGN KEY (`par_catalogo`) REFERENCES `mper` (`per_catalogo`),
-  CONSTRAINT `participantes_chk_1` CHECK ((`par_estado` in (_utf8mb4'G',_utf8mb4'C',_utf8mb4'R',_utf8mb4'D')))
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci
-
-
---==================PROMOCIONES===================================
-
+  CONSTRAINT `participantes_chk_1` CHECK (
+    (
+      `par_estado` in (_utf8mb4 'G', _utf8mb4 'C', _utf8mb4 'R', _utf8mb4 'D')
+    )
+  )
+) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci --==================PROMOCIONES===================================
 CREATE TABLE `promociones` (
   `pro_codigo` int NOT NULL AUTO_INCREMENT,
   `pro_curso` int NOT NULL,
@@ -169,7 +162,7 @@ CREATE TABLE `promociones` (
   `fecha_registro` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
   `fecha_modificacion` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`pro_codigo`),
-  UNIQUE KEY `pro_curso_numero` (`pro_curso`,`pro_numero`),
+  UNIQUE KEY `pro_curso_numero` (`pro_curso`, `pro_numero`),
   KEY `idx_anio` (`pro_anio`),
   KEY `idx_curso` (`pro_curso`),
   KEY `idx_pais` (`pro_pais`),
@@ -177,10 +170,8 @@ CREATE TABLE `promociones` (
   CONSTRAINT `promociones_ibfk_1` FOREIGN KEY (`pro_curso`) REFERENCES `cursos` (`cur_codigo`),
   CONSTRAINT `promociones_ibfk_2` FOREIGN KEY (`pro_pais`) REFERENCES `paises` (`pais_codigo`),
   CONSTRAINT `promociones_ibfk_3` FOREIGN KEY (`pro_institucion_imparte`) REFERENCES `instituciones` (`inst_codigo`),
-  CONSTRAINT `promociones_chk_1` CHECK ((`pro_activa` in (_utf8mb4'S',_utf8mb4'N')))
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci
-
---==================NIVELES===================================
+  CONSTRAINT `promociones_chk_1` CHECK ((`pro_activa` in (_utf8mb4 'S', _utf8mb4 'N')))
+) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci --==================NIVELES===================================
 CREATE TABLE niveles (
   niv_codigo SMALLINT PRIMARY KEY AUTO_INCREMENT,
   niv_nombre VARCHAR(20) NOT NULL
@@ -482,3 +473,86 @@ VALUES
     'N',
     'Primeros auxilios nivel avanzado'
   );
+
+----------------
+-- Tabla de usuarios
+CREATE TABLE usuario (
+  usu_id INT PRIMARY KEY AUTO_INCREMENT,
+  usu_nombre VARCHAR(100) NOT NULL,
+  usu_catalogo INT UNIQUE NOT NULL,
+  usu_password VARCHAR(255) NOT NULL,
+  usu_situacion TINYINT DEFAULT 1,
+  UNIQUE KEY unique_catalogo (usu_catalogo)
+) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4;
+
+-- Tabla de roles
+CREATE TABLE rol (
+  rol_id INT PRIMARY KEY AUTO_INCREMENT,
+  rol_nombre VARCHAR(50) NOT NULL,
+  rol_nombre_ct VARCHAR(50) NOT NULL,
+  rol_app INT DEFAULT 1,
+  rol_situacion TINYINT DEFAULT 1
+) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4;
+
+-- Insertar roles
+INSERT INTO
+  rol (rol_nombre, rol_nombre_ct)
+VALUES
+  ('Administrador', 'ADMINISTRADOR'),
+  ('Instructor', 'INSTRUCTOR');
+
+-- Tabla de permisos
+CREATE TABLE permiso (
+  permiso_id INT PRIMARY KEY AUTO_INCREMENT,
+  permiso_usuario INT NOT NULL,
+  permiso_rol INT NOT NULL,
+  permiso_situacion TINYINT DEFAULT 1,
+  FOREIGN KEY (permiso_usuario) REFERENCES usuario(usu_id),
+  FOREIGN KEY (permiso_rol) REFERENCES rol(rol_id)
+) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4;
+
+-- Insertar usuario ADMINISTRADOR
+INSERT INTO
+  usuario (
+    usu_nombre,
+    usu_catalogo,
+    usu_password,
+    usu_situacion
+  )
+VALUES
+  (
+    'Admin Sistema',
+    1000,
+    '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi',
+    1
+  );
+
+-- Password: password
+-- Insertar usuario INSTRUCTOR
+INSERT INTO
+  usuario (
+    usu_nombre,
+    usu_catalogo,
+    usu_password,
+    usu_situacion
+  )
+VALUES
+  (
+    'Instructor Ejemplo',
+    2000,
+    '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi',
+    1
+  );
+
+-- Password: password
+-- Asignar rol de ADMINISTRADOR al usuario 1
+INSERT INTO
+  permiso (permiso_usuario, permiso_rol, permiso_situacion)
+VALUES
+  (1, 1, 1);
+
+-- Asignar rol de INSTRUCTOR al usuario 2
+INSERT INTO
+  permiso (permiso_usuario, permiso_rol, permiso_situacion)
+VALUES
+  (2, 2, 1);

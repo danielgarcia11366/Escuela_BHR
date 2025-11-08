@@ -1,83 +1,87 @@
 <?php
 
-function debuguear($variable) {
+function debuguear($variable)
+{
     echo "<pre>";
     var_dump($variable);
     echo "</pre>";
     exit;
 }
 
-// Escapa / Sanitizar el HTML
-function s($html) {
+function s($html)
+{
     $s = htmlspecialchars($html);
     return $s;
 }
 
-// Función que revisa que el usuario este autenticado
-function isAuth() {
-    session_start();
-    if(!isset($_SESSION['login'])) {
-        header('Location: /');
+// Verificar si NO está autenticado (para login/registro)
+function isNotAuth()
+{
+    if (isset($_SESSION['user'])) {
+        header('Location: /Escuela_BHR/menu');
+        exit;
     }
 }
-function isAuthApi() {
-    getHeadersApi();
-    session_start();
-    if(!isset($_SESSION['auth_user'])) {
-        echo json_encode([    
-            "mensaje" => "No esta autenticado",
 
+// Verificar si está autenticado
+function isAuth()
+{
+    if (!isset($_SESSION['user'])) {
+        header('Location: /Escuela_BHR/');
+        exit;
+    }
+}
+
+// Verificar permisos de usuario
+function hasPermission(array $permisos)
+{
+    $comprobaciones = [];
+    foreach ($permisos as $permiso) {
+        $comprobaciones[] = isset($_SESSION[$permiso]) ? true : false;
+    }
+
+    if (array_search(true, $comprobaciones) === false) {
+        header('Location: /Escuela_BHR/logout');
+        exit;
+    }
+}
+
+// Para APIs
+function isAuthApi()
+{
+    getHeadersApi();
+    if (!isset($_SESSION['user'])) {
+        echo json_encode([
+            "mensaje" => "No está autenticado",
             "codigo" => 4,
         ]);
         exit;
     }
 }
 
-function isNotAuth(){
-    session_start();
-    if(isset($_SESSION['auth'])) {
-        header('Location: /auth/');
-    }
-}
-
-
-function hasPermission(array $permisos){
-
-    $comprobaciones = [];
-    foreach ($permisos as $permiso) {
-
-        $comprobaciones[] = !isset($_SESSION[$permiso]) ? false : true;
-      
-    }
-
-    if(array_search(true, $comprobaciones) !== false){}else{
-        header('Location: /');
-    }
-}
-
-function hasPermissionApi(array $permisos){
+function hasPermissionApi(array $permisos)
+{
     getHeadersApi();
     $comprobaciones = [];
     foreach ($permisos as $permiso) {
-
-        $comprobaciones[] = !isset($_SESSION[$permiso]) ? false : true;
-      
+        $comprobaciones[] = isset($_SESSION[$permiso]) ? true : false;
     }
 
-    if(array_search(true, $comprobaciones) !== false){}else{
-        echo json_encode([     
+    if (array_search(true, $comprobaciones) === false) {
+        echo json_encode([
             "mensaje" => "No tiene permisos",
-
             "codigo" => 4,
         ]);
         exit;
     }
 }
 
-function getHeadersApi(){
+function getHeadersApi()
+{
     return header("Content-type:application/json; charset=utf-8");
 }
 
-function asset($ruta){
-    return "/". $_ENV['APP_NAME']."/public/" . $ruta;
+function asset($ruta)
+{
+    return "/Escuela_BHR/public/" . $ruta;
 }

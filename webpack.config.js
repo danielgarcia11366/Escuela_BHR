@@ -9,6 +9,9 @@ module.exports = {
     'js/personal/index' : './src/js/personal/index.js',
     'js/promociones/index' : './src/js/promociones/index.js',
     'js/participantes/index' : './src/js/participantes/index.js',
+    'js/auth/login' : './src/js/auth/login.js',
+    'js/auth/registro' : './src/js/auth/registro.js',
+    'js/auth/login' : './src/js/auth/login.js',
 
   },
   output: {

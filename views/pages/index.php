@@ -102,7 +102,7 @@
     </div>
 
     <div class="col-lg-3 col-md-6">
-      <a href="/Escuela_BHR/nuevoalumno" class="quick-access-card">
+      <a href="/Escuela_BHR/participantes" class="quick-access-card">
         <div class="quick-icon bg-primary">
           <i class="bi bi-person-plus-fill"></i>
         </div>
