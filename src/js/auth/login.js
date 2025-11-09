@@ -6,7 +6,6 @@ const formLogin = document.getElementById('formLogin');
 const login = async (e) => {
     e.preventDefault();
 
-    // Usando tu función validarFormulario que recibe excepciones
     if (!validarFormulario(formLogin, [])) {
         Toast.fire({
             icon: 'warning',
@@ -15,11 +14,15 @@ const login = async (e) => {
         return;
     }
 
-    // Mostrar loader
+    // ⭐ CAMBIO AQUÍ: Loader más moderno
     Swal.fire({
-        position: "top-end",
         title: 'Iniciando sesión...',
-        allowOutsideClick: true,
+        html: 'Por favor espere',
+        icon: 'info',
+        allowOutsideClick: false,
+        allowEscapeKey: false,
+        showConfirmButton: false,
+        draggable: true,
         didOpen: () => {
             Swal.showLoading();
         }
@@ -40,28 +43,39 @@ const login = async (e) => {
         Swal.close();
 
         if (data.codigo == 1) {
-            Toast.fire({
+            // ⭐ ÉXITO: Swal draggable
+            Swal.fire({
+                title: '¡Bienvenido!',
+                html: data.mensaje,
                 icon: 'success',
-                title: data.mensaje
-            });
-
-            setTimeout(() => {
+                draggable: true,
+                confirmButtonText: 'Continuar',
+                timer: 2000,
+                timerProgressBar: true
+            }).then(() => {
                 location.href = '/Escuela_BHR/menu';
-            }, 1500);
+            });
         } else {
-            Toast.fire({
+            // ⭐ ERROR: Swal draggable
+            Swal.fire({
+                title: 'Error de acceso',
+                html: data.mensaje,
                 icon: 'error',
-                title: data.mensaje,
-                text: data.detalle || ''
+                draggable: true,
+                confirmButtonText: 'Intentar de nuevo'
             });
         }
     } catch (error) {
         Swal.close();
         console.error(error);
-        Toast.fire({
+
+        // ⭐ ERROR DE RED: Swal draggable
+        Swal.fire({
+            title: 'Error de conexión',
+            html: 'No se pudo conectar con el servidor',
             icon: 'error',
-            title: 'Error al iniciar sesión',
-            text: 'Por favor, intente nuevamente'
+            draggable: true,
+            confirmButtonText: 'Reintentar'
         });
     }
 };
