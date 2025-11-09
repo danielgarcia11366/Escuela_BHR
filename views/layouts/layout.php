@@ -90,7 +90,7 @@ $nombreUsuario = $_SESSION['user']['usu_nombre'] ?? 'Usuario';
                                     </a>
                                 </li>
                                 <li>
-                                    <a class="dropdown-item modern-dropdown-item" href="/Escuela_BHR/nueva">
+                                    <a class="dropdown-item modern-dropdown-item" href="/Escuela_BHR/historial">
                                         <i class="bi bi-book-half"></i>Historial de Promociones
                                     </a>
                                 </li>
@@ -104,12 +104,12 @@ $nombreUsuario = $_SESSION['user']['usu_nombre'] ?? 'Usuario';
                             <ul class="dropdown-menu modern-dropdown-menu">
                                 <li>
                                     <a class="dropdown-item modern-dropdown-item" href="/Escuela_BHR/participantes">
-                                        <i class="bi bi-person-video2"></i>Inscribir a Promoción
+                                        <i class="bi bi-person-video2"></i>Asignación de Promociones
                                     </a>
                                 </li>
                                 <li>
                                     <a class="dropdown-item modern-dropdown-item" href="/Escuela_BHR/alumnos">
-                                        <i class="bi bi-person-lines-fill"></i>Historial de Cursos
+                                        <i class="bi bi-person-lines-fill"></i>Historial de Alumnos
                                     </a>
                                 </li>
                             </ul>
@@ -120,11 +120,12 @@ $nombreUsuario = $_SESSION['user']['usu_nombre'] ?? 'Usuario';
                                 <i class="bi bi-flag-fill"></i>Reportes
                             </a>
                             <ul class="dropdown-menu modern-dropdown-menu">
+                                <!-- 
                                 <li>
                                     <a class="dropdown-item modern-dropdown-item" href="/Escuela_BHR/reporte/alumnos">
                                         <i class="bi bi-list-columns"></i>Listado por Promoción
                                     </a>
-                                </li>
+                                </li>-->
                                 <li>
                                     <a class="dropdown-item modern-dropdown-item" href="/Escuela_BHR/estadisticas">
                                         <i class="bi bi-bar-chart-fill"></i>Estadísticas

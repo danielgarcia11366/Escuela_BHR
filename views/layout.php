@@ -75,7 +75,7 @@
                                 </a>
                             </li>
                             <li>
-                                <a class="dropdown-item modern-dropdown-item" href="/Escuela_BHR/nueva">
+                                <a class="dropdown-item modern-dropdown-item" href="/Escuela_BHR/historial">
                                     <i class="bi bi-book-half"></i>Historial de Promociones
                                 </a>
                             </li>

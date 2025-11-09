@@ -5,6 +5,7 @@ use Controllers\AlumnosController;
 use MVC\Router;
 use Controllers\AppController;
 use Controllers\CursosController;
+use Controllers\HistorialController;
 use Controllers\InicioController;
 use Controllers\LoginController;
 use Controllers\ParticipantesController;
@@ -28,7 +29,6 @@ $router->get('/logout', [LoginController::class, 'logout']);
 // ============================================
 $router->get('/menu', [LoginController::class, 'menu']);
 
-
 // API DE ESTADÍSTICAS (PROTEGIDA)
 $router->get('/API/estadisticas', [InicioController::class, 'estadisticasAPI']);
 
@@ -36,6 +36,15 @@ $router->get('/API/estadisticas', [InicioController::class, 'estadisticasAPI']);
 // GESTIÓN DE USUARIOS (Solo Administrador)
 $router->get('/usuarios', [LoginController::class, 'usuarios']);
 $router->post('/API/usuarios/crear', [LoginController::class, 'crearUsuarioAPI']);
+
+
+//HISTORIAL
+$router->get('/historial', [HistorialController::class, 'index']);
+
+
+//ESTADISTICAS
+$router->get('/estadisticas', [HistorialController::class, 'index']);
+
 
 //CURSOS
 $router->get('/cursos', [CursosController::class, 'index']);

@@ -1,0 +1,2 @@
+<h1>VISTA DE ESTADISTICAS
+</h1>
