@@ -16,6 +16,11 @@ class LoginController
         $router->render('auth/login', [], 'layout_auth');
     }
 
+    public static function forbidden(Router $router)
+    {
+        $router->render('pages/forbidden', []);
+    }
+
     public static function logout()
     {
         isAuth();

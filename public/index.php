@@ -20,6 +20,7 @@ $router->setBaseURL('/' . $_ENV['APP_NAME']);
 $router->get('/', [LoginController::class, 'login']);
 $router->get('/registro', [LoginController::class, 'registro']);
 $router->post('/API/login', [LoginController::class, 'loginAPI']);
+$router->get('/forbidden', [LoginController::class, 'forbidden']);
 //$router->post('/API/registro', [LoginController::class, 'registroAPI']);
 $router->get('/logout', [LoginController::class, 'logout']);
 // ============================================
@@ -30,6 +31,7 @@ $router->get('/menu', [LoginController::class, 'menu']);
 
 // API DE ESTADÍSTICAS (PROTEGIDA)
 $router->get('/API/estadisticas', [InicioController::class, 'estadisticasAPI']);
+
 
 // GESTIÓN DE USUARIOS (Solo Administrador)
 $router->get('/usuarios', [LoginController::class, 'usuarios']);

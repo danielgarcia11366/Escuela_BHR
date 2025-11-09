@@ -1,5 +1,10 @@
 <?php
 
+// Iniciar sesión si no está iniciada
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+
 function debuguear($variable)
 {
     echo "<pre>";
@@ -41,36 +46,42 @@ function hasPermission(array $permisos)
     }
 
     if (array_search(true, $comprobaciones) === false) {
-        header('Location: /Escuela_BHR/logout');
+        // Redirigir a página de acceso denegado
+        header('Location: /Escuela_BHR/forbidden');
         exit;
     }
 }
 
-// Para APIs
+// Para APIs - Verificar autenticación
 function isAuthApi()
 {
     getHeadersApi();
+
     if (!isset($_SESSION['user'])) {
+        http_response_code(401);
         echo json_encode([
-            "mensaje" => "No está autenticado",
             "codigo" => 4,
+            "mensaje" => "No está autenticado",
         ]);
         exit;
     }
 }
 
+// Para APIs - Verificar permisos
 function hasPermissionApi(array $permisos)
 {
     getHeadersApi();
+
     $comprobaciones = [];
     foreach ($permisos as $permiso) {
         $comprobaciones[] = isset($_SESSION[$permiso]) ? true : false;
     }
 
     if (array_search(true, $comprobaciones) === false) {
+        http_response_code(403);
         echo json_encode([
-            "mensaje" => "No tiene permisos",
             "codigo" => 4,
+            "mensaje" => "No tiene permisos para realizar esta acción",
         ]);
         exit;
     }

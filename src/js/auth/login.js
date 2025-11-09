@@ -17,8 +17,9 @@ const login = async (e) => {
 
     // Mostrar loader
     Swal.fire({
+        position: "top-end",
         title: 'Iniciando sesión...',
-        allowOutsideClick: false,
+        allowOutsideClick: true,
         didOpen: () => {
             Swal.showLoading();
         }

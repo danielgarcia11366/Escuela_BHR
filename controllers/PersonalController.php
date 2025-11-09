@@ -12,6 +12,10 @@ class PersonalController
 {
     public static function index(Router $router)
     {
+        // ⭐ PROTEGER LA VISTA
+        isAuth();
+        hasPermission(['ADMINISTRADOR']);
+
         $armas = Armas::obtenerarmaconQuery();
         $grados = Grados::obtenergradoconQuery();
 
@@ -21,11 +25,12 @@ class PersonalController
         ]);
     }
 
-    /**
-     * Guardar nuevo registro de personal
-     */
     public static function guardarAPI()
     {
+        // ⭐ PROTEGER LA API
+        isAuthApi();
+        hasPermissionApi(['ADMINISTRADOR']);
+
         header('Content-Type: application/json; charset=UTF-8');
 
         error_log("========== GUARDAR PERSONAL ==========");
@@ -101,15 +106,16 @@ class PersonalController
         }
     }
 
-    /**
-     * Obtener todo el personal
-     */
     public static function buscarAPI()
     {
+        // ⭐ PROTEGER LA API
+        isAuthApi();
+        hasPermissionApi(['ADMINISTRADOR', 'INSTRUCTOR']);
+
         header('Content-Type: application/json; charset=UTF-8');
 
         try {
-            $personal = Personal::obtenerPersonal(); // ✅ Nombre correcto del método
+            $personal = Personal::obtenerPersonal();
 
             http_response_code(200);
             echo json_encode([
@@ -128,11 +134,12 @@ class PersonalController
         }
     }
 
-    /**
-     * Modificar registro existente
-     */
     public static function modificarAPI()
     {
+        // ⭐ PROTEGER LA API
+        isAuthApi();
+        hasPermissionApi(['ADMINISTRADOR']);
+
         header('Content-Type: application/json; charset=UTF-8');
 
         error_log("========== MODIFICAR PERSONAL ==========");
@@ -225,11 +232,12 @@ class PersonalController
         }
     }
 
-    /**
-     * Eliminar registro
-     */
     public static function eliminarAPI()
     {
+        // ⭐ PROTEGER LA API
+        isAuthApi();
+        hasPermissionApi(['ADMINISTRADOR']);
+
         header('Content-Type: application/json; charset=UTF-8');
 
         $id = filter_var($_POST['per_catalogo'] ?? null, FILTER_SANITIZE_NUMBER_INT);

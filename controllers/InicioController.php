@@ -10,13 +10,18 @@ class InicioController
 {
     public static function index(Router $router)
     {
+        // ⭐ PROTEGER LA VISTA
+        isAuth();
+        hasPermission(['ADMINISTRADOR', 'INSTRUCTOR']);
+
         $router->render('pages/index', []);
     }
 
     public static function estadisticasAPI()
     {
-        // IMPORTANTE: Verificar autenticación (pero session_start ya está en functions.php)
+        // ⭐ YA ESTÁ PROTEGIDO
         isAuthApi();
+        hasPermissionApi(['ADMINISTRADOR', 'INSTRUCTOR']);
 
         header('Content-Type: application/json; charset=UTF-8');
 

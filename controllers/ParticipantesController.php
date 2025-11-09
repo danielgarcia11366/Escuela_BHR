@@ -13,6 +13,10 @@ class ParticipantesController
 {
     public static function index(Router $router)
     {
+        // ⭐ PROTEGER LA VISTA
+        isAuth();
+        hasPermission(['ADMINISTRADOR']);
+
         $promociones = Promociones::obtenerPromocionesConDetalles();
         $persona = Personal::obtenerPersonal();
 
@@ -24,6 +28,10 @@ class ParticipantesController
 
     public static function guardarAPI()
     {
+        // ⭐ PROTEGER LA API
+        isAuthApi();
+        hasPermissionApi(['ADMINISTRADOR']);
+
         header('Content-Type: application/json; charset=UTF-8');
 
         try {
@@ -137,6 +145,10 @@ class ParticipantesController
 
     public static function buscarAPI()
     {
+        // ⭐ PROTEGER LA API
+        isAuthApi();
+        hasPermissionApi(['ADMINISTRADOR', 'INSTRUCTOR']);
+
         header('Content-Type: application/json; charset=UTF-8');
 
         try {
@@ -161,6 +173,10 @@ class ParticipantesController
 
     public static function modificarAPI()
     {
+        // ⭐ PROTEGER LA API
+        isAuthApi();
+        hasPermissionApi(['ADMINISTRADOR']);
+
         header('Content-Type: application/json; charset=UTF-8');
 
         $id = filter_var($_POST['par_codigo'], FILTER_SANITIZE_NUMBER_INT);
@@ -303,7 +319,12 @@ class ParticipantesController
 
     public static function eliminarAPI()
     {
-        header('Content-Type: application/json; charset=UTF-8');
+        // ⭐ PROTEGER LA API
+        isAuthApi();
+        hasPermissionApi(['ADMINISTRADOR']);
+
+        header('Content-Type:
+        application/json; charset=UTF-8');
 
         $id = filter_var($_POST['par_codigo'], FILTER_SANITIZE_NUMBER_INT);
 

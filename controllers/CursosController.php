@@ -13,6 +13,10 @@ class CursosController
 {
     public static function index(Router $router)
     {
+        // ⭐ PROTEGER LA VISTA
+        isAuth();
+        hasPermission(['ADMINISTRADOR']);
+
         $instituciones = Instituciones::obtenerinstitucionQuery();
         $niveles = Niveles::obtenerNivelesConQuery();
         $tipos = Tipos::obtenerTiposConQuery();
@@ -26,7 +30,11 @@ class CursosController
 
     public static function guardarAPI()
     {
-        header('Content-Type: application/json; charset=UTF-8'); // ⭐ AÑADIR ESTA LÍNEA
+        // ⭐ PROTEGER LA API
+        isAuthApi();
+        hasPermissionApi(['ADMINISTRADOR']);
+
+        header('Content-Type: application/json; charset=UTF-8');
 
         $_POST['cur_nombre'] = htmlspecialchars($_POST['cur_nombre']);
         $_POST['cur_nombre_corto'] = htmlspecialchars($_POST['cur_nombre_corto']);
@@ -40,7 +48,7 @@ class CursosController
             echo json_encode([
                 'codigo' => 1,
                 'mensaje' => 'Curso registrado exitosamente',
-            ], JSON_UNESCAPED_UNICODE); // ⭐ AÑADIR JSON_UNESCAPED_UNICODE
+            ], JSON_UNESCAPED_UNICODE);
         } catch (Exception $e) {
             http_response_code(500);
             echo json_encode([
@@ -53,7 +61,11 @@ class CursosController
 
     public static function buscarAPI()
     {
-        header('Content-Type: application/json; charset=UTF-8'); // ⭐ AÑADIR ESTA LÍNEA
+        // ⭐ PROTEGER LA API
+        isAuthApi();
+        hasPermissionApi(['ADMINISTRADOR', 'INSTRUCTOR']);
+
+        header('Content-Type: application/json; charset=UTF-8');
 
         try {
             $cursos = Cursos::obtenerCursos1();
@@ -64,7 +76,7 @@ class CursosController
                 'mensaje' => 'Datos encontrados',
                 'detalle' => '',
                 'datos' => $cursos
-            ], JSON_UNESCAPED_UNICODE); // ⭐ AÑADIR JSON_UNESCAPED_UNICODE
+            ], JSON_UNESCAPED_UNICODE);
         } catch (Exception $e) {
             http_response_code(500);
             echo json_encode([
@@ -77,7 +89,11 @@ class CursosController
 
     public static function modificarAPI()
     {
-        header('Content-Type: application/json; charset=UTF-8'); // ⭐ AÑADIR ESTA LÍNEA
+        // ⭐ PROTEGER LA API
+        isAuthApi();
+        hasPermissionApi(['ADMINISTRADOR']);
+
+        header('Content-Type: application/json; charset=UTF-8');
 
         $_POST['cur_nombre'] = htmlspecialchars($_POST['cur_nombre']);
         $_POST['cur_nombre_corto'] = htmlspecialchars($_POST['cur_nombre_corto']);
@@ -126,7 +142,11 @@ class CursosController
 
     public static function eliminarAPI()
     {
-        header('Content-Type: application/json; charset=UTF-8'); // ⭐ AÑADIR ESTA LÍNEA
+        // ⭐ PROTEGER LA API
+        isAuthApi();
+        hasPermissionApi(['ADMINISTRADOR']);
+
+        header('Content-Type: application/json; charset=UTF-8');
 
         $id = filter_var($_POST['cur_codigo'], FILTER_SANITIZE_NUMBER_INT);
 
