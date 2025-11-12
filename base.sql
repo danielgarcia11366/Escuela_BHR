@@ -144,7 +144,8 @@ CREATE TABLE `participantes` (
       `par_estado` in (_utf8mb4 'G', _utf8mb4 'C', _utf8mb4 'R', _utf8mb4 'D')
     )
   )
-) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci --==================PROMOCIONES===================================
+) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci
+ --==================PROMOCIONES===================================
 CREATE TABLE `promociones` (
   `pro_codigo` int NOT NULL AUTO_INCREMENT,
   `pro_curso` int NOT NULL,
