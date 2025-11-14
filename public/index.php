@@ -59,6 +59,10 @@ $router->get('/API/promociones/buscar', [PromocionesController::class, 'buscarAP
 $router->post('/API/promociones/guardar', [PromocionesController::class, 'guardarAPI']);
 $router->post('/API/promociones/modificar', [PromocionesController::class, 'modificarAPI']);
 $router->post('/API/promociones/eliminar', [PromocionesController::class, 'eliminarAPI']);
+// En la sección de rutas GET
+$router->get('/promociones/historial', [PromocionesController::class, 'historial']);
+$router->get('/promociones/pdf', [PromocionesController::class, 'generarPDFParticipantes']);
+
 
 //PERSONAL
 $router->get('/personal', [PersonalController::class, 'index']);

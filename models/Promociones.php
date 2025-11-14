@@ -52,35 +52,91 @@ class Promociones extends ActiveRecord
         $this->pro_activa = $args['pro_activa'] ?? 'S';
     }
 
+
     public static function obtenerPromocionesConDetalles()
     {
         $sql = "SELECT 
-    p.pro_codigo,
-    p.pro_numero,
-    p.pro_anio,
-    CONCAT(p.pro_numero, '-', p.pro_anio) as numero_anio,
-    p.pro_fecha_inicio,
-    p.pro_fecha_fin,
-    p.pro_fecha_graduacion,
-    p.pro_lugar,
-    p.pro_cantidad_graduados,
-    p.pro_observaciones,
-    p.pro_activa,
-    p.pro_curso,
-    p.pro_pais,
-    p.pro_institucion_imparte,
-    c.cur_nombre as curso_nombre,
-    c.cur_nivel,
-    COALESCE(n.niv_nombre, 'Sin nivel') as nivel_nombre,
-    CONCAT(c.cur_nombre, ' - ', COALESCE(n.niv_nombre, 'Sin nivel')) as curso_completo,
-    COALESCE(pa.pais_nombre, 'Guatemala') as pais_nombre,
-    COALESCE(i.inst_nombre, 'Sin institución') as institucion_nombre
-FROM promociones p
-INNER JOIN cursos c ON p.pro_curso = c.cur_codigo
-LEFT JOIN niveles n ON c.cur_nivel = n.niv_codigo
-LEFT JOIN paises pa ON p.pro_pais = pa.pais_codigo
-LEFT JOIN instituciones i ON p.pro_institucion_imparte = i.inst_codigo
-ORDER BY p.pro_anio DESC, p.pro_numero DESC";
+        p.pro_codigo,
+        p.pro_numero,
+        p.pro_anio,
+        CONCAT(p.pro_numero, '-', p.pro_anio) as numero_anio,
+        p.pro_fecha_inicio,
+        p.pro_fecha_fin,
+        p.pro_fecha_graduacion,
+        p.pro_lugar,
+        p.pro_observaciones,
+        p.pro_activa,
+        p.pro_curso,
+        p.pro_pais,
+        p.pro_institucion_imparte,
+        c.cur_nombre as curso_nombre,
+        c.cur_nivel,
+        COALESCE(n.niv_nombre, 'Sin nivel') as nivel_nombre,
+        CONCAT(c.cur_nombre, ' - ', COALESCE(n.niv_nombre, 'Sin nivel')) as curso_completo,
+        COALESCE(pa.pais_nombre, 'Guatemala') as pais_nombre,
+        COALESCE(i.inst_nombre, 'Sin institución') as institucion_nombre,
+        COALESCE(
+            (SELECT COUNT(*) 
+             FROM participantes part 
+             WHERE part.par_promocion = p.pro_codigo),
+            0
+        ) as total_participantes
+    FROM promociones p
+    INNER JOIN cursos c ON p.pro_curso = c.cur_codigo
+    LEFT JOIN niveles n ON c.cur_nivel = n.niv_codigo
+    LEFT JOIN paises pa ON p.pro_pais = pa.pais_codigo
+    LEFT JOIN instituciones i ON p.pro_institucion_imparte = i.inst_codigo
+    WHERE p.pro_activa = 'S'
+    ORDER BY p.pro_anio DESC, p.pro_numero DESC";
+
+        return self::fetchArray($sql);
+    }
+
+
+    public static function obtenerParticipantesPorPromocion(int $pro_codigo)
+    {
+        $sql = "SELECT 
+        par.par_codigo,
+        par.par_catalogo,
+        par.par_calificacion,
+        par.par_posicion,
+        par.par_certificado_numero,
+        par.par_certificado_fecha,
+        par.par_estado,
+        par.par_observaciones,
+        m.per_catalogo,
+        m.per_serie,
+        TRIM(CONCAT(
+            COALESCE(g.gra_desc_ct, ''),
+            ' ',
+            COALESCE(ar.arm_desc_ct, '')
+        )) as grado_arma,
+        TRIM(CONCAT(
+            COALESCE(m.per_nom1, ''),
+            ' ',
+            COALESCE(m.per_nom2, ''),
+            ' ',
+            COALESCE(m.per_ape1, ''),
+            ' ',
+            COALESCE(m.per_ape2, '')
+        )) as nombre_completo,
+        g.gra_desc_lg as grado_completo,
+        ar.arm_desc_lg as arma_completa,
+        p.pro_numero,
+        p.pro_anio,
+        CONCAT(p.pro_numero, '-', p.pro_anio) as promocion,
+        c.cur_nombre as curso_nombre,
+        COALESCE(n.niv_nombre, 'Sin nivel') as nivel_nombre,
+        CONCAT(c.cur_nombre, ' - ', COALESCE(n.niv_nombre, 'Sin nivel')) as curso_completo
+    FROM participantes par
+    INNER JOIN mper m ON par.par_catalogo = m.per_catalogo
+    LEFT JOIN grados g ON m.per_grado = g.gra_codigo
+    LEFT JOIN armas ar ON m.per_arma = ar.arm_codigo
+    INNER JOIN promociones p ON par.par_promocion = p.pro_codigo
+    INNER JOIN cursos c ON p.pro_curso = c.cur_codigo
+    LEFT JOIN niveles n ON c.cur_nivel = n.niv_codigo
+    WHERE par.par_promocion = {$pro_codigo}
+    ORDER BY m.per_ape1, m.per_ape2, m.per_nom1";
 
         return self::fetchArray($sql);
     }
