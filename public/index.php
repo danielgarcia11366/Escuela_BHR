@@ -12,6 +12,8 @@ use Controllers\ParticipantesController;
 use Controllers\PersonalController;
 use Controllers\PromocionesController;
 use Controllers\PruebaController;
+use Controllers\RecordController;
+use Controllers\RecordControllerController;
 use Model\Promociones;
 
 $router = new Router();
@@ -70,6 +72,10 @@ $router->get('/API/personal/buscar', [PersonalController::class, 'buscarAPI']);
 $router->post('/API/personal/guardar', [PersonalController::class, 'guardarAPI']);
 $router->post('/API/personal/modificar', [PersonalController::class, 'modificarAPI']);
 $router->post('/API/personal/eliminar', [PersonalController::class, 'eliminarAPI']);
+
+
+//RECORD
+$router->get('/record', [RecordController::class, 'index']);
 
 
 //PERSONAL

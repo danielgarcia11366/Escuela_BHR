@@ -93,7 +93,7 @@
                                 </a>
                             </li>
                             <li>
-                                <a class="dropdown-item modern-dropdown-item" href="/Escuela_BHR/alumnos">
+                                <a class="dropdown-item modern-dropdown-item" href="/Escuela_BHR/record">
                                     <i class="bi bi-person-lines-fill"></i>Historial de Cursos
                                 </a>
                             </li>
@@ -106,7 +106,7 @@
                         </a>
                         <ul class="dropdown-menu modern-dropdown-menu">
                             <li>
-                                <a class="dropdown-item modern-dropdown-item" href="/Escuela_BHR/alumnos">
+                                <a class="dropdown-item modern-dropdown-item" href="/Escuela_BHR/record">
                                     <i class="bi bi-list-columns"></i>Listado por Promoción
                                 </a>
                             </li>

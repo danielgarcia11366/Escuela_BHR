@@ -108,7 +108,7 @@ $nombreUsuario = $_SESSION['user']['usu_nombre'] ?? 'Usuario';
                                     </a>
                                 </li>
                                 <li>
-                                    <a class="dropdown-item modern-dropdown-item" href="/Escuela_BHR/alumnos">
+                                    <a class="dropdown-item modern-dropdown-item" href="/Escuela_BHR/record">
                                         <i class="bi bi-person-lines-fill"></i>Récord de Cursos (Por Alumno)
                                     </a>
                                 </li>
