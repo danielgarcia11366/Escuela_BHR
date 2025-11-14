@@ -58,11 +58,6 @@ const datatable = new DataTable('#tablaPromociones', {
             }
         },
         {
-            title: 'Graduados',
-            data: 'pro_cantidad_graduados',
-            render: data => `<span class="badge bg-info">${data}</span>`
-        },
-        {
             title: 'Estado',
             data: 'pro_activa',
             render: data => data === 'S'

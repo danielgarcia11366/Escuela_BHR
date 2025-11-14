@@ -48,8 +48,8 @@ const inicializarTablaHistorial = (datos) => {
                 render: (data, type, row) => {
                     return `
                         <div class="d-flex flex-column align-items-start">
-                            <span class="badge bg-primary mb-2 fs-6">${row.numero_anio}</span>
                             <strong>${row.curso_completo}</strong>
+                            <span class="badge bg-primary mb-2 fs-6">Promoción ${row.numero_anio}</span>
                         </div>
                     `;
                 }

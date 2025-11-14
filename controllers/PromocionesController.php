@@ -284,12 +284,12 @@ class PromocionesController
 
             // Header del PDF
             $header = '
-            <div style="text-align: center; border-bottom: 3px solid #ff7b00; padding-bottom: 10px; margin-bottom: 20px;">
-                <h1 style="color: #1a1a1a; margin: 0; font-size: 24px; font-weight: bold;">
+            <div style="text-align: center; border-bottom: 3px solid #ff7b00; padding-bottom: 5px; margin-bottom: 10px;">
+                <h1 style="color: #1a1a1a; margin: 0; font-size: 28px; font-weight: bold;">
                     LISTADO DE PARTICIPANTES
                 </h1>
-                <h2 style="color: #ff7b00; margin: 5px 0; font-size: 16px; font-weight: 600;">
-                    Curso ' . htmlspecialchars($infoPromocion['curso_nombre']) . ' - Promoción ' . htmlspecialchars($infoPromocion['numero_anio']) . ' - ' . htmlspecialchars($infoPromocion['nivel_nombre']) . '
+                <h2 style="color: #ff7b00; margin: 5px 0; font-size: 22px; font-weight: 600;">
+                    Curso ' . htmlspecialchars($infoPromocion['curso_nombre']) . ' - ' . htmlspecialchars($infoPromocion['nivel_nombre']) . ' - Promoción ' . htmlspecialchars($infoPromocion['numero_anio']) . '
                 </h2>
             </div>
             ';
@@ -304,7 +304,7 @@ class PromocionesController
 
             $infoBox = '
             <div style="background: #f8f9fa; border: 2px solid #ff7b00; border-radius: 10px; padding: 15px; margin-bottom: 20px;">
-                <table style="width: 100%; font-size: 15px; color: #333;">
+                <table style="width: 100%; font-size: 18px; color: #333;">
                     <tr>
                         <td style="padding: 5px;">
                             <strong style="color: #ff7b00;">• Lugar:</strong> ' . htmlspecialchars($infoPromocion['pro_lugar']) . '
