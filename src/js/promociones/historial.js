@@ -48,8 +48,8 @@ const inicializarTablaHistorial = (datos) => {
                 render: (data, type, row) => {
                     return `
                         <div class="d-flex flex-column align-items-start">
+                            <span class="badge bg-primary mb-2 fs-6">${row.numero_anio}</span>
                             <strong>${row.curso_completo}</strong>
-                            <span class="badge bg-primary mb-2 fs-6">Promoción ${row.numero_anio}</span>
                         </div>
                     `;
                 }
@@ -114,7 +114,7 @@ const inicializarTablaHistorial = (datos) => {
                             data-numero_anio="${row.numero_anio}"
                             type="button"
                             title="Generar PDF con los ${total} participantes">
-                            <i class="bi bi-eye"></i> VER 
+                            <i class="bi bi-eye"></i> VER
                         </button>
                     `;
                 }
@@ -174,7 +174,34 @@ const actualizarEstadisticas = (datos) => {
         animarNumero(promocionesConCert, promosConCert);
     }
 
+    // 🎓 Calcular graduados directamente de los datos
     if (totalGraduados) {
+        calcularGraduados();
+    }
+};
+
+// ============================================
+// CALCULAR TOTAL DE GRADUADOS
+// ============================================
+const calcularGraduados = async () => {
+    try {
+        const url = "/Escuela_BHR/API/estadisticas";
+        const response = await fetch(url);
+
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        const resultado = await response.json();
+
+        if (resultado.codigo === 1) {
+            const graduados = resultado.datos.graduados || 0;
+            animarNumero(totalGraduados, graduados);
+        } else {
+            totalGraduados.textContent = '0';
+        }
+    } catch (error) {
+        console.error('❌ Error al cargar graduados:', error);
         totalGraduados.textContent = '-';
     }
 };
@@ -197,6 +224,27 @@ const animarNumero = (elemento, valorFinal) => {
         }
         elemento.textContent = valorActual;
     }, duracion / 50);
+};
+
+// ============================================
+// BUSCAR TOTAL DE GRADUADOS
+// ============================================
+const buscarTotalGraduados = async () => {
+    try {
+        const url = "/Escuela_BHR/API/promociones/graduados";
+        const respuesta = await fetch(url);
+        const data = await respuesta.json();
+        const { codigo, total } = data;
+
+        if (codigo === 1 && total !== undefined) {
+            animarNumero(totalGraduados, parseInt(total));
+        } else {
+            totalGraduados.textContent = '0';
+        }
+    } catch (error) {
+        console.error('❌ Error al cargar graduados:', error);
+        totalGraduados.textContent = '-';
+    }
 };
 
 // ============================================

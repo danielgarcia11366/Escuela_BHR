@@ -17,4 +17,5 @@ class EstadisticasController
 
         $router->render('estadisticas/index', []);
     }
+    
 }
