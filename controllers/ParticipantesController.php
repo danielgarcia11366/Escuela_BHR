@@ -171,6 +171,33 @@ class ParticipantesController
         }
     }
 
+    public static function buscarPersonalAPI()
+    {
+        // ⭐ PROTEGER LA API
+        isAuthApi();
+        hasPermissionApi(['ADMINISTRADOR', 'INSTRUCTOR']);
+
+        header('Content-Type: application/json; charset=UTF-8');
+
+        try {
+            $personal = Participantes::obtenerResumenPersonal();
+
+            http_response_code(200);
+            echo json_encode([
+                'codigo' => 1,
+                'mensaje' => 'Datos encontrados',
+                'datos' => $personal
+            ], JSON_UNESCAPED_UNICODE);
+        } catch (Exception $e) {
+            http_response_code(500);
+            echo json_encode([
+                'codigo' => 0,
+                'mensaje' => 'Error al buscar personal',
+                'detalle' => $e->getMessage(),
+            ], JSON_UNESCAPED_UNICODE);
+        }
+    }
+
     public static function modificarAPI()
     {
         // ⭐ PROTEGER LA API
@@ -323,8 +350,7 @@ class ParticipantesController
         isAuthApi();
         hasPermissionApi(['ADMINISTRADOR']);
 
-        header('Content-Type:
-        application/json; charset=UTF-8');
+        header('Content-Type: application/json; charset=UTF-8');
 
         $id = filter_var($_POST['par_codigo'], FILTER_SANITIZE_NUMBER_INT);
 

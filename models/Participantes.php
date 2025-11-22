@@ -165,4 +165,82 @@ class Participantes extends ActiveRecord
         $sql = "SELECT * FROM " . static::$tabla . " WHERE par_promocion = " . intval($promocion_id);
         return self::fetchArray($sql);
     }
+
+    public static function getCursosPersona($per_catalogo)
+    {
+        $sql = "SELECT 
+        m.per_catalogo,
+        m.per_serie,
+        CONCAT_WS(' ', m.per_nom1, m.per_nom2, m.per_ape1, m.per_ape2) AS nombre_completo,
+        CONCAT(g.gra_desc_lg, ' de ', a.arm_desc_lg) AS grado_arma,
+        c.cur_nombre AS curso_completo,
+        c.cur_nombre_corto,
+        c.cur_duracion_dias,
+        p.pro_numero,
+        p.pro_anio,
+        p.pro_fecha_inicio,
+        p.pro_fecha_fin,
+        p.pro_fecha_graduacion,
+        p.pro_lugar,
+        pa.par_calificacion,
+        pa.par_posicion,
+        pa.par_certificado_numero,
+        pa.par_certificado_fecha,
+        pa.par_estado,
+        pa.par_observaciones
+    FROM mper m
+    INNER JOIN grados g ON m.per_grado = g.gra_codigo
+    INNER JOIN armas a ON m.per_arma = a.arm_codigo
+    INNER JOIN participantes pa ON m.per_catalogo = pa.par_catalogo
+    INNER JOIN promociones p ON pa.par_promocion = p.pro_codigo
+    INNER JOIN cursos c ON p.pro_curso = c.cur_codigo
+    WHERE m.per_catalogo = " . self::$db->quote($per_catalogo) . "
+    ORDER BY p.pro_fecha_inicio DESC";
+
+        return self::fetchArray($sql);
+    }
+    /**
+     * ✅ Obtener resumen de personal con sus cursos
+     * @return array Lista de personas con total de cursos y último curso
+     */
+    public static function obtenerResumenPersonal()
+    {
+        $sql = "SELECT 
+        m.per_catalogo,
+        CONCAT_WS(' ', m.per_nom1, m.per_nom2, m.per_ape1, m.per_ape2) AS nombre_completo,
+        CONCAT(g.gra_desc_lg, ' de ', a.arm_desc_lg) AS grado_arma,
+        COUNT(p.par_codigo) AS total_cursos,
+        (SELECT CONCAT(c2.cur_nombre_corto, ' - Promoción ', pr2.pro_numero, ' ', pr2.pro_anio)
+         FROM participantes p2
+         INNER JOIN promociones pr2 ON p2.par_promocion = pr2.pro_codigo
+         INNER JOIN cursos c2 ON pr2.pro_curso = c2.cur_codigo
+         WHERE p2.par_catalogo = m.per_catalogo
+         ORDER BY pr2.pro_fecha_inicio DESC
+         LIMIT 1
+        ) AS ultimo_curso
+    FROM mper m
+    LEFT JOIN grados g ON m.per_grado = g.gra_codigo
+    LEFT JOIN armas a ON m.per_arma = a.arm_codigo
+    LEFT JOIN participantes p ON m.per_catalogo = p.par_catalogo
+    GROUP BY m.per_catalogo, m.per_nom1, m.per_nom2, m.per_ape1, m.per_ape2, 
+             g.gra_desc_lg, a.arm_desc_lg
+    HAVING total_cursos > 0
+    ORDER BY total_cursos DESC, m.per_catalogo";
+
+        return self::fetchArray($sql);
+    }
+    /**
+     * Contar total de cursos de una persona
+     * @param int $per_catalogo
+     * @return int Cantidad de cursos
+     */
+    public static function contarCursosPersona($per_catalogo)
+    {
+        $sql = "SELECT COUNT(*) as total
+        FROM participantes pa
+        WHERE pa.par_catalogo = " . self::$db->quote($per_catalogo);
+
+        $resultado = self::fetchArray($sql);
+        return $resultado[0]['total'] ?? 0;
+    }
 }

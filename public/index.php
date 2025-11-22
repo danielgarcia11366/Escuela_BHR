@@ -24,8 +24,8 @@ $router->get('/', [LoginController::class, 'login']);
 $router->get('/registro', [LoginController::class, 'registro']);
 $router->post('/API/login', [LoginController::class, 'loginAPI']);
 $router->get('/forbidden', [LoginController::class, 'forbidden']);
-//$router->post('/API/registro', [LoginController::class, 'registroAPI']);
 $router->get('/logout', [LoginController::class, 'logout']);
+
 // ============================================
 // RUTAS PROTEGIDAS (REQUIEREN LOGIN)
 // ============================================
@@ -34,19 +34,15 @@ $router->get('/menu', [LoginController::class, 'menu']);
 // API DE ESTADÍSTICAS (PROTEGIDA)
 $router->get('/API/estadisticas', [InicioController::class, 'estadisticasAPI']);
 
-
 // GESTIÓN DE USUARIOS (Solo Administrador)
 $router->get('/usuarios', [LoginController::class, 'usuarios']);
 $router->post('/API/usuarios/crear', [LoginController::class, 'crearUsuarioAPI']);
 
-
 //HISTORIAL
 $router->get('/historial', [HistorialController::class, 'index']);
 
-
 //ESTADISTICAS
 $router->get('/estadisticas', [HistorialController::class, 'index']);
-
 
 //CURSOS
 $router->get('/cursos', [CursosController::class, 'index']);
@@ -61,10 +57,8 @@ $router->get('/API/promociones/buscar', [PromocionesController::class, 'buscarAP
 $router->post('/API/promociones/guardar', [PromocionesController::class, 'guardarAPI']);
 $router->post('/API/promociones/modificar', [PromocionesController::class, 'modificarAPI']);
 $router->post('/API/promociones/eliminar', [PromocionesController::class, 'eliminarAPI']);
-// En la sección de rutas GET
 $router->get('/promociones/historial', [PromocionesController::class, 'historial']);
 $router->get('/promociones/pdf', [PromocionesController::class, 'generarPDFParticipantes']);
-
 
 //PERSONAL
 $router->get('/personal', [PersonalController::class, 'index']);
@@ -73,16 +67,18 @@ $router->post('/API/personal/guardar', [PersonalController::class, 'guardarAPI']
 $router->post('/API/personal/modificar', [PersonalController::class, 'modificarAPI']);
 $router->post('/API/personal/eliminar', [PersonalController::class, 'eliminarAPI']);
 
-
 //RECORD
 $router->get('/record', [RecordController::class, 'index']);
+$router->get('/record/historialPDF', [RecordController::class, 'historialPDF']); // ⬅️ NUEVA RUTA
 
-
-//PERSONAL
-$router->get('/participantes', [ParticipantesController::class, 'index']);
+//PARTICIPANTES
+$router->get('/participantes/historialPDF', [ParticipantesController::class, 'historialPDF']); // ⬅️ PRIMERO EL PDF
+$router->get('/participantes', [ParticipantesController::class, 'index']); // ⬅️ DESPUÉS LA VISTA PRINCIPAL
 $router->get('/API/participantes/buscar', [ParticipantesController::class, 'buscarAPI']);
 $router->post('/API/participantes/guardar', [ParticipantesController::class, 'guardarAPI']);
 $router->post('/API/participantes/modificar', [ParticipantesController::class, 'modificarAPI']);
 $router->post('/API/participantes/eliminar', [ParticipantesController::class, 'eliminarAPI']);
+$router->get('/API/participantes/buscarPersonal', [ParticipantesController::class, 'buscarPersonalAPI']);
+
 // Comprueba y valida las rutas, que existan y les asigna las funciones del Controlador
 $router->comprobarRutas();
