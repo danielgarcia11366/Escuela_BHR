@@ -27,7 +27,8 @@ class Personal extends ActiveRecord
         'per_tipo',
         'fecha_registro',
         'fecha_modificacion',
-        'observaciones'
+        'observaciones',
+        'per_foto'  // ⭐ NUEVO CAMPO
     ];
 
     public $per_catalogo;
@@ -51,6 +52,7 @@ class Personal extends ActiveRecord
     public $fecha_registro;
     public $fecha_modificacion;
     public $observaciones;
+    public $per_foto;  // ⭐ NUEVA PROPIEDAD
 
     public function __construct($args = [])
     {
@@ -75,12 +77,9 @@ class Personal extends ActiveRecord
         $this->fecha_registro = date('Y-m-d H:i:s');
         $this->fecha_modificacion = date('Y-m-d H:i:s');
         $this->observaciones = $args['observaciones'] ?? '';
+        $this->per_foto = $args['per_foto'] ?? null;  // ⭐ NUEVO
     }
 
-    /**
-     * Override del método atributos() para incluir per_catalogo
-     * porque NO es auto-increment
-     */
     public function atributos()
     {
         $atributos = [];
@@ -91,9 +90,6 @@ class Personal extends ActiveRecord
         return $atributos;
     }
 
-    /**
-     * Obtener todo el personal con sus grados y armas
-     */
     public static function obtenerPersonal()
     {
         $sql = "SELECT 
@@ -119,7 +115,8 @@ class Personal extends ActiveRecord
             m.per_tipo,
             m.fecha_registro,
             m.fecha_modificacion,
-            m.observaciones
+            m.observaciones,
+            m.per_foto
         FROM mper m
         INNER JOIN grados g ON m.per_grado = g.gra_codigo
         INNER JOIN armas a ON m.per_arma = a.arm_codigo

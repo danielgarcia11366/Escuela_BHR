@@ -17,6 +17,53 @@ const contenedorFormulario = document.getElementById('contenedorFormulario');
 const contenedorTabla = document.getElementById('contenedorTabla');
 const tituloFormulario = document.getElementById('tituloFormulario');
 
+// ⭐ Referencias para la foto
+const inputFoto = document.getElementById('per_foto');
+const previewContainer = document.getElementById('preview-container');
+const previewImage = document.getElementById('preview-image');
+
+// ============================================
+// VISTA PREVIA DE LA FOTO
+// ============================================
+inputFoto.addEventListener('change', (e) => {
+    const file = e.target.files[0];
+
+    if (file) {
+        // Validar tamaño (5MB)
+        if (file.size > 10 * 1024 * 1024) {
+            Toast.fire({
+                icon: 'error',
+                title: 'La imagen no debe superar los 10MB'
+            });
+            inputFoto.value = '';
+            previewContainer.style.display = 'none';
+            return;
+        }
+
+        // Validar tipo
+        const tiposPermitidos = ['image/jpeg', 'image/jpg', 'image/png'];
+        if (!tiposPermitidos.includes(file.type)) {
+            Toast.fire({
+                icon: 'error',
+                title: 'Solo se permiten imágenes JPG o PNG'
+            });
+            inputFoto.value = '';
+            previewContainer.style.display = 'none';
+            return;
+        }
+
+        // Mostrar vista previa
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            previewImage.src = e.target.result;
+            previewContainer.style.display = 'block';
+        };
+        reader.readAsDataURL(file);
+    } else {
+        previewContainer.style.display = 'none';
+    }
+});
+
 // ============================================
 // CONFIGURACIÓN DE DATATABLE
 // ============================================
@@ -29,6 +76,29 @@ const datatable = new DataTable('#tablaPersonal', {
             title: 'No.',
             data: 'per_catalogo',
             render: (data, type, row, meta) => meta.row + 1
+        },
+        {
+            title: 'Foto',
+            data: 'per_foto',
+            orderable: false,
+            searchable: false,
+            render: (data, type, row) => {
+                if (data) {
+                    return `
+                <img src="/Escuela_BHR/public/uploads/fotos_personal/${data}" 
+                     alt="Foto" 
+                     style="width: 70px; height: 70px; object-fit: cover; border-radius: 50%; 
+                            box-shadow: 0 2px 8px rgba(0,0,0,0.2); cursor: pointer; 
+                            transition: transform 0.3s ease;"
+                     onmouseover="this.style.transform='scale(1.1)'"
+                     onmouseout="this.style.transform='scale(1)'"
+                     onclick="verFotoGrande('${data}', '${row.per_catalogo}')"
+                     onerror="this.src='/Escuela_BHR/public/img/no-foto.png'">
+            `;
+                } else {
+                    return `<i class="bi bi-person-circle" style="font-size: 70px; color: #6c757d;"></i>`;
+                }
+            }
         },
         {
             title: 'Grado y Arma',
@@ -78,7 +148,7 @@ const datatable = new DataTable('#tablaPersonal', {
                     title='Modificar persona'
                     data-per_catalogo="${row.per_catalogo}"
                     data-per_serie="${row.per_serie || ''}"
-                    data-per_nom1="${row.per_nom1}"
+                    data-per_nom1="${row.per_nom1 || ''}"
                     data-per_nom2="${row.per_nom2 || ''}"
                     data-per_ape1="${row.per_ape1}"
                     data-per_ape2="${row.per_ape2 || ''}"
@@ -94,7 +164,8 @@ const datatable = new DataTable('#tablaPersonal', {
                     data-per_tipo_doc="${row.per_tipo_doc || 'DPI'}"
                     data-per_estado="${row.per_estado}"
                     data-per_tipo="${row.per_tipo}"
-                    data-observaciones="${row.observaciones || ''}">
+                    data-observaciones="${row.observaciones || ''}"
+                    data-per_foto="${row.per_foto || ''}">
                     <i class='bi bi-pencil-square'></i>
                 </button>
                 <button class='btn btn-acciones btn-eliminar eliminar'
@@ -124,6 +195,10 @@ const mostrarFormulario = () => {
     contenedorTabla.style.display = 'none';
     tituloFormulario.textContent = 'Nueva Persona';
     formulario.reset();
+
+    // ⭐ Limpiar vista previa de foto
+    previewContainer.style.display = 'none';
+    previewImage.src = '';
 
     btnGuardar.parentElement.style.display = '';
     btnModificar.parentElement.style.display = 'none';
@@ -179,7 +254,9 @@ const guardar = async (e) => {
     }
 
     try {
+        // ⭐ Usar FormData para enviar archivos
         const body = new FormData(formulario);
+
         const url = "/Escuela_BHR/API/personal/guardar";
         const respuesta = await fetch(url, { method: 'POST', body });
         const data = await respuesta.json();
@@ -189,6 +266,7 @@ const guardar = async (e) => {
 
         if (codigo == 1) {
             formulario.reset();
+            previewContainer.style.display = 'none'; // ⭐ Limpiar vista previa
             buscar();
             ocultarFormulario();
         }
@@ -247,6 +325,14 @@ const traerDatos = (e) => {
     formulario.per_tipo.value = d.per_tipo;
     formulario.observaciones.value = d.observaciones || '';
 
+    // ⭐ Mostrar foto actual si existe
+    if (d.per_foto && d.per_foto !== 'null' && d.per_foto !== '') {
+        previewImage.src = `/Escuela_BHR/public/uploads/fotos_personal/${d.per_foto}`;
+        previewContainer.style.display = 'block';
+    } else {
+        previewContainer.style.display = 'none';
+    }
+
     // Cambiar título y mostrar formulario
     tituloFormulario.textContent = 'Modificar Persona';
     contenedorFormulario.style.display = '';
@@ -283,7 +369,9 @@ const modificar = async (e) => {
     }
 
     try {
+        // ⭐ Usar FormData para enviar archivos
         const body = new FormData(formulario);
+
         const url = "/Escuela_BHR/API/personal/modificar";
         const respuesta = await fetch(url, { method: 'POST', body });
         const data = await respuesta.json();
@@ -294,6 +382,7 @@ const modificar = async (e) => {
         if (codigo == 1) {
             formulario.reset();
             formulario.per_catalogo.removeAttribute('readonly');
+            previewContainer.style.display = 'none'; // ⭐ Limpiar vista previa
             buscar();
             ocultarFormulario();
         }
@@ -314,7 +403,7 @@ const eliminar = async (e) => {
     const confirmacion = await Swal.fire({
         icon: 'question',
         title: 'Confirmación',
-        text: '¿Está seguro de eliminar este registro?',
+        text: '¿Está seguro de eliminar este registro? La foto también será eliminada.',
         showCancelButton: true,
         confirmButtonText: '<i class="bi bi-check-circle"></i> Sí, eliminar',
         cancelButtonText: '<i class="bi bi-x-circle"></i> No, cancelar',
@@ -352,6 +441,7 @@ const eliminar = async (e) => {
 const cancelar = () => {
     formulario.reset();
     formulario.per_catalogo.removeAttribute('readonly');
+    previewContainer.style.display = 'none'; // ⭐ Limpiar vista previa
     ocultarFormulario();
 
     btnGuardar.parentElement.style.display = '';
@@ -369,6 +459,79 @@ btnCancelar.addEventListener('click', cancelar);
 // Eventos de la tabla (delegación de eventos)
 datatable.on('click', '.modificar', traerDatos);
 datatable.on('click', '.eliminar', eliminar);
+
+// Al final de src/js/personal/index.js
+
+window.verFotoGrande = (nombreFoto, catalogo) => {
+    const datos = datatable.rows().data().toArray();
+    const persona = datos.find(p => p.per_catalogo == catalogo);
+
+    if (persona) {
+        Swal.fire({
+            html: `
+                <div style="
+                    background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+                    padding: 3rem 2rem;
+                    border-radius: 20px;
+                    box-shadow: 0 15px 50px rgba(0,0,0,0.3);
+                    color: white;
+                ">
+                    <!-- Header -->
+                    <div style="text-align: center; margin-bottom: 2rem;">
+                        <h2 style="color: white; margin: 0; font-weight: 700; font-size: 1.8rem;">
+                            <i class="bi bi-shield-fill-check"></i> 
+                            Escuela de Adiestramiento de Asistencia Humanitaria y Rescate
+                        </h2>
+                        <p style="color: #ccc; margin: 0.5rem 0 0 0; font-size: 1.5rem;">
+                            Identificación Oficial
+                        </p>
+                    </div>
+                    
+                    <!-- Foto Cuadrada -->
+                    <div style="text-align: center; margin-bottom: 2rem;">
+                        <img src="/Escuela_BHR/public/uploads/fotos_personal/${nombreFoto}" 
+                             alt="Foto" 
+                             style="
+                                width: 500px; 
+                                height: 400px; 
+                                object-fit: cover; 
+                                border-radius: 15px; 
+                                border: 5px solid white;
+                                box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+                             ">
+                    </div>
+                    
+                    <!-- Nombre -->
+                    <div style="
+                        background: white;
+                        color: #1a1a1a;
+                        padding: 1.5rem;
+                        border-radius: 15px;
+                        text-align: center;
+                    ">
+                        <h3 style="
+                            margin: 0; 
+                            color: #1a1a1a;
+                            font-weight: 700;
+                            font-size: 1.5rem;
+                        ">
+                            ${persona.grado_arma}
+                            ${persona.nombre_completo}
+                        </h3>
+                    </div>
+                </div>
+            `,
+            width: 700,
+            showCloseButton: true,
+            showConfirmButton: false,
+            background: 'transparent',
+            backdrop: `rgba(0,0,0,0.85)`,
+            customClass: {
+                popup: 'no-border-modal'
+            }
+        });
+    }
+};
 
 // ============================================
 // INICIALIZACIÓN

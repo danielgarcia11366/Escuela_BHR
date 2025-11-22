@@ -376,7 +376,7 @@
                     </h3>
                 </div>
 
-                <form id="formularioPersonal" class="form-body">
+                <form id="formularioPersonal" class="form-body" enctype="multipart/form-data">
                     <!-- Fila 1: Catálogo y Serie -->
                     <div class="row mb-3">
                         <div class="col-md-6">
@@ -557,7 +557,30 @@
                         </div>
                     </div>
 
-                    <!-- Fila 11: Observaciones -->
+                    <!-- Fila 11: Foto -->
+                    <div class="row mb-3">
+                        <div class="col-md-12">
+                            <label for="per_foto" class="form-label">
+                                <i class="bi bi-camera-fill"></i> Fotografía
+                            </label>
+                            <input type="file"
+                                name="per_foto"
+                                id="per_foto"
+                                class="form-control"
+                                accept="image/jpeg,image/png,image/jpg">
+                            <small class="text-muted">Formatos permitidos: JPG, PNG (máx. 10MB)</small>
+
+                            <!-- Vista previa -->
+                            <div id="preview-container" class="mt-3" style="display:none;">
+                                <img id="preview-image"
+                                    src=""
+                                    alt="Vista previa"
+                                    style="max-width: 200px; border-radius: 10px; box-shadow: 0 4px 15px rgba(0,0,0,0.2);">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Fila 12: Observaciones (era la 11) -->
                     <div class="row mb-3">
                         <div class="col-md-12">
                             <label for="observaciones" class="form-label">
