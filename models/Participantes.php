@@ -166,40 +166,38 @@ class Participantes extends ActiveRecord
         return self::fetchArray($sql);
     }
 
+    // En models/Participantes.php
     public static function getCursosPersona($per_catalogo)
     {
         $sql = "SELECT 
-        m.per_catalogo,
-        m.per_serie,
-        CONCAT_WS(' ', m.per_nom1, m.per_nom2, m.per_ape1, m.per_ape2) AS nombre_completo,
-        CONCAT(g.gra_desc_lg, ' de ', a.arm_desc_lg) AS grado_arma,
-        c.cur_nombre AS curso_completo,
-        c.cur_nombre_corto,
-        c.cur_duracion_dias,
-        p.pro_numero,
-        p.pro_anio,
-        p.pro_fecha_inicio,
-        p.pro_fecha_fin,
-        p.pro_fecha_graduacion,
-        p.pro_lugar,
-        pa.par_calificacion,
-        pa.par_posicion,
-        pa.par_certificado_numero,
-        pa.par_certificado_fecha,
-        pa.par_estado,
-        pa.par_observaciones
-    FROM mper m
-    INNER JOIN grados g ON m.per_grado = g.gra_codigo
-    INNER JOIN armas a ON m.per_arma = a.arm_codigo
-    INNER JOIN participantes pa ON m.per_catalogo = pa.par_catalogo
-    INNER JOIN promociones p ON pa.par_promocion = p.pro_codigo
-    INNER JOIN cursos c ON p.pro_curso = c.cur_codigo
-    WHERE m.per_catalogo = " . self::$db->quote($per_catalogo) . "
-    ORDER BY p.pro_fecha_inicio DESC";
+    m.per_catalogo,
+    m.per_foto,
+    CONCAT_WS(' ', m.per_nom1, m.per_nom2, m.per_ape1, m.per_ape2) AS nombre_completo,
+    CONCAT(g.gra_desc_lg, ' de ', a.arm_desc_lg) AS grado_arma,
+
+    -- Aquí agregamos el nivel al nombre del curso
+    CONCAT(c.cur_nombre, ' - Nivel ', n.niv_nombre) AS curso_completo,
+
+    p.pro_numero,
+    p.pro_anio,
+    p.pro_fecha_inicio,
+    p.pro_fecha_fin,
+    par.par_calificacion,
+    par.par_estado
+FROM participantes par
+INNER JOIN mper m ON par.par_catalogo = m.per_catalogo
+INNER JOIN grados g ON m.per_grado = g.gra_codigo
+INNER JOIN armas a ON m.per_arma = a.arm_codigo
+INNER JOIN promociones p ON par.par_promocion = p.pro_codigo
+INNER JOIN cursos c ON p.pro_curso = c.cur_codigo
+INNER JOIN niveles n ON c.cur_nivel = n.niv_codigo
+WHERE m.per_catalogo = {$per_catalogo}
+ORDER BY p.pro_fecha_inicio DESC;";
 
         return self::fetchArray($sql);
     }
     /**
+     *
      * ✅ Obtener resumen de personal con sus cursos
      * @return array Lista de personas con total de cursos y último curso
      */

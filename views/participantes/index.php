@@ -196,12 +196,12 @@
         gap: 0.5rem;
     }
 
-    #tablaCursos {
+    #tablaParticipantes {
         border-collapse: separate;
         border-spacing: 0;
     }
 
-    #tablaCursos thead th {
+    #tablaParticipantes thead th {
         background: linear-gradient(135deg, #2d2d2d 0%, #404040 100%);
         color: white;
         font-weight: 600;
@@ -212,26 +212,26 @@
         border: none;
     }
 
-    #tablaCursos thead th:first-child {
+    #tablaParticipantes thead th:first-child {
         border-radius: 10px 0 0 0;
     }
 
-    #tablaCursos thead th:last-child {
+    #tablaParticipantes thead th:last-child {
         border-radius: 0 10px 0 0;
     }
 
-    #tablaCursos tbody tr {
+    #tablaParticipantes tbody tr {
         transition: all 0.3s ease;
         border-bottom: 1px solid #e2e8f0;
     }
 
-    #tablaCursos tbody tr:hover {
+    #tablaParticipantes tbody tr:hover {
         background: #f7fafc;
         transform: scale(1.01);
         box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
     }
 
-    #tablaCursos tbody td {
+    #tablaParticipantes tbody td {
         padding: 1rem;
         vertical-align: middle;
         color: #4a5568;
@@ -414,7 +414,7 @@
                                 <option value="">Seleccione...</option>
                                 <?php foreach ($persona as $per): ?>
                                     <option value="<?= $per['per_catalogo'] ?>">
-                                        <?= $per['grado_arma'] . ' ' . $per['nombre_completo']?>
+                                        <?= $per['grado_arma'] . ' ' . $per['nombre_completo'] ?>
                                     </option>
                                 <?php endforeach ?>
                             </select>

@@ -144,6 +144,7 @@
         box-shadow: 0 0 0 3px rgba(45, 45, 45, 0.1);
     }
 
+
     /* Tabla mejorada */
     .table-container {
         background: white;
@@ -197,12 +198,12 @@
         gap: 0.5rem;
     }
 
-    #tablaAlumnos {
+    #tablaPersonal {
         border-collapse: separate;
         border-spacing: 0;
     }
 
-    #tablaAlumnos thead th {
+    #tablaPersonal thead th {
         background: linear-gradient(135deg, #2d2d2d 0%, #404040 100%);
         color: white;
         font-weight: 600;
@@ -213,26 +214,26 @@
         border: none;
     }
 
-    #tablaAlumnos thead th:first-child {
+    #tablaPersonal thead th:first-child {
         border-radius: 10px 0 0 0;
     }
 
-    #tablaAlumnos thead th:last-child {
+    #tablaPersonal thead th:last-child {
         border-radius: 0 10px 0 0;
     }
 
-    #tablaAlumnos tbody tr {
+    #tablaPersonal tbody tr {
         transition: all 0.3s ease;
         border-bottom: 1px solid #e2e8f0;
     }
 
-    #tablaAlumnos tbody tr:hover {
+    #tablaPersonal tbody tr:hover {
         background: #f7fafc;
         transform: scale(1.01);
         box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
     }
 
-    #tablaAlumnos tbody td {
+    #tablaPersonal tbody td {
         padding: 1rem;
         vertical-align: middle;
         color: #4a5568;

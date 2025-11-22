@@ -30,7 +30,7 @@ const datatable = new DataTable('#tablaParticipantes', {
         {
             title: 'Información del Alumno',
             data: 'participante_nombre',
-            width: '40%',
+            width: '32%',
             render: (data) => {
                 // Poner en negrita el nivel (Básico, Intermedio, Avanzado)
                 return data.replace(/(Básico|Intermedio|Avanzado)/gi, '<strong>$1</strong>');
@@ -49,6 +49,7 @@ const datatable = new DataTable('#tablaParticipantes', {
         {
             title: 'Calificación',
             data: 'par_calificacion',
+            width: '10%',
             render: (data) => {
                 if (!data) return '-';
                 const nota = parseFloat(data);
@@ -75,22 +76,22 @@ const datatable = new DataTable('#tablaParticipantes', {
             orderable: false,
             searchable: false,
             render: (data, type, row) => `
-                <button class="btn btn-outline-warning modificar"
-                    data-par_codigo="${data}"
-                    data-par_promocion="${row.par_promocion}"
-                    data-par_catalogo="${row.par_catalogo}"
-                    data-par_calificacion="${row.par_calificacion}"
-                    data-par_posicion="${row.par_posicion}"
-                    data-par_estado="${row.par_estado}"
-                    data-par_certificado_numero="${row.par_certificado_numero}"
-                    data-par_certificado_fecha="${row.par_certificado_fecha}"
-                    data-par_observaciones="${row.par_observaciones || ''}">
-                    <i class="bi bi-pencil-square"></i>
-                </button>
-                <button class="btn btn-outline-danger eliminar"
-                    data-par_codigo="${data}">
-                    <i class="bi bi-trash"></i>
-                </button>
+            <button class="btn btn-acciones btn-modificar modificar"
+            data-par_codigo="${data}"
+            data-par_promocion="${row.par_promocion}"
+            data-par_catalogo="${row.par_catalogo}"
+            data-par_calificacion="${row.par_calificacion}"
+            data-par_posicion="${row.par_posicion}"
+            data-par_estado="${row.par_estado}"
+            data-par_certificado_numero="${row.par_certificado_numero}"
+            data-par_certificado_fecha="${row.par_certificado_fecha}"
+            data-par_observaciones="${row.par_observaciones || ''}">
+            <i class="bi bi-pencil-square"></i>
+            </button>
+            <button class="btn btn-acciones btn-eliminar eliminar"
+                data-par_codigo="${data}">
+                <i class="bi bi-trash"></i>
+            </button>
             `
         }
     ]

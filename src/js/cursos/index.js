@@ -40,7 +40,8 @@ const datatable = new DataTable('#tablaCursos', {
         },
         {
             title: 'Duración (días)',
-            data: 'cur_duracion_dias'
+            data: 'cur_duracion_dias',
+            width: '8%',
         },
         {
             title: 'Tipo',
@@ -48,7 +49,8 @@ const datatable = new DataTable('#tablaCursos', {
         },
         {
             title: 'Certificación',
-            data: 'cur_certificado'
+            data: 'cur_certificado',
+            width: '8%',
         },
         {
             title: 'Institución',
@@ -57,30 +59,31 @@ const datatable = new DataTable('#tablaCursos', {
         },
         {
             title: 'Acciones',
+            width: '13%',
             data: 'cur_codigo',
             searchable: false,
             orderable: false,
             render: (data, type, row) => {
                 return `
-                    <button class='btn btn-outline-warning modificar' 
-                        title='Modificar curso'
-                        data-cur_codigo="${data}" 
-                        data-cur_nombre="${row.cur_nombre}"
-                        data-cur_nombre_corto="${row.cur_nombre_corto}"
-                        data-cur_duracion_dias="${row.cur_duracion_dias}"
-                        data-cur_nivel="${row.cur_nivel}"
-                        data-cur_tipo="${row.cur_tipo}"
-                        data-cur_certificado="${row.cur_certificado}"
-                        data-cur_institucion_certifica="${row.cur_institucion_certifica}"
-                        data-cur_descripcion="${row.cur_descripcion}">
-                        <i class='bi bi-pencil-square'></i> 
-                    </button>
-                    <button class='btn btn-outline-danger eliminar' 
-                        title='Eliminar curso'
-                        data-cur_codigo="${data}">
-                        <i class='bi bi-trash'></i> 
-                    </button>
-                `;
+        <button class='btn btn-acciones btn-modificar modificar' 
+            title='Modificar curso'
+            data-cur_codigo="${data}" 
+            data-cur_nombre="${row.cur_nombre}"
+            data-cur_nombre_corto="${row.cur_nombre_corto}"
+            data-cur_duracion_dias="${row.cur_duracion_dias}"
+            data-cur_nivel="${row.cur_nivel}"
+            data-cur_tipo="${row.cur_tipo}"
+            data-cur_certificado="${row.cur_certificado}"
+            data-cur_institucion_certifica="${row.cur_institucion_certifica}"
+            data-cur_descripcion="${row.cur_descripcion}">
+            <i class='bi bi-pencil-square'></i> 
+        </button>
+        <button class='btn btn-acciones btn-eliminar eliminar' 
+            title='Eliminar curso'
+            data-cur_codigo="${data}">
+            <i class='bi bi-trash'></i> 
+        </button>
+    `;
             }
         }
 

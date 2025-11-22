@@ -47,26 +47,30 @@ const datatable = new DataTable('#tablaParticipantes', {
             }
         },
         {
-            title: 'Último Curso',
+            title: 'Último Curso Completado',
             data: 'ultimo_curso',
             width: '25%',
             render: (data) => data || '<span class="text-muted fst-italic">Sin cursos registrados</span>'
         },
         {
-            title: 'Acciones',
+            title: 'Ver Historial',
             data: 'per_catalogo',
             orderable: false,
             searchable: false,
             width: '15%',
             className: 'text-center',
             render: (data, type, row) => `
-                <button class="btn btn-primary btn-sm btn-ver-cursos" 
-                        data-catalogo="${data}"
-                        data-nombre="${row.nombre_completo}"
-                        type="button"
-                        title="Ver historial de cursos">
-                    <i class="bi bi-file-pdf-fill"></i> Ver Cursos
-                </button>
+                <button class="btn btn-warning btn-lg btn-ver-cursos"
+        data-catalogo="${data}"
+        data-nombre="${row.nombre_completo}"
+        type="button"
+        data-bs-toggle="tooltip"
+        data-bs-placement="top"
+        title="Ver historial de cursos">
+    <i class="bi bi-eye-fill"></i>  
+    <i class="bi bi-journal-text"></i>
+</button>
+
             `
         }
     ]
