@@ -5,6 +5,12 @@ if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 
+function numeroOrdinalCorto($num) {
+    // En español el ordinal corto siempre usa "°" (masculino) o "ª" (femenino)
+    return $num . '°';
+}
+
+
 function debuguear($variable)
 {
     echo "<pre>";

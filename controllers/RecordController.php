@@ -124,67 +124,67 @@ class RecordController
 
             // === ENCABEZADO CON FOTO ===
             $header = '
-        <div style="border-bottom: 3px solid #ff7b00; padding-bottom: 15px; margin-bottom: 20px;">
-            <table style="width: 100%; border-collapse: collapse;">
-                <tr>';
+    <div style="border-bottom: 3px solid #ff7b00; padding-bottom: 15px; margin-bottom: 20px;">
+        <table style="width: 100%; border-collapse: collapse;">
+            <tr>';
 
             if ($tieneFoto) {
                 $header .= '
-                    <td style="width: 25%; text-align: center; vertical-align: top; padding-right: 15px;">
-                        <img src="' . htmlspecialchars($fotoBase64) . '" 
-                             style="width: 150px; height: 150px; object-fit: cover; border-radius: 10px; border: 3px solid #ff7b00; box-shadow: 0 4px 10px rgba(0,0,0,0.2);">
-                    </td>';
+                <td style="width: 25%; text-align: center; vertical-align: top; padding-right: 15px;">
+                    <img src="' . htmlspecialchars($fotoBase64) . '" 
+                         style="width: 150px; height: 150px; object-fit: cover; border-radius: 10px; border: 3px solid #ff7b00; box-shadow: 0 4px 10px rgba(0,0,0,0.2);">
+                </td>';
             }
 
             $header .= '
-                    <td style="' . ($tieneFoto ? 'width: 75%;' : 'width: 100%;') . ' text-align: center; vertical-align: bottom; padding-bottom: 10px;">
-                        <h2 style="color: #111111; margin: 0; font-size: 22px; font-weight: 600; line-height: 1.4;">
-                            ESCUELA DE ADIESTRAMIENTO DE ASISTENCIA HUMANITARIA Y DE RESCATE
-                        </h2>
-                        <br>
-                        <h1 style="color: #ff7b00; margin: 0 0 5px 0; font-size: 20px; font-weight: bold;">
-                            HISTORIAL DE CURSOS
-                        </h1>
-                        <br>
-                        <h1 style="color: #111111; margin: 0 0 5px 0; font-size: 20px; font-weight: bold;">
-                            ' . strtoupper(htmlspecialchars($datosPersona['grado_arma'])) . '
-                        </h1>
-                        <h1 style="color: #111111; margin: 0 0 10px 0; font-size: 20px; font-weight: bold;">
-                            ' . strtoupper(htmlspecialchars($datosPersona['nombre_completo'])) . '
-                        </h1>
-                    </td>
-                </tr>
-            </table>
-        </div>';
+                <td style="' . ($tieneFoto ? 'width: 75%;' : 'width: 100%;') . ' text-align: center; vertical-align: bottom; padding-bottom: 10px;">
+                    <h2 style="color: #111111; margin: 0; font-size: 22px; font-weight: 600; line-height: 1.4;">
+                        ESCUELA DE ADIESTRAMIENTO DE ASISTENCIA HUMANITARIA Y DE RESCATE
+                    </h2>
+                    <br>
+                    <h1 style="color: #ff7b00; margin: 0 0 5px 0; font-size: 20px; font-weight: bold;">
+                        HISTORIAL DE CURSOS
+                    </h1>
+                    <br>
+                    <h1 style="color: #111111; margin: 0 0 5px 0; font-size: 20px; font-weight: bold;">
+                        ' . strtoupper(htmlspecialchars($datosPersona['grado_arma'])) . '
+                    </h1>
+                    <h1 style="color: #111111; margin: 0 0 10px 0; font-size: 20px; font-weight: bold;">
+                        ' . strtoupper(htmlspecialchars($datosPersona['nombre_completo'])) . '
+                    </h1>
+                </td>
+            </tr>
+        </table>
+    </div>';
 
             // === INFORMACIÓN DE LA PERSONA ===
             $infoPersona = '
-        <div style="background: #f8f9fa; border: 2px solid #ff7b00; border-radius: 8px; padding: 15px; margin-bottom: 20px;">
-            <table style="width: 100%; font-size: 15px;">
-                <tr>
-                    <td style="padding: 5px; width: 25%;"><strong>Catálogo:</strong></td>
-                    <td style="padding: 5px;">' . htmlspecialchars($datosPersona['per_catalogo']) . '</td>
-                    <td style="padding: 5px; width: 25%;"><strong>Total de Cursos:</strong></td>
-                    <td style="padding: 5px;">' . count($persona) . '</td>
-                </tr>
-            </table>
-        </div>';
+    <div style="background: #f8f9fa; border: 2px solid #ff7b00; border-radius: 8px; padding: 15px; margin-bottom: 20px;">
+        <table style="width: 100%; font-size: 15px;">
+            <tr>
+                <td style="padding: 5px; width: 25%;"><strong>Catálogo:</strong></td>
+                <td style="padding: 5px;">' . htmlspecialchars($datosPersona['per_catalogo']) . '</td>
+                <td style="padding: 5px; width: 25%;"><strong>Total de Cursos:</strong></td>
+                <td style="padding: 5px;">' . count($persona) . '</td>
+            </tr>
+        </table>
+    </div>';
 
             // === TABLA DE CURSOS ===
             $tabla = '
-        <table style="width: 100%; border-collapse: collapse; font-size: 13px; margin-top: 10px;">
-            <thead>
-                <tr style="background: linear-gradient(135deg, #ff8400ff 0%, #197f00ff 100%); color: white;">
-                    <th style="border: 1px solid #ddd; padding: 8px; text-align: center; width: 7%;">No.</th>
-                    <th style="border: 1px solid #ddd; padding: 8px; text-align: left; width: 30%;">Curso</th>
-                    <th style="border: 1px solid #ddd; padding: 8px; text-align: center; width: 14%;">Promoción</th>
-                    <th style="border: 1px solid #ddd; padding: 8px; text-align: center; width: 12%;">Inicio</th>
-                    <th style="border: 1px solid #ddd; padding: 8px; text-align: center; width: 12%;">Fin</th>
-                    <th style="border: 1px solid #ddd; padding: 8px; text-align: center; width: 10%;">Calific.</th>
-                    <th style="border: 1px solid #ddd; padding: 8px; text-align: center; width: 11%;">Estado</th>
-                </tr>
-            </thead>
-            <tbody>';
+    <table style="width: 100%; border-collapse: collapse; font-size: 13px; margin-top: 10px;">
+        <thead>
+            <tr style="background: linear-gradient(135deg, #ff8400ff 0%, #197f00ff 100%); color: white;">
+                <th style="border: 1px solid #ddd; padding: 8px; text-align: center; width: 7%;">No.</th>
+                <th style="border: 1px solid #ddd; padding: 8px; text-align: left; width: 30%;">Curso</th>
+                <th style="border: 1px solid #ddd; padding: 8px; text-align: center; width: 12%;">Promoción</th>
+                <th style="border: 1px solid #ddd; padding: 8px; text-align: center; width: 16%;">Fecha Graduación</th>
+                <th style="border: 1px solid #ddd; padding: 8px; text-align: center; width: 12%;">Calific.</th>
+                <th style="border: 1px solid #ddd; padding: 8px; text-align: center; width: 12%;">Puesto</th>
+                <th style="border: 1px solid #ddd; padding: 8px; text-align: center; width: 11%;">Estado</th>
+            </tr>
+        </thead>
+        <tbody>';
 
             $contador = 1;
             foreach ($persona as $curso) {
@@ -193,29 +193,42 @@ class RecordController
                 $fechaFin = date('d/m/Y', strtotime($curso['pro_fecha_fin']));
                 $calificacion = $curso['par_calificacion'] ?? '-';
 
-                $calColor = '#6c757d';
-                if ($calificacion !== '-' && $calificacion !== null) {
-                    $calNum = floatval($calificacion);
-                    if ($calNum >= 90) $calColor = '#28a745';
-                    elseif ($calNum >= 80) $calColor = '#007bff';
-                    elseif ($calNum >= 70) $calColor = '#ffc107';
-                    else $calColor = '#dc3545';
-                }
+                // Calificación: siempre en negro
+                $calColor = '#000000';
 
                 $estadoMap = ['G' => 'Graduado', 'C' => 'Cursando', 'R' => 'Retirado', 'D' => 'Desertor'];
                 $estado = $estadoMap[$curso['par_estado']] ?? $curso['par_estado'];
 
+                // --- Puesto: ordinal corto + color (1-3 dorado, 4+ azul)
+                $puesto = $curso['puesto_obtenido'] ?? null;
+                $puestoTexto = '-';
+                $puestoColor = '#0000ff'; // azul por defecto para puestos (4+ o sin puesto)
+
+                if (!empty($puesto) && is_numeric($puesto)) {
+                    $puestoNum = intval($puesto);
+                    $puestoTexto = numeroOrdinalCorto($puestoNum);
+
+                    if ($puestoNum >= 1 && $puestoNum <= 3) {
+                        $puestoColor = '#d4af37'; // dorado
+                    } else {
+                        $puestoColor = '#0000ff'; // azul
+                    }
+                }
+
                 $tabla .= '
-            <tr style="background: ' . $bgColor . ';">
-                <td style="border: 1px solid #ddd; padding: 6px; text-align: center; font-weight: bold;">' . $contador . '</td>
-                <td style="border: 1px solid #ddd; padding: 6px;">' . htmlspecialchars(substr($curso['curso_completo'], 0, 60)) . '</td>
-                <td style="border: 1px solid #ddd; padding: 6px; text-align: center;">' . htmlspecialchars($curso['pro_numero'] . ' ' . $curso['pro_anio']) . '</td>
-                <td style="border: 1px solid #ddd; padding: 6px; text-align: center;">' . $fechaInicio . '</td>
-                <td style="border: 1px solid #ddd; padding: 6px; text-align: center;">' . $fechaFin . '</td>
-                <td style="border: 1px solid #ddd; padding: 6px; text-align: center; font-weight: bold; color: ' . $calColor . ';">' .
+        <tr style="background: ' . $bgColor . ';">
+            <td style="border: 1px solid #ddd; padding: 6px; text-align: center; font-weight: bold;">' . $contador . '</td>
+            <td style="border: 1px solid #ddd; padding: 6px; font-weight:bold;">' . htmlspecialchars(substr($curso['curso_completo'], 0, 60)) . '</td>
+            <td style="border: 1px solid #ddd; padding: 6px; text-align: center;">' . htmlspecialchars($curso['pro_numero'] . ' ' . $curso['pro_anio']) . '</td>
+            <td style="border: 1px solid #ddd; padding: 6px; text-align: center;">' . $fechaFin . '</td>
+            <td style="border: 1px solid #ddd; padding: 6px; text-align: center; font-weight: bold; color: ' . $calColor . ';">' .
                     ($calificacion !== '-' ? number_format(floatval($calificacion), 2) : '-') . '</td>
-                <td style="border: 1px solid #ddd; padding: 6px; text-align: center;">' . $estado . '</td>
-            </tr>';
+            <td style="border: 1px solid #ddd; padding: 6px; text-align: center; font-weight: bold; color: ' . $puestoColor . ';">' .
+                    htmlspecialchars($puestoTexto) .
+                    ' Lugar</td>
+            <td style="border: 1px solid #ddd; padding: 6px; text-align: center;">' . $estado . '</td>
+        </tr>';
+
                 $contador++;
             }
             $tabla .= '</tbody></table>';
@@ -223,14 +236,14 @@ class RecordController
             $fechaGeneracion = date('d/m/Y H:i:s');
             $nombreUsuario = $_SESSION['user']['usu_nombre'] ?? 'Sistema';
             $footer = '
-        <div style="margin-top: 20px; padding-top: 10px; border-top: 2px solid #ddd; font-size: 9px; color: #666;">
-            <table style="width: 100%;">
-                <tr>
-                    <td style="text-align: left;">Generado el: ' . $fechaGeneracion . '</td>
-                    <td style="text-align: right;">Usuario: ' . htmlspecialchars($nombreUsuario) . '</td>
-                </tr>
-            </table>
-        </div>';
+    <div style="margin-top: 20px; padding-top: 10px; border-top: 2px solid #ddd; font-size: 9px; color: #666;">
+        <table style="width: 100%;">
+            <tr>
+                <td style="text-align: left;">Generado el: ' . $fechaGeneracion . '</td>
+                <td style="text-align: right;">Usuario: ' . htmlspecialchars($nombreUsuario) . '</td>
+            </tr>
+        </table>
+    </div>';
 
             $html = $header . $infoPersona . $tabla . $footer;
             $mpdf->WriteHTML($html);

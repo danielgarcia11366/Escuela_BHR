@@ -356,7 +356,7 @@ class PromocionesController
 
                 // Color según calificación
                 $calificacion = $part['par_calificacion'] ?? '';
-                $calColor = '#6c757d';
+                $calColor = '##000000';
                 if ($calificacion !== '' && $calificacion !== null) {
                     $calNum = floatval($calificacion);
                     if ($calNum >= 90) $calColor = '#28a745';

@@ -277,6 +277,7 @@ class Participantes extends ActiveRecord
     p.pro_fecha_inicio,
     p.pro_fecha_fin,
     par.par_calificacion,
+    par.par_posicion AS puesto_obtenido,   -- << AQUI ESTÁ EL PUESTO
     par.par_estado
 FROM participantes par
 INNER JOIN mper m ON par.par_catalogo = m.per_catalogo
@@ -286,7 +287,7 @@ INNER JOIN promociones p ON par.par_promocion = p.pro_codigo
 INNER JOIN cursos c ON p.pro_curso = c.cur_codigo
 INNER JOIN niveles n ON c.cur_nivel = n.niv_codigo
 WHERE m.per_catalogo = {$per_catalogo}
-ORDER BY p.pro_fecha_inicio DESC;";
+ORDER BY p.pro_fecha_inicio DESC";
 
         return self::fetchArray($sql);
     }
