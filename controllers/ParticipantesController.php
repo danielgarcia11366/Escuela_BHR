@@ -13,7 +13,6 @@ class ParticipantesController
 {
     public static function index(Router $router)
     {
-        // ⭐ PROTEGER LA VISTA
         isAuth();
         hasPermission(['ADMINISTRADOR']);
 
@@ -26,16 +25,55 @@ class ParticipantesController
         ]);
     }
 
+    /**
+     * 🆕 API PARA CALCULAR POSICIÓN ESTIMADA (Frontend en tiempo real)
+     */
+    public static function calcularPosicionAPI()
+    {
+        isAuthApi();
+        hasPermissionApi(['ADMINISTRADOR', 'INSTRUCTOR']);
+        
+        header('Content-Type: application/json; charset=UTF-8');
+
+        try {
+            $promocion = $_POST['par_promocion'] ?? null;
+            $calificacion = $_POST['par_calificacion'] ?? null;
+
+            if (empty($promocion) || empty($calificacion)) {
+                echo json_encode([
+                    'codigo' => 0,
+                    'mensaje' => 'Faltan datos para calcular la posición'
+                ], JSON_UNESCAPED_UNICODE);
+                return;
+            }
+
+            $resultado = Participantes::obtenerPosicionEstimada($promocion, $calificacion);
+
+            echo json_encode([
+                'codigo' => 1,
+                'mensaje' => 'Posición calculada',
+                'datos' => $resultado
+            ], JSON_UNESCAPED_UNICODE);
+
+        } catch (Exception $e) {
+            http_response_code(500);
+            echo json_encode([
+                'codigo' => 0,
+                'mensaje' => 'Error al calcular posición',
+                'detalle' => $e->getMessage()
+            ], JSON_UNESCAPED_UNICODE);
+        }
+    }
+
     public static function guardarAPI()
     {
-        // ⭐ PROTEGER LA API
         isAuthApi();
         hasPermissionApi(['ADMINISTRADOR']);
 
         header('Content-Type: application/json; charset=UTF-8');
 
         try {
-            // ✅ Validación 1: Campos requeridos
+            // Validación 1: Campos requeridos
             if (empty($_POST['par_promocion']) || empty($_POST['par_catalogo'])) {
                 echo json_encode([
                     'codigo' => 0,
@@ -45,43 +83,30 @@ class ParticipantesController
                 return;
             }
 
-            // ✅ Validación 2: Alumno ya registrado en la promoción
+            // Validación 2: Alumno ya registrado en la promoción
             if (Participantes::existeEnPromocion($_POST['par_catalogo'], $_POST['par_promocion'])) {
                 echo json_encode([
                     'codigo' => 0,
-                    'mensaje' => 'Este alumno ya está registrado en esta promoción. No puede estar inscrito dos veces en el mismo curso.',
+                    'mensaje' => 'Este alumno ya está registrado en esta promoción.',
                     'campo' => 'par_catalogo'
                 ], JSON_UNESCAPED_UNICODE);
                 return;
             }
 
-            // ✅ Validación 3: Número de certificado duplicado
+            // Validación 3: Número de certificado duplicado
             if (
                 !empty($_POST['par_certificado_numero']) &&
                 Participantes::existeCertificado($_POST['par_certificado_numero'])
             ) {
                 echo json_encode([
                     'codigo' => 0,
-                    'mensaje' => 'El número de certificado ya existe. Por favor ingresa uno diferente.',
+                    'mensaje' => 'El número de certificado ya existe.',
                     'campo' => 'par_certificado_numero'
                 ], JSON_UNESCAPED_UNICODE);
                 return;
             }
 
-            // ✅ Validación 4: Posición duplicada en la promoción
-            if (
-                !empty($_POST['par_posicion']) &&
-                Participantes::existePosicionEnPromocion($_POST['par_promocion'], $_POST['par_posicion'])
-            ) {
-                echo json_encode([
-                    'codigo' => 0,
-                    'mensaje' => 'Esta posición ya está ocupada por otro alumno en esta promoción.',
-                    'campo' => 'par_posicion'
-                ], JSON_UNESCAPED_UNICODE);
-                return;
-            }
-
-            // ✅ Validación 5: Calificación en rango válido
+            // Validación 4: Calificación en rango válido
             if (!empty($_POST['par_calificacion'])) {
                 $calificacion = floatval($_POST['par_calificacion']);
                 if ($calificacion < 0 || $calificacion > 100) {
@@ -94,20 +119,7 @@ class ParticipantesController
                 }
             }
 
-            // ✅ Validación 6: Posición debe ser positiva
-            if (!empty($_POST['par_posicion'])) {
-                $posicion = intval($_POST['par_posicion']);
-                if ($posicion < 1) {
-                    echo json_encode([
-                        'codigo' => 0,
-                        'mensaje' => 'La posición debe ser un número mayor a 0.',
-                        'campo' => 'par_posicion'
-                    ], JSON_UNESCAPED_UNICODE);
-                    return;
-                }
-            }
-
-            // ✅ Validación 7: Fecha de certificado no puede ser futura
+            // Validación 5: Fecha de certificado no puede ser futura
             if (!empty($_POST['par_certificado_fecha'])) {
                 $fecha_cert = strtotime($_POST['par_certificado_fecha']);
                 $fecha_hoy = strtotime(date('Y-m-d'));
@@ -115,37 +127,48 @@ class ParticipantesController
                 if ($fecha_cert > $fecha_hoy) {
                     echo json_encode([
                         'codigo' => 0,
-                        'mensaje' => 'La fecha del certificado no puede ser posterior a la fecha actual.',
+                        'mensaje' => 'La fecha del certificado no puede ser futura.',
                         'campo' => 'par_certificado_fecha'
                     ], JSON_UNESCAPED_UNICODE);
                     return;
                 }
             }
 
-            // Si todas las validaciones pasan, guardar
+            // 🆕 CALCULAR POSICIÓN AUTOMÁTICA (si hay calificación)
+            if (!empty($_POST['par_calificacion'])) {
+                $_POST['par_posicion'] = Participantes::calcularPosicionAutomatica(
+                    $_POST['par_promocion'],
+                    $_POST['par_calificacion']
+                );
+            } else {
+                $_POST['par_posicion'] = null; // Sin calificación = sin posición
+            }
+
+            // Guardar participante
             $participante = new Participantes($_POST);
             $resultado = $participante->crear();
+
+            // 🆕 RECALCULAR TODAS LAS POSICIONES DE LA PROMOCIÓN
+            Participantes::recalcularPosicionesPromocion($_POST['par_promocion']);
 
             echo json_encode([
                 'codigo' => 1,
                 'mensaje' => 'Participante registrado exitosamente',
-                'debug' => $resultado
+                'posicion_asignada' => $_POST['par_posicion']
             ], JSON_UNESCAPED_UNICODE);
+
         } catch (Throwable $e) {
             http_response_code(500);
             echo json_encode([
                 'codigo' => 0,
                 'mensaje' => 'Error al guardar participante',
-                'error' => $e->getMessage(),
-                'linea' => $e->getLine(),
-                'archivo' => $e->getFile()
+                'error' => $e->getMessage()
             ], JSON_UNESCAPED_UNICODE);
         }
     }
 
     public static function buscarAPI()
     {
-        // ⭐ PROTEGER LA API
         isAuthApi();
         hasPermissionApi(['ADMINISTRADOR', 'INSTRUCTOR']);
 
@@ -158,7 +181,6 @@ class ParticipantesController
             echo json_encode([
                 'codigo' => 1,
                 'mensaje' => 'Datos encontrados',
-                'detalle' => '',
                 'datos' => $participantes
             ], JSON_UNESCAPED_UNICODE);
         } catch (Exception $e) {
@@ -173,7 +195,6 @@ class ParticipantesController
 
     public static function buscarPersonalAPI()
     {
-        // ⭐ PROTEGER LA API
         isAuthApi();
         hasPermissionApi(['ADMINISTRADOR', 'INSTRUCTOR']);
 
@@ -200,7 +221,6 @@ class ParticipantesController
 
     public static function modificarAPI()
     {
-        // ⭐ PROTEGER LA API
         isAuthApi();
         hasPermissionApi(['ADMINISTRADOR']);
 
@@ -229,9 +249,8 @@ class ParticipantesController
                 return;
             }
 
-            // ✅ MISMAS VALIDACIONES QUE EN GUARDAR, pero excluyendo el registro actual
-
-            // Validación 1: Campos requeridos
+            // VALIDACIONES (mismas que en guardar, excluyendo el registro actual)
+            
             if (empty($_POST['par_promocion']) || empty($_POST['par_catalogo'])) {
                 echo json_encode([
                     'codigo' => 0,
@@ -241,7 +260,6 @@ class ParticipantesController
                 return;
             }
 
-            // Validación 2: Alumno ya registrado en la promoción (excluyendo este registro)
             if (Participantes::existeEnPromocion($_POST['par_catalogo'], $_POST['par_promocion'], $id)) {
                 echo json_encode([
                     'codigo' => 0,
@@ -251,7 +269,6 @@ class ParticipantesController
                 return;
             }
 
-            // Validación 3: Número de certificado duplicado (excluyendo este registro)
             if (
                 !empty($_POST['par_certificado_numero']) &&
                 Participantes::existeCertificado($_POST['par_certificado_numero'], $id)
@@ -264,20 +281,6 @@ class ParticipantesController
                 return;
             }
 
-            // Validación 4: Posición duplicada (excluyendo este registro)
-            if (
-                !empty($_POST['par_posicion']) &&
-                Participantes::existePosicionEnPromocion($_POST['par_promocion'], $_POST['par_posicion'], $id)
-            ) {
-                echo json_encode([
-                    'codigo' => 0,
-                    'mensaje' => 'Esta posición ya está ocupada por otro alumno.',
-                    'campo' => 'par_posicion'
-                ], JSON_UNESCAPED_UNICODE);
-                return;
-            }
-
-            // Validación 5: Calificación válida
             if (!empty($_POST['par_calificacion'])) {
                 $calificacion = floatval($_POST['par_calificacion']);
                 if ($calificacion < 0 || $calificacion > 100) {
@@ -290,20 +293,6 @@ class ParticipantesController
                 }
             }
 
-            // Validación 6: Posición positiva
-            if (!empty($_POST['par_posicion'])) {
-                $posicion = intval($_POST['par_posicion']);
-                if ($posicion < 1) {
-                    echo json_encode([
-                        'codigo' => 0,
-                        'mensaje' => 'La posición debe ser mayor a 0.',
-                        'campo' => 'par_posicion'
-                    ], JSON_UNESCAPED_UNICODE);
-                    return;
-                }
-            }
-
-            // Validación 7: Fecha del certificado
             if (!empty($_POST['par_certificado_fecha'])) {
                 $fecha_cert = strtotime($_POST['par_certificado_fecha']);
                 $fecha_hoy = strtotime(date('Y-m-d'));
@@ -318,22 +307,30 @@ class ParticipantesController
                 }
             }
 
-            // Limpiar valores vacíos
-            $_POST['par_calificacion'] = $_POST['par_calificacion'] ?? null;
-            $_POST['par_posicion'] = $_POST['par_posicion'] ?? null;
-            $_POST['par_certificado_numero'] = htmlspecialchars($_POST['par_certificado_numero'] ?? '');
-            $_POST['par_certificado_fecha'] = $_POST['par_certificado_fecha'] ?? null;
-            $_POST['par_estado'] = $_POST['par_estado'] ?? 'C';
-            $_POST['par_observaciones'] = htmlspecialchars($_POST['par_observaciones'] ?? '');
+            // 🆕 RECALCULAR POSICIÓN (si hay calificación)
+            if (!empty($_POST['par_calificacion'])) {
+                $_POST['par_posicion'] = Participantes::calcularPosicionAutomatica(
+                    $_POST['par_promocion'],
+                    $_POST['par_calificacion'],
+                    $id // Excluir este registro del cálculo
+                );
+            } else {
+                $_POST['par_posicion'] = null;
+            }
 
             $participante->sincronizar($_POST);
-            $resultado = $participante->actualizar();
+            $participante->actualizar();
+
+            // 🆕 RECALCULAR TODAS LAS POSICIONES
+            Participantes::recalcularPosicionesPromocion($_POST['par_promocion']);
 
             http_response_code(200);
             echo json_encode([
                 'codigo' => 1,
                 'mensaje' => 'Participante modificado exitosamente',
+                'posicion_asignada' => $_POST['par_posicion']
             ], JSON_UNESCAPED_UNICODE);
+
         } catch (Exception $e) {
             http_response_code(500);
             echo json_encode([
@@ -346,7 +343,6 @@ class ParticipantesController
 
     public static function eliminarAPI()
     {
-        // ⭐ PROTEGER LA API
         isAuthApi();
         hasPermissionApi(['ADMINISTRADOR']);
 
@@ -375,13 +371,20 @@ class ParticipantesController
                 return;
             }
 
+            // Guardar el ID de la promoción antes de eliminar
+            $promocion_id = $participante->par_promocion;
+
             $participante->eliminar();
+
+            // 🆕 RECALCULAR POSICIONES después de eliminar
+            Participantes::recalcularPosicionesPromocion($promocion_id);
 
             http_response_code(200);
             echo json_encode([
                 'codigo' => 1,
                 'mensaje' => 'Participante eliminado exitosamente',
             ], JSON_UNESCAPED_UNICODE);
+
         } catch (Exception $e) {
             http_response_code(500);
             echo json_encode([

@@ -84,6 +84,7 @@ $router->post('/API/participantes/guardar', [ParticipantesController::class, 'gu
 $router->post('/API/participantes/modificar', [ParticipantesController::class, 'modificarAPI']);
 $router->post('/API/participantes/eliminar', [ParticipantesController::class, 'eliminarAPI']);
 $router->get('/API/participantes/buscarPersonal', [ParticipantesController::class, 'buscarPersonalAPI']);
+$router->post('/API/participantes/calcular-posicion', [ParticipantesController::class, 'calcularPosicionAPI']);
 
 // Comprueba y valida las rutas, que existan y les asigna las funciones del Controlador
 $router->comprobarRutas();

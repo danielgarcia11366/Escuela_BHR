@@ -47,10 +47,6 @@ class Participantes extends ActiveRecord
 
     /**
      * ✅ Validar que un alumno no esté ya registrado en una promoción
-     * @param int $catalogo - Catálogo del alumno
-     * @param int $promocion - ID de la promoción
-     * @param int|null $excluir_id - ID del registro a excluir (para modificaciones)
-     * @return bool - true si ya existe, false si no existe
      */
     public static function existeEnPromocion($catalogo, $promocion, $excluir_id = null)
     {
@@ -68,14 +64,11 @@ class Participantes extends ActiveRecord
 
     /**
      * ✅ Validar que el número de certificado sea único
-     * @param string $numero_certificado - Número del certificado
-     * @param int|null $excluir_id - ID del registro a excluir (para modificaciones)
-     * @return bool - true si ya existe, false si no existe
      */
     public static function existeCertificado($numero_certificado, $excluir_id = null)
     {
         if (empty(trim($numero_certificado))) {
-            return false; // Si no hay certificado, no validamos
+            return false;
         }
 
         $numero_certificado = self::$db->quote($numero_certificado);
@@ -91,28 +84,135 @@ class Participantes extends ActiveRecord
     }
 
     /**
-     * ✅ Validar que la posición no esté ocupada en la promoción
+     * 🆕 CALCULAR POSICIÓN AUTOMÁTICA BASADA EN CALIFICACIÓN
+     * Retorna la posición que le corresponde según su nota
+     * 
      * @param int $promocion - ID de la promoción
-     * @param int $posicion - Número de posición
-     * @param int|null $excluir_id - ID del registro a excluir (para modificaciones)
-     * @return bool - true si ya existe, false si no existe
+     * @param float $calificacion - Calificación del alumno
+     * @param int|null $excluir_id - ID del participante a excluir (para modificaciones)
+     * @return int - Posición calculada
      */
-    public static function existePosicionEnPromocion($promocion, $posicion, $excluir_id = null)
+    public static function calcularPosicionAutomatica($promocion, $calificacion, $excluir_id = null)
     {
-        if (empty($posicion)) {
-            return false; // Si no hay posición, no validamos
+        if (empty($calificacion)) {
+            return null;
         }
 
-        $sql = "SELECT par_codigo FROM " . static::$tabla . " 
+        $sql = "SELECT COUNT(*) + 1 as posicion 
+                FROM " . static::$tabla . " 
                 WHERE par_promocion = " . intval($promocion) . " 
-                AND par_posicion = " . intval($posicion);
+                AND par_calificacion IS NOT NULL 
+                AND par_calificacion > " . floatval($calificacion);
 
         if ($excluir_id) {
             $sql .= " AND par_codigo != " . intval($excluir_id);
         }
 
         $resultado = self::fetchFirst($sql);
-        return !empty($resultado);
+        return $resultado['posicion'] ?? 1;
+    }
+
+    /**
+     * 🆕 RECALCULAR TODAS LAS POSICIONES DE UNA PROMOCIÓN
+     * Se ejecuta después de guardar/modificar/eliminar
+     * 
+     * @param int $promocion - ID de la promoción
+     * @return bool - true si se actualizó correctamente
+     */
+    public static function recalcularPosicionesPromocion($promocion)
+    {
+        try {
+            // Obtener todos los participantes con calificación ordenados por nota DESC
+            $sql = "SELECT par_codigo, par_calificacion 
+                    FROM " . static::$tabla . " 
+                    WHERE par_promocion = " . intval($promocion) . " 
+                    AND par_calificacion IS NOT NULL 
+                    ORDER BY par_calificacion DESC, par_codigo ASC";
+
+            $participantes = self::fetchArray($sql);
+
+            if (empty($participantes)) {
+                return true; // No hay participantes con calificación
+            }
+
+            // Asignar posiciones considerando empates
+            $posicion = 1;
+            $calificacion_anterior = null;
+            $contador = 0;
+
+            foreach ($participantes as $participante) {
+                $contador++;
+
+                // Si la calificación es diferente a la anterior, actualizar posición
+                if ($calificacion_anterior !== $participante['par_calificacion']) {
+                    $posicion = $contador;
+                }
+
+                // Actualizar la posición en la base de datos
+                $update_sql = "UPDATE " . static::$tabla . " 
+                               SET par_posicion = {$posicion} 
+                               WHERE par_codigo = " . intval($participante['par_codigo']);
+
+                self::$db->query($update_sql);
+
+                $calificacion_anterior = $participante['par_calificacion'];
+            }
+
+            // Limpiar posiciones de participantes sin calificación
+            $limpiar_sql = "UPDATE " . static::$tabla . " 
+                           SET par_posicion = NULL 
+                           WHERE par_promocion = " . intval($promocion) . " 
+                           AND par_calificacion IS NULL";
+
+            self::$db->query($limpiar_sql);
+
+            return true;
+        } catch (\Exception $e) {
+            error_log("Error al recalcular posiciones: " . $e->getMessage());
+            return false;
+        }
+    }
+
+    /**
+     * 🆕 OBTENER POSICIÓN ESTIMADA (para mostrar en frontend antes de guardar)
+     * 
+     * @param int $promocion - ID de la promoción
+     * @param float $calificacion - Calificación propuesta
+     * @return array - ['posicion' => int, 'total_participantes' => int]
+     */
+    public static function obtenerPosicionEstimada($promocion, $calificacion)
+    {
+        if (empty($calificacion)) {
+            return [
+                'posicion' => null,
+                'total_participantes' => 0,
+                'mensaje' => 'Ingrese una calificación para calcular la posición'
+            ];
+        }
+
+        // Contar cuántos tienen mejor nota
+        $sql_posicion = "SELECT COUNT(*) + 1 as posicion 
+                        FROM " . static::$tabla . " 
+                        WHERE par_promocion = " . intval($promocion) . " 
+                        AND par_calificacion > " . floatval($calificacion);
+
+        // Contar total de participantes con calificación
+        $sql_total = "SELECT COUNT(*) as total 
+                     FROM " . static::$tabla . " 
+                     WHERE par_promocion = " . intval($promocion) . " 
+                     AND par_calificacion IS NOT NULL";
+
+        $posicion_data = self::fetchFirst($sql_posicion);
+        $total_data = self::fetchFirst($sql_total);
+
+        $posicion = $posicion_data['posicion'] ?? 1;
+        $total = $total_data['total'] ?? 0;
+
+        return [
+            'posicion' => $posicion,
+            'total_participantes' => $total + 1, // +1 porque se incluirá este nuevo
+            'mensaje' => "Este alumno quedaría en el lugar #{$posicion} de " . ($total + 1) . " participantes"
+        ];
     }
 
     public static function obtenerParticipantes()
@@ -121,7 +221,6 @@ class Participantes extends ActiveRecord
         p.par_codigo,
         p.par_promocion,
         p.par_catalogo,
-        -- Información de promoción con nivel del curso
         CONCAT(
             pr.pro_numero, ' ', 
             pr.pro_anio, ' - ', 
@@ -131,7 +230,6 @@ class Participantes extends ActiveRecord
         c.cur_nombre_corto AS curso_corto,
         c.cur_nombre AS curso_nombre,
         IFNULL(n.niv_nombre, 'Sin nivel') AS nivel_curso,
-        -- Nombre completo del participante
         CONCAT(
             g.gra_desc_lg, ' de ', 
             a.arm_desc_lg, ' ', 
@@ -166,7 +264,6 @@ class Participantes extends ActiveRecord
         return self::fetchArray($sql);
     }
 
-    // En models/Participantes.php
     public static function getCursosPersona($per_catalogo)
     {
         $sql = "SELECT 
@@ -174,10 +271,7 @@ class Participantes extends ActiveRecord
     m.per_foto,
     CONCAT_WS(' ', m.per_nom1, m.per_nom2, m.per_ape1, m.per_ape2) AS nombre_completo,
     CONCAT(g.gra_desc_lg, ' de ', a.arm_desc_lg) AS grado_arma,
-
-    -- Aquí agregamos el nivel al nombre del curso
     CONCAT(c.cur_nombre, ' - Nivel ', n.niv_nombre) AS curso_completo,
-
     p.pro_numero,
     p.pro_anio,
     p.pro_fecha_inicio,
@@ -196,11 +290,7 @@ ORDER BY p.pro_fecha_inicio DESC;";
 
         return self::fetchArray($sql);
     }
-    /**
-     *
-     * ✅ Obtener resumen de personal con sus cursos
-     * @return array Lista de personas con total de cursos y último curso
-     */
+
     public static function obtenerResumenPersonal()
     {
         $sql = "SELECT 
@@ -227,11 +317,7 @@ ORDER BY p.pro_fecha_inicio DESC;";
 
         return self::fetchArray($sql);
     }
-    /**
-     * Contar total de cursos de una persona
-     * @param int $per_catalogo
-     * @return int Cantidad de cursos
-     */
+
     public static function contarCursosPersona($per_catalogo)
     {
         $sql = "SELECT COUNT(*) as total
