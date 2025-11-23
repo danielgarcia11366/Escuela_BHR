@@ -85,6 +85,8 @@ $router->post('/API/participantes/modificar', [ParticipantesController::class, '
 $router->post('/API/participantes/eliminar', [ParticipantesController::class, 'eliminarAPI']);
 $router->get('/API/participantes/buscarPersonal', [ParticipantesController::class, 'buscarPersonalAPI']);
 $router->post('/API/participantes/calcular-posicion', [ParticipantesController::class, 'calcularPosicionAPI']);
+// API para verificar si un curso emite certificación
+$router->post('/API/participantes/verificar-certificacion', [ParticipantesController::class, 'verificarCertificacionAPI']);
 
 // Comprueba y valida las rutas, que existan y les asigna las funciones del Controlador
 $router->comprobarRutas();

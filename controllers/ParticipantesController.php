@@ -6,6 +6,7 @@ use Exception;
 use Model\Participantes;
 use Model\Personal;
 use Model\Promociones;
+use Model\Cursos;
 use MVC\Router;
 use Throwable;
 
@@ -25,14 +26,11 @@ class ParticipantesController
         ]);
     }
 
-    /**
-     * 🆕 API PARA CALCULAR POSICIÓN ESTIMADA (Frontend en tiempo real)
-     */
     public static function calcularPosicionAPI()
     {
         isAuthApi();
         hasPermissionApi(['ADMINISTRADOR', 'INSTRUCTOR']);
-        
+
         header('Content-Type: application/json; charset=UTF-8');
 
         try {
@@ -54,7 +52,6 @@ class ParticipantesController
                 'mensaje' => 'Posición calculada',
                 'datos' => $resultado
             ], JSON_UNESCAPED_UNICODE);
-
         } catch (Exception $e) {
             http_response_code(500);
             echo json_encode([
@@ -73,7 +70,6 @@ class ParticipantesController
         header('Content-Type: application/json; charset=UTF-8');
 
         try {
-            // Validación 1: Campos requeridos
             if (empty($_POST['par_promocion']) || empty($_POST['par_catalogo'])) {
                 echo json_encode([
                     'codigo' => 0,
@@ -83,7 +79,6 @@ class ParticipantesController
                 return;
             }
 
-            // Validación 2: Alumno ya registrado en la promoción
             if (Participantes::existeEnPromocion($_POST['par_catalogo'], $_POST['par_promocion'])) {
                 echo json_encode([
                     'codigo' => 0,
@@ -93,20 +88,41 @@ class ParticipantesController
                 return;
             }
 
-            // Validación 3: Número de certificado duplicado
-            if (
-                !empty($_POST['par_certificado_numero']) &&
-                Participantes::existeCertificado($_POST['par_certificado_numero'])
-            ) {
-                echo json_encode([
-                    'codigo' => 0,
-                    'mensaje' => 'El número de certificado ya existe.',
-                    'campo' => 'par_certificado_numero'
-                ], JSON_UNESCAPED_UNICODE);
-                return;
+            /**
+             * 🆕 VALIDAR CERTIFICADO SOLO SI EL CURSO LO EMITE
+             */
+            $info_curso = Cursos::obtenerPorPromocion($_POST['par_promocion']); // Sin \Model\
+
+            if ($info_curso && !empty($info_curso)) {
+                // Verificar si existe el campo emite_certificado
+                $emite_cert = isset($info_curso['emite_certificado'])
+                    ? $info_curso['emite_certificado']
+                    : false;
+
+                if ($emite_cert) {
+                    // Solo validar certificado si el curso lo emite
+                    if (
+                        !empty($_POST['par_certificado_numero']) &&
+                        Participantes::existeCertificado($_POST['par_certificado_numero'])
+                    ) {
+                        echo json_encode([
+                            'codigo' => 0,
+                            'mensaje' => 'El número de certificado ya existe.',
+                            'campo' => 'par_certificado_numero'
+                        ], JSON_UNESCAPED_UNICODE);
+                        return;
+                    }
+                } else {
+                    // NO EMITE CERTIFICADO → limpiar campos
+                    $_POST['par_certificado_numero'] = null;
+                    $_POST['par_certificado_fecha'] = null;
+                }
+            } else {
+                // Si no se encuentra info del curso, limpiar certificados por seguridad
+                $_POST['par_certificado_numero'] = null;
+                $_POST['par_certificado_fecha'] = null;
             }
 
-            // Validación 4: Calificación en rango válido
             if (!empty($_POST['par_calificacion'])) {
                 $calificacion = floatval($_POST['par_calificacion']);
                 if ($calificacion < 0 || $calificacion > 100) {
@@ -119,7 +135,6 @@ class ParticipantesController
                 }
             }
 
-            // Validación 5: Fecha de certificado no puede ser futura
             if (!empty($_POST['par_certificado_fecha'])) {
                 $fecha_cert = strtotime($_POST['par_certificado_fecha']);
                 $fecha_hoy = strtotime(date('Y-m-d'));
@@ -134,21 +149,18 @@ class ParticipantesController
                 }
             }
 
-            // 🆕 CALCULAR POSICIÓN AUTOMÁTICA (si hay calificación)
             if (!empty($_POST['par_calificacion'])) {
                 $_POST['par_posicion'] = Participantes::calcularPosicionAutomatica(
                     $_POST['par_promocion'],
                     $_POST['par_calificacion']
                 );
             } else {
-                $_POST['par_posicion'] = null; // Sin calificación = sin posición
+                $_POST['par_posicion'] = null;
             }
 
-            // Guardar participante
             $participante = new Participantes($_POST);
-            $resultado = $participante->crear();
+            $participante->crear();
 
-            // 🆕 RECALCULAR TODAS LAS POSICIONES DE LA PROMOCIÓN
             Participantes::recalcularPosicionesPromocion($_POST['par_promocion']);
 
             echo json_encode([
@@ -156,8 +168,8 @@ class ParticipantesController
                 'mensaje' => 'Participante registrado exitosamente',
                 'posicion_asignada' => $_POST['par_posicion']
             ], JSON_UNESCAPED_UNICODE);
-
         } catch (Throwable $e) {
+
             http_response_code(500);
             echo json_encode([
                 'codigo' => 0,
@@ -249,8 +261,6 @@ class ParticipantesController
                 return;
             }
 
-            // VALIDACIONES (mismas que en guardar, excluyendo el registro actual)
-            
             if (empty($_POST['par_promocion']) || empty($_POST['par_catalogo'])) {
                 echo json_encode([
                     'codigo' => 0,
@@ -269,16 +279,35 @@ class ParticipantesController
                 return;
             }
 
-            if (
-                !empty($_POST['par_certificado_numero']) &&
-                Participantes::existeCertificado($_POST['par_certificado_numero'], $id)
-            ) {
-                echo json_encode([
-                    'codigo' => 0,
-                    'mensaje' => 'El número de certificado ya existe.',
-                    'campo' => 'par_certificado_numero'
-                ], JSON_UNESCAPED_UNICODE);
-                return;
+            /**
+             * 🆕 VALIDAR CERTIFICADO SOLO SI EL CURSO LO EMITE
+             */
+            $info_curso = Cursos::obtenerPorPromocion($_POST['par_promocion']); // Sin \Model\
+
+            if ($info_curso && !empty($info_curso)) {
+                $emite_cert = isset($info_curso['emite_certificado'])
+                    ? $info_curso['emite_certificado']
+                    : false;
+
+                if ($emite_cert) {
+                    if (
+                        !empty($_POST['par_certificado_numero']) &&
+                        Participantes::existeCertificado($_POST['par_certificado_numero'], $id)
+                    ) {
+                        echo json_encode([
+                            'codigo' => 0,
+                            'mensaje' => 'El número de certificado ya existe.',
+                            'campo' => 'par_certificado_numero'
+                        ], JSON_UNESCAPED_UNICODE);
+                        return;
+                    }
+                } else {
+                    $_POST['par_certificado_numero'] = null;
+                    $_POST['par_certificado_fecha'] = null;
+                }
+            } else {
+                $_POST['par_certificado_numero'] = null;
+                $_POST['par_certificado_fecha'] = null;
             }
 
             if (!empty($_POST['par_calificacion'])) {
@@ -307,12 +336,11 @@ class ParticipantesController
                 }
             }
 
-            // 🆕 RECALCULAR POSICIÓN (si hay calificación)
             if (!empty($_POST['par_calificacion'])) {
                 $_POST['par_posicion'] = Participantes::calcularPosicionAutomatica(
                     $_POST['par_promocion'],
                     $_POST['par_calificacion'],
-                    $id // Excluir este registro del cálculo
+                    $id
                 );
             } else {
                 $_POST['par_posicion'] = null;
@@ -321,7 +349,6 @@ class ParticipantesController
             $participante->sincronizar($_POST);
             $participante->actualizar();
 
-            // 🆕 RECALCULAR TODAS LAS POSICIONES
             Participantes::recalcularPosicionesPromocion($_POST['par_promocion']);
 
             http_response_code(200);
@@ -330,8 +357,8 @@ class ParticipantesController
                 'mensaje' => 'Participante modificado exitosamente',
                 'posicion_asignada' => $_POST['par_posicion']
             ], JSON_UNESCAPED_UNICODE);
-
         } catch (Exception $e) {
+
             http_response_code(500);
             echo json_encode([
                 'codigo' => 0,
@@ -371,12 +398,10 @@ class ParticipantesController
                 return;
             }
 
-            // Guardar el ID de la promoción antes de eliminar
             $promocion_id = $participante->par_promocion;
 
             $participante->eliminar();
 
-            // 🆕 RECALCULAR POSICIONES después de eliminar
             Participantes::recalcularPosicionesPromocion($promocion_id);
 
             http_response_code(200);
@@ -384,13 +409,75 @@ class ParticipantesController
                 'codigo' => 1,
                 'mensaje' => 'Participante eliminado exitosamente',
             ], JSON_UNESCAPED_UNICODE);
-
         } catch (Exception $e) {
+
             http_response_code(500);
             echo json_encode([
                 'codigo' => 0,
                 'mensaje' => 'Error al eliminar participante',
                 'detalle' => $e->getMessage(),
+            ], JSON_UNESCAPED_UNICODE);
+        }
+    }
+
+    public static function verificarCertificacionAPI()
+    {
+        isAuthApi();
+        hasPermissionApi(['ADMINISTRADOR', 'INSTRUCTOR']);
+
+        header('Content-Type: application/json; charset=UTF-8');
+
+        try {
+            $promocion_id = $_POST['par_promocion'] ?? $_GET['promocion'] ?? null;
+
+            if (empty($promocion_id)) {
+                echo json_encode([
+                    'codigo' => 0,
+                    'mensaje' => 'ID de promoción requerido'
+                ], JSON_UNESCAPED_UNICODE);
+                return;
+            }
+
+            // 🔥 CORRECCIÓN: Sin barra invertida inicial
+            $info_curso = Cursos::obtenerPorPromocion($promocion_id);
+
+            // 🔥 VALIDACIÓN: Verificar si se encontró el curso
+            if (!$info_curso || empty($info_curso)) {
+                echo json_encode([
+                    'codigo' => 0,
+                    'mensaje' => 'No se encontró información del curso para esta promoción'
+                ], JSON_UNESCAPED_UNICODE);
+                return;
+            }
+
+            // 🔥 NORMALIZACIÓN: Asegurar que emite_certificado existe
+            $emite_certificado = isset($info_curso['emite_certificado'])
+                ? $info_curso['emite_certificado']
+                : false;
+
+            echo json_encode([
+                'codigo' => 1,
+                'mensaje' => 'Información obtenida',
+                'datos' => [
+                    'emite_certificado' => $emite_certificado,
+                    'curso_nombre' => $info_curso['cur_nombre'] ?? 'Sin nombre',
+                    'institucion' => $info_curso['inst_nombre'] ?? 'Sin institución',
+                    'mensaje' => $emite_certificado
+                        ? "✅ Este curso emite certificación" .
+                        (!empty($info_curso['inst_nombre']) ? " por {$info_curso['inst_nombre']}" : "")
+                        : " Este curso no emite certificación oficial"
+                ]
+            ], JSON_UNESCAPED_UNICODE);
+        } catch (Exception $e) {
+            // 🔥 LOGGING DETALLADO para debug
+            error_log("Error en verificarCertificacionAPI: " . $e->getMessage());
+            error_log("Stack trace: " . $e->getTraceAsString());
+
+            http_response_code(500);
+            echo json_encode([
+                'codigo' => 0,
+                'mensaje' => 'Error al verificar certificación',
+                'detalle' => $e->getMessage()
             ], JSON_UNESCAPED_UNICODE);
         }
     }

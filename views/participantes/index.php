@@ -358,6 +358,51 @@
             padding: 1rem;
         }
     }
+
+    .certificacion-info {
+        background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
+        border-left: 4px solid #2196F3;
+        padding: 1rem;
+        border-radius: 8px;
+        margin-bottom: 1rem;
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        animation: slideIn 0.3s ease-out;
+    }
+
+    .certificacion-info.no-certifica {
+        background: linear-gradient(135deg, #fff3e0 0%, #ffe0b2 100%);
+        border-left-color: #ff9800;
+    }
+
+    .certificacion-info i {
+        font-size: 1.5rem;
+    }
+
+    .campos-certificado {
+        transition: all 0.3s ease;
+    }
+
+    .campos-certificado.oculto {
+        opacity: 0;
+        height: 0;
+        overflow: hidden;
+        margin: 0;
+        padding: 0;
+    }
+
+    @keyframes slideIn {
+        from {
+            opacity: 0;
+            transform: translateX(-20px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateX(0);
+        }
+    }
 </style>
 
 <div class="container-fluid mt-4">
@@ -374,7 +419,7 @@
         <i class="bi bi-plus"></i>
     </button>
 
-    <!-- FORMULARIO (inicia oculto) -->
+    <!-- FORMULARIO -->
     <div class="row justify-content-center mb-4" id="contenedorFormulario" style="display:none;">
         <div class="col-lg-10">
             <div class="form-container">
@@ -410,15 +455,17 @@
                                 <option value="">Seleccione Promoción y Curso...</option>
                                 <?php foreach ($promociones as $promo): ?>
                                     <option value="<?= $promo['pro_codigo'] ?>">
-                                        Promoción
-                                        <?= $promo['pro_numero'] ?>
-                                        <?= $promo['pro_anio'] ?>
-                                        -
-                                        <?= $promo['curso_nombre'] ?>
+                                        Promoción <?= $promo['pro_numero'] ?> <?= $promo['pro_anio'] ?> - <?= $promo['curso_nombre'] ?> - <?= $promo['nivel_nombre'] ?>
                                     </option>
                                 <?php endforeach ?>
                             </select>
                         </div>
+                    </div>
+
+                    <!-- 🆕 MENSAJE INFORMATIVO DE CERTIFICACIÓN -->
+                    <div id="mensajeCertificacion" class="certificacion-info" style="display:none;">
+                        <i class="bi bi-info-circle-fill"></i>
+                        <span id="textoCertificacion"></span>
                     </div>
 
                     <div class="row mb-3">
@@ -432,7 +479,7 @@
                             <label for="par_posicion" class="form-label">
                                 <i class="bi bi-trophy-fill"></i> Posición
                             </label>
-                            <input type="number" name="par_posicion" id="par_posicion" class="form-control" min="1">
+                            <input type="text" name="par_posicion" id="par_posicion" class="form-control" readonly placeholder="Se calculará automáticamente">
                         </div>
                         <div class="col-md-4">
                             <label for="par_estado" class="form-label">
@@ -447,7 +494,8 @@
                         </div>
                     </div>
 
-                    <div class="row mb-3">
+                    <!-- 🆕 CAMPOS DE CERTIFICADO (SE OCULTAN SI NO APLICA) -->
+                    <div id="camposCertificado" class="row mb-3 campos-certificado">
                         <div class="col-md-6">
                             <label for="par_certificado_numero" class="form-label">
                                 <i class="bi bi-award-fill"></i> N° de Certificado
@@ -510,5 +558,4 @@
     </div>
 </div>
 
-<!-- Script principal -->
 <script src="build/js/participantes/index.js" type="module"></script>

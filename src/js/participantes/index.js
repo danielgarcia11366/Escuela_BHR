@@ -15,12 +15,19 @@ const contenedorFormulario = document.getElementById('contenedorFormulario');
 const contenedorTabla = document.getElementById('contenedorTabla');
 const tituloFormulario = document.getElementById('tituloFormulario');
 
-// 🆕 CAMPOS PARA CALCULAR POSICIÓN
+// 🆕 REFERENCIAS PARA CERTIFICACIÓN
 const inputCalificacion = document.getElementById('par_calificacion');
 const inputPromocion = document.getElementById('par_promocion');
 const inputPosicion = document.getElementById('par_posicion');
+const camposCertificado = document.getElementById('camposCertificado');
+const mensajeCertificacion = document.getElementById('mensajeCertificacion');
+const textoCertificacion = document.getElementById('textoCertificacion');
+const inputCertificadoNumero = document.getElementById('par_certificado_numero');
+const inputCertificadoFecha = document.getElementById('par_certificado_fecha');
 
-// 🆕 VARIABLE PARA CONTROLAR TIMEOUT DE CÁLCULO
+// 🆕 VARIABLE GLOBAL PARA SABER SI EMITE CERTIFICADO
+let cursoEmiteCertificado = false;
+
 let timeoutCalculoPosicion = null;
 
 const datatable = new DataTable('#tablaParticipantes', {
@@ -70,7 +77,6 @@ const datatable = new DataTable('#tablaParticipantes', {
                 if (!data) return '-';
                 const posicion = parseInt(data);
 
-                // Emojis según posición
                 let emoji = '';
                 if (posicion === 1) emoji = '🥇';
                 else if (posicion === 2) emoji = '🥈';
@@ -120,11 +126,9 @@ const datatable = new DataTable('#tablaParticipantes', {
     ]
 });
 
-// Estado inicial
 btnModificar.parentElement.style.display = 'none';
 btnCancelar.parentElement.style.display = 'none';
 
-// Mostrar/ocultar formulario
 btnFlotante.addEventListener('click', () => {
     if (contenedorFormulario.style.display === 'none') mostrarFormulario();
     else ocultarFormulario();
@@ -144,8 +148,8 @@ const mostrarFormulario = () => {
     btnFlotante.innerHTML = '<i class="bi bi-skip-backward"></i>';
     btnFlotante.setAttribute('title', 'Volver a la tabla');
 
-    // 🆕 LIMPIAR CAMPO DE POSICIÓN
     limpiarPosicionEstimada();
+    ocultarCamposCertificado(); // 🆕 Ocultar campos por defecto
 };
 
 const ocultarFormulario = () => {
@@ -160,20 +164,101 @@ const ocultarFormulario = () => {
     btnFlotante.setAttribute('title', 'Asigne una Promoción');
 };
 
-// 🆕 ============================================
-// FUNCIÓN PARA CALCULAR POSICIÓN EN TIEMPO REAL
-// ============================================
+// 🆕 ================================================
+// VERIFICAR SI EL CURSO EMITE CERTIFICACIÓN
+// ================================================
+const verificarCertificacion = async (promocionId) => {
+    if (!promocionId) {
+        ocultarCamposCertificado();
+        return;
+    }
+
+    try {
+        const body = new FormData();
+        body.append('par_promocion', promocionId);
+
+        const url = "/Escuela_BHR/API/participantes/verificar-certificacion";
+        const resp = await fetch(url, { method: 'POST', body });
+        const data = await resp.json();
+
+        if (data.codigo === 1 && data.datos) {
+            cursoEmiteCertificado = data.datos.emite_certificado;
+
+            if (cursoEmiteCertificado) {
+                mostrarCamposCertificado(data.datos.mensaje);
+            } else {
+                ocultarCamposCertificado(data.datos.mensaje);
+            }
+        } else {
+            ocultarCamposCertificado();
+        }
+
+    } catch (error) {
+        console.error('Error al verificar certificación:', error);
+        ocultarCamposCertificado();
+    }
+};
+
+const mostrarCamposCertificado = (mensaje) => {
+    // Mostrar campos
+    camposCertificado.classList.remove('oculto');
+    camposCertificado.style.display = '';
+
+    // Habilitar inputs
+    inputCertificadoNumero.disabled = false;
+    inputCertificadoFecha.disabled = false;
+
+    // Mostrar mensaje informativo
+    mensajeCertificacion.style.display = 'flex';
+    mensajeCertificacion.classList.remove('no-certifica');
+    textoCertificacion.textContent = mensaje || '✅ Este curso emite certificación';
+};
+
+const ocultarCamposCertificado = (mensaje = null) => {
+    // Ocultar campos con animación
+    camposCertificado.classList.add('oculto');
+
+    // Limpiar y deshabilitar inputs
+    inputCertificadoNumero.value = '';
+    inputCertificadoFecha.value = '';
+    inputCertificadoNumero.disabled = true;
+    inputCertificadoFecha.disabled = true;
+
+    // Mostrar mensaje informativo si lo hay
+    if (mensaje) {
+        mensajeCertificacion.style.display = 'flex';
+        mensajeCertificacion.classList.add('no-certifica');
+        textoCertificacion.textContent = mensaje;
+    } else {
+        mensajeCertificacion.style.display = 'none';
+    }
+};
+
+// 🆕 EVENTO CUANDO CAMBIA LA PROMOCIÓN
+inputPromocion.addEventListener('change', async () => {
+    const promocionId = inputPromocion.value;
+
+    // Verificar si el curso emite certificado
+    await verificarCertificacion(promocionId);
+
+    // Si hay calificación, recalcular posición
+    if (inputCalificacion.value.trim()) {
+        calcularPosicionEstimada();
+    }
+});
+
+// ================================================
+// CALCULAR POSICIÓN ESTIMADA
+// ================================================
 const calcularPosicionEstimada = async () => {
     const calificacion = inputCalificacion.value.trim();
     const promocion = inputPromocion.value;
 
-    // Si no hay calificación o promoción, limpiar
     if (!calificacion || !promocion) {
         limpiarPosicionEstimada();
         return;
     }
 
-    // Validar rango de calificación
     const nota = parseFloat(calificacion);
     if (nota < 0 || nota > 100) {
         mostrarPosicionError('La calificación debe estar entre 0 y 100');
@@ -181,7 +266,6 @@ const calcularPosicionEstimada = async () => {
     }
 
     try {
-        // Mostrar indicador de carga
         inputPosicion.value = 'Calculando...';
         inputPosicion.classList.add('text-muted');
         inputPosicion.disabled = true;
@@ -197,7 +281,6 @@ const calcularPosicionEstimada = async () => {
         if (data.codigo === 1 && data.datos) {
             const { posicion, total_participantes, mensaje } = data.datos;
 
-            // Mostrar posición con emoji
             let emoji = '';
             if (posicion === 1) emoji = '🥇';
             else if (posicion === 2) emoji = '🥈';
@@ -208,7 +291,6 @@ const calcularPosicionEstimada = async () => {
             inputPosicion.classList.remove('text-muted');
             inputPosicion.classList.add('text-success', 'fw-bold');
 
-            // Toast informativo
             Toast.fire({
                 icon: 'info',
                 title: mensaje,
@@ -238,24 +320,14 @@ const mostrarPosicionError = (mensaje) => {
     inputPosicion.disabled = true;
 };
 
-// 🆕 EVENTOS PARA CALCULAR POSICIÓN EN TIEMPO REAL
 inputCalificacion.addEventListener('input', () => {
-    // Cancelar timeout previo
     if (timeoutCalculoPosicion) {
         clearTimeout(timeoutCalculoPosicion);
     }
 
-    // Esperar 500ms después de que el usuario deje de escribir
     timeoutCalculoPosicion = setTimeout(() => {
         calcularPosicionEstimada();
     }, 500);
-});
-
-inputPromocion.addEventListener('change', () => {
-    // Si cambia la promoción y hay calificación, recalcular
-    if (inputCalificacion.value.trim()) {
-        calcularPosicionEstimada();
-    }
 });
 
 // GUARDAR
@@ -263,7 +335,13 @@ const guardar = async (e) => {
     e.preventDefault();
     btnGuardar.disabled = true;
 
-    if (!validarFormulario(formulario, ['par_codigo', 'par_posicion'])) {
+    // 🆕 VALIDAR CAMPOS OBLIGATORIOS (excluyendo certificado si no aplica)
+    const camposExcluir = ['par_codigo', 'par_posicion'];
+    if (!cursoEmiteCertificado) {
+        camposExcluir.push('par_certificado_numero', 'par_certificado_fecha');
+    }
+
+    if (!validarFormulario(formulario, camposExcluir)) {
         Swal.fire({
             icon: "warning",
             title: "Campos incompletos",
@@ -277,9 +355,13 @@ const guardar = async (e) => {
 
     try {
         const body = new FormData(formulario);
-
-        // 🆕 NO ENVIAR POSICIÓN, se calcula en el backend
         body.delete('par_posicion');
+
+        // 🆕 Si no emite certificado, limpiar campos
+        if (!cursoEmiteCertificado) {
+            body.set('par_certificado_numero', '');
+            body.set('par_certificado_fecha', '');
+        }
 
         const url = "/Escuela_BHR/API/participantes/guardar";
         const resp = await fetch(url, { method: 'POST', body });
@@ -288,7 +370,6 @@ const guardar = async (e) => {
         const { codigo, mensaje, campo, posicion_asignada } = data;
 
         if (codigo === 1) {
-            // ✅ Éxito
             let textoMensaje = mensaje;
             if (posicion_asignada) {
                 let emoji = '';
@@ -311,7 +392,6 @@ const guardar = async (e) => {
             ocultarFormulario();
 
         } else {
-            // ❌ Error
             Swal.fire({
                 icon: "error",
                 title: "No se pudo guardar",
@@ -343,7 +423,6 @@ const guardar = async (e) => {
     btnGuardar.disabled = false;
 };
 
-// BUSCAR
 const buscar = async () => {
     try {
         const url = "/Escuela_BHR/API/participantes/buscar";
@@ -358,8 +437,7 @@ const buscar = async () => {
     }
 };
 
-// MODIFICAR
-const traerDatos = (e) => {
+const traerDatos = async (e) => {
     const d = e.currentTarget.dataset;
 
     formulario.par_codigo.value = d.par_codigo;
@@ -383,7 +461,8 @@ const traerDatos = (e) => {
     btnFlotante.innerHTML = '<i class="bi bi-x"></i>';
     btnFlotante.setAttribute('title', 'Cerrar formulario');
 
-    // 🆕 CALCULAR POSICIÓN ESTIMADA AL CARGAR DATOS
+    // 🆕 VERIFICAR CERTIFICACIÓN Y CALCULAR POSICIÓN
+    await verificarCertificacion(d.par_promocion);
     if (d.par_calificacion) {
         calcularPosicionEstimada();
     }
@@ -392,7 +471,12 @@ const traerDatos = (e) => {
 const modificar = async (e) => {
     e.preventDefault();
 
-    if (!validarFormulario(formulario, ['par_posicion'])) {
+    const camposExcluir = ['par_posicion'];
+    if (!cursoEmiteCertificado) {
+        camposExcluir.push('par_certificado_numero', 'par_certificado_fecha');
+    }
+
+    if (!validarFormulario(formulario, camposExcluir)) {
         Swal.fire({
             icon: "warning",
             title: "Campos incompletos",
@@ -405,9 +489,12 @@ const modificar = async (e) => {
 
     try {
         const body = new FormData(formulario);
-
-        // 🆕 NO ENVIAR POSICIÓN, se recalcula en el backend
         body.delete('par_posicion');
+
+        if (!cursoEmiteCertificado) {
+            body.set('par_certificado_numero', '');
+            body.set('par_certificado_fecha', '');
+        }
 
         const url = "/Escuela_BHR/API/participantes/modificar";
         const resp = await fetch(url, { method: 'POST', body });
@@ -463,7 +550,6 @@ const modificar = async (e) => {
     }
 };
 
-// ELIMINAR
 const eliminar = async (e) => {
     const par_codigo = e.currentTarget.dataset.par_codigo;
 
@@ -514,7 +600,6 @@ const eliminar = async (e) => {
     }
 };
 
-// CANCELAR
 const cancelar = () => {
     ocultarFormulario();
     formulario.reset();
@@ -522,14 +607,13 @@ const cancelar = () => {
     btnModificar.parentElement.style.display = 'none';
     btnCancelar.parentElement.style.display = 'none';
     limpiarPosicionEstimada();
+    ocultarCamposCertificado();
 };
 
-// EVENTOS
 formulario.addEventListener('submit', guardar);
 btnCancelar.addEventListener('click', cancelar);
 btnModificar.addEventListener('click', modificar);
 datatable.on('click', '.modificar', traerDatos);
 datatable.on('click', '.eliminar', eliminar);
 
-// Cargar al inicio
 buscar();
