@@ -111,7 +111,7 @@ const mostrarFormulario = () => {
     contenedorFormulario.style.display = '';
     contenedorFormulario.classList.add('slide-down');
     contenedorTabla.style.display = 'none';
-    tituloFormulario.textContent = 'Nuevo Participante';
+    tituloFormulario.textContent = 'Asigne una Promoción';
     formulario.reset();
 
     btnGuardar.parentElement.style.display = '';
@@ -131,7 +131,7 @@ const ocultarFormulario = () => {
         contenedorTabla.style.display = '';
     }, 300);
     btnFlotante.innerHTML = '<i class="bi bi-plus"></i>';
-    btnFlotante.setAttribute('title', 'Nuevo Participante');
+    btnFlotante.setAttribute('title', 'Asigne una Promoción');
 };
 
 

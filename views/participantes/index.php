@@ -390,6 +390,19 @@
 
                     <div class="row mb-3">
                         <div class="col-md-6">
+                            <label for="par_catalogo" class="form-label">
+                                <i class="bi bi-person-badge-fill"></i> Seleccione Alumno *
+                            </label>
+                            <select name="par_catalogo" id="par_catalogo" class="form-select" required>
+                                <option value="">Seleccione...</option>
+                                <?php foreach ($persona as $per): ?>
+                                    <option value="<?= $per['per_catalogo'] ?>">
+                                        <?= $per['grado_arma'] . ' ' . $per['nombre_completo'] ?>
+                                    </option>
+                                <?php endforeach ?>
+                            </select>
+                        </div>
+                        <div class="col-md-6">
                             <label for="par_promocion" class="form-label">
                                 <i class="bi bi-collection-fill"></i> Promoción y Curso *
                             </label>
@@ -402,19 +415,6 @@
                                         <?= $promo['pro_anio'] ?>
                                         -
                                         <?= $promo['curso_nombre'] ?>
-                                    </option>
-                                <?php endforeach ?>
-                            </select>
-                        </div>
-                        <div class="col-md-6">
-                            <label for="par_catalogo" class="form-label">
-                                <i class="bi bi-person-badge-fill"></i> Seleccione Alumno *
-                            </label>
-                            <select name="par_catalogo" id="par_catalogo" class="form-select" required>
-                                <option value="">Seleccione...</option>
-                                <?php foreach ($persona as $per): ?>
-                                    <option value="<?= $per['per_catalogo'] ?>">
-                                        <?= $per['grado_arma'] . ' ' . $per['nombre_completo'] ?>
                                     </option>
                                 <?php endforeach ?>
                             </select>
