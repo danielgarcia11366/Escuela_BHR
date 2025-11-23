@@ -147,10 +147,10 @@ class RecordController
                     </h1>
                     <br>
                     <h1 style="color: #111111; margin: 0 0 5px 0; font-size: 20px; font-weight: bold;">
-                        ' . strtoupper(htmlspecialchars($datosPersona['grado_arma'])) . '
+                        ' . (htmlspecialchars($datosPersona['grado_arma'])) . '
                     </h1>
                     <h1 style="color: #111111; margin: 0 0 10px 0; font-size: 20px; font-weight: bold;">
-                        ' . strtoupper(htmlspecialchars($datosPersona['nombre_completo'])) . '
+                        ' . (htmlspecialchars($datosPersona['nombre_completo'])) . '
                     </h1>
                 </td>
             </tr>
@@ -172,16 +172,17 @@ class RecordController
 
             // === TABLA DE CURSOS ===
             $tabla = '
-    <table style="width: 100%; border-collapse: collapse; font-size: 13px; margin-top: 10px;">
+    <table style="width: 100%; border-collapse: collapse; font-size: 15px; margin-top: 10px;">
         <thead>
             <tr style="background: linear-gradient(135deg, #ff8400ff 0%, #197f00ff 100%); color: white;">
                 <th style="border: 1px solid #ddd; padding: 8px; text-align: center; width: 7%;">No.</th>
-                <th style="border: 1px solid #ddd; padding: 8px; text-align: left; width: 30%;">Curso</th>
-                <th style="border: 1px solid #ddd; padding: 8px; text-align: center; width: 12%;">Promoción</th>
-                <th style="border: 1px solid #ddd; padding: 8px; text-align: center; width: 16%;">Fecha Graduación</th>
-                <th style="border: 1px solid #ddd; padding: 8px; text-align: center; width: 12%;">Calific.</th>
-                <th style="border: 1px solid #ddd; padding: 8px; text-align: center; width: 12%;">Puesto</th>
-                <th style="border: 1px solid #ddd; padding: 8px; text-align: center; width: 11%;">Estado</th>
+                <th style="border: 1px solid #ddd; padding: 8px; text-align: left; width: 25%;">Curso</th>
+                <th style="border: 1px solid #ddd; padding: 8px; text-align: center; width: 13%;">País</th>
+                <th style="border: 1px solid #ddd; padding: 8px; text-align: center; width: 14%;">Promoción</th>
+                <th style="border: 1px solid #ddd; padding: 8px; text-align: center; width: 15%;">Fecha Graduación</th>
+                <th style="border: 1px solid #ddd; padding: 8px; text-align: center; width: 10%;">Calific.</th>
+                <th style="border: 1px solid #ddd; padding: 8px; text-align: center; width: 10%;">Puesto</th>
+                <th style="border: 1px solid #ddd; padding: 8px; text-align: center; width: 12%;">Estado</th>
             </tr>
         </thead>
         <tbody>';
@@ -219,6 +220,7 @@ class RecordController
         <tr style="background: ' . $bgColor . ';">
             <td style="border: 1px solid #ddd; padding: 6px; text-align: center; font-weight: bold;">' . $contador . '</td>
             <td style="border: 1px solid #ddd; padding: 6px; font-weight:bold;">' . htmlspecialchars(substr($curso['curso_completo'], 0, 60)) . '</td>
+            <td style="border: 1px solid #ddd; padding: 6px; text-align: center;">' . htmlspecialchars(substr($curso['pais_promocion'], 0, 60)) . '</td>
             <td style="border: 1px solid #ddd; padding: 6px; text-align: center;">' . htmlspecialchars($curso['pro_numero'] . ' ' . $curso['pro_anio']) . '</td>
             <td style="border: 1px solid #ddd; padding: 6px; text-align: center;">' . $fechaFin . '</td>
             <td style="border: 1px solid #ddd; padding: 6px; text-align: center; font-weight: bold; color: ' . $calColor . ';">' .

@@ -277,13 +277,15 @@ class Participantes extends ActiveRecord
     p.pro_fecha_inicio,
     p.pro_fecha_fin,
     par.par_calificacion,
-    par.par_posicion AS puesto_obtenido,   -- << AQUI ESTÁ EL PUESTO
-    par.par_estado
+    par.par_posicion AS puesto_obtenido,
+    par.par_estado,
+    pa.pais_nombre AS pais_promocion
 FROM participantes par
 INNER JOIN mper m ON par.par_catalogo = m.per_catalogo
 INNER JOIN grados g ON m.per_grado = g.gra_codigo
 INNER JOIN armas a ON m.per_arma = a.arm_codigo
 INNER JOIN promociones p ON par.par_promocion = p.pro_codigo
+INNER JOIN paises pa ON p.pro_pais = pa.pais_codigo
 INNER JOIN cursos c ON p.pro_curso = c.cur_codigo
 INNER JOIN niveles n ON c.cur_nivel = n.niv_codigo
 WHERE m.per_catalogo = {$per_catalogo}
