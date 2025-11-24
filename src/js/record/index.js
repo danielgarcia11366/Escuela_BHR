@@ -47,6 +47,12 @@ const datatable = new DataTable('#tablaParticipantes', {
             }
         },
         {
+            title: 'Cursos Certificados',
+            data: 'total_cursos_certificados',
+            width: '10%',
+            render: (data) => `<span class="badge bg-danger">${data}</span>`
+        },
+        {
             title: 'Último Curso Completado',
             data: 'ultimo_curso',
             width: '25%',

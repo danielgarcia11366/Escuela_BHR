@@ -169,7 +169,7 @@
     <div class="page-header">
         <h1>
             <i class="bi bi-people-fill"></i>
-            Historial de Cursos por Persona
+            Récord de Cursos del Personal
         </h1>
     </div>
 

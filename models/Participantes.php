@@ -279,7 +279,21 @@ class Participantes extends ActiveRecord
     par.par_calificacion,
     par.par_posicion AS puesto_obtenido,
     par.par_estado,
-    pa.pais_nombre AS pais_promocion
+    pa.pais_nombre AS pais_promocion,
+
+    -- 🟢 Mostrar SI / NO de certificado
+    c.cur_certificado AS emite_certificado,
+
+    -- Conteo de cursos que SÍ emiten certificado
+    (
+        SELECT COUNT(*) 
+        FROM participantes par2
+        INNER JOIN promociones p2 ON par2.par_promocion = p2.pro_codigo
+        INNER JOIN cursos c2 ON p2.pro_curso = c2.cur_codigo
+        WHERE par2.par_catalogo = m.per_catalogo
+          AND c2.cur_certificado = 'Si'
+    ) AS total_cursos_certificados
+
 FROM participantes par
 INNER JOIN mper m ON par.par_catalogo = m.per_catalogo
 INNER JOIN grados g ON m.per_grado = g.gra_codigo
@@ -297,26 +311,45 @@ ORDER BY p.pro_fecha_inicio DESC";
     public static function obtenerResumenPersonal()
     {
         $sql = "SELECT 
-        m.per_catalogo,
-        CONCAT_WS(' ', m.per_nom1, m.per_nom2, m.per_ape1, m.per_ape2) AS nombre_completo,
-        CONCAT(g.gra_desc_lg, ' de ', a.arm_desc_lg) AS grado_arma,
-        COUNT(p.par_codigo) AS total_cursos,
-        (SELECT CONCAT(c2.cur_nombre_corto, ' - Promoción ', pr2.pro_numero, ' ', pr2.pro_anio)
-         FROM participantes p2
-         INNER JOIN promociones pr2 ON p2.par_promocion = pr2.pro_codigo
-         INNER JOIN cursos c2 ON pr2.pro_curso = c2.cur_codigo
-         WHERE p2.par_catalogo = m.per_catalogo
-         ORDER BY pr2.pro_fecha_inicio DESC
-         LIMIT 1
-        ) AS ultimo_curso
-    FROM mper m
-    LEFT JOIN grados g ON m.per_grado = g.gra_codigo
-    LEFT JOIN armas a ON m.per_arma = a.arm_codigo
-    LEFT JOIN participantes p ON m.per_catalogo = p.par_catalogo
-    GROUP BY m.per_catalogo, m.per_nom1, m.per_nom2, m.per_ape1, m.per_ape2, 
-             g.gra_desc_lg, a.arm_desc_lg
-    HAVING total_cursos > 0
-    ORDER BY total_cursos DESC, m.per_catalogo";
+    m.per_catalogo,
+    CONCAT_WS(' ', m.per_nom1, m.per_nom2, m.per_ape1, m.per_ape2) AS nombre_completo,
+    CONCAT(g.gra_desc_lg, ' de ', a.arm_desc_lg) AS grado_arma,
+
+    -- Total de cursos (ya lo tenías)
+    COUNT(p.par_codigo) AS total_cursos,
+
+    -- 🔥 Total de cursos que emiten certificado
+    (
+        SELECT COUNT(*)
+        FROM participantes p2
+        INNER JOIN promociones pr2 ON p2.par_promocion = pr2.pro_codigo
+        INNER JOIN cursos c2 ON pr2.pro_curso = c2.cur_codigo
+        WHERE p2.par_catalogo = m.per_catalogo
+          AND c2.cur_certificado = 'Si'
+    ) AS total_cursos_certificados,
+
+    -- Último curso (ya lo tenías)
+    (
+        SELECT CONCAT(c2.cur_nombre_corto, ' - Promoción ', pr2.pro_numero, ' ', pr2.pro_anio)
+        FROM participantes p2
+        INNER JOIN promociones pr2 ON p2.par_promocion = pr2.pro_codigo
+        INNER JOIN cursos c2 ON pr2.pro_curso = c2.cur_codigo
+        WHERE p2.par_catalogo = m.per_catalogo
+        ORDER BY pr2.pro_fecha_inicio DESC
+        LIMIT 1
+    ) AS ultimo_curso
+
+FROM mper m
+LEFT JOIN grados g ON m.per_grado = g.gra_codigo
+LEFT JOIN armas a ON m.per_arma = a.arm_codigo
+LEFT JOIN participantes p ON m.per_catalogo = p.par_catalogo
+
+GROUP BY 
+    m.per_catalogo, m.per_nom1, m.per_nom2, m.per_ape1, m.per_ape2,
+    g.gra_desc_lg, a.arm_desc_lg
+
+HAVING total_cursos > 0
+ORDER BY total_cursos DESC, m.per_catalogo";
 
         return self::fetchArray($sql);
     }

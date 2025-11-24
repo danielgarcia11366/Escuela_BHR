@@ -143,7 +143,7 @@ class RecordController
                     </h2>
                     <br>
                     <h1 style="color: #ff7b00; margin: 0 0 5px 0; font-size: 20px; font-weight: bold;">
-                        HISTORIAL DE CURSOS
+                        HISTORIAL DE CURSOS APROBADOS SATISFACTORIAMENTE
                     </h1>
                     <br>
                     <h1 style="color: #111111; margin: 0 0 5px 0; font-size: 20px; font-weight: bold;">
@@ -162,10 +162,12 @@ class RecordController
     <div style="background: #f8f9fa; border: 2px solid #ff7b00; border-radius: 8px; padding: 15px; margin-bottom: 20px;">
         <table style="width: 100%; font-size: 15px;">
             <tr>
-                <td style="padding: 5px; width: 25%;"><strong>Catálogo:</strong></td>
-                <td style="padding: 5px;">' . htmlspecialchars($datosPersona['per_catalogo']) . '</td>
-                <td style="padding: 5px; width: 25%;"><strong>Total de Cursos:</strong></td>
+                <td style="padding: 5px; width: 15%;"><strong>Cursos:</strong></td>
                 <td style="padding: 5px;">' . count($persona) . '</td>
+                <td style="padding: 5px; width: 20%;"><strong>Catálogo:</strong></td>
+                <td style="padding: 5px;">' . htmlspecialchars($datosPersona['per_catalogo']) . '</td>
+                <td style="padding: 5px; width: 20%;"><strong>Cursos Certificados:</strong></td>
+                <td style="padding: 5px;">' . htmlspecialchars($datosPersona['total_cursos_certificados']) . '</td>
             </tr>
         </table>
     </div>';
@@ -182,7 +184,7 @@ class RecordController
                 <th style="border: 1px solid #ddd; padding: 8px; text-align: center; width: 15%;">Fecha Graduación</th>
                 <th style="border: 1px solid #ddd; padding: 8px; text-align: center; width: 10%;">Calific.</th>
                 <th style="border: 1px solid #ddd; padding: 8px; text-align: center; width: 10%;">Puesto</th>
-                <th style="border: 1px solid #ddd; padding: 8px; text-align: center; width: 12%;">Estado</th>
+                <th style="border: 1px solid #ddd; padding: 8px; text-align: center; width: 12%;">Cert.</th>
             </tr>
         </thead>
         <tbody>';
@@ -228,7 +230,7 @@ class RecordController
             <td style="border: 1px solid #ddd; padding: 6px; text-align: center; font-weight: bold; color: ' . $puestoColor . ';">' .
                     htmlspecialchars($puestoTexto) .
                     ' Lugar</td>
-            <td style="border: 1px solid #ddd; padding: 6px; text-align: center;">' . $estado . '</td>
+            <td style="border: 1px solid #ddd; padding: 6px; text-align: center;">' . htmlspecialchars(substr($curso['emite_certificado'], 0, 60)) . '</td>
         </tr>';
 
                 $contador++;
