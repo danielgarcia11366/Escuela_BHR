@@ -29,7 +29,7 @@ inputFoto.addEventListener('change', (e) => {
     const file = e.target.files[0];
 
     if (file) {
-        // Validar tamaño (5MB)
+        // Validar tamaño (10MB)
         if (file.size > 10 * 1024 * 1024) {
             Toast.fire({
                 icon: 'error',
@@ -200,6 +200,16 @@ const mostrarFormulario = () => {
     previewContainer.style.display = 'none';
     previewImage.src = '';
 
+    // ⭐ Restaurar etiqueta original
+    const labelFoto = document.querySelector('label[for="per_foto"]');
+    if (labelFoto) {
+        const smallText = labelFoto.querySelector('small');
+        labelFoto.innerHTML = `
+            <i class="bi bi-camera-fill"></i> Fotografía
+            ${smallText ? smallText.outerHTML : '<small class="text-muted">Formatos permitidos: JPG, PNG (máx. 10MB)</small>'}
+        `;
+    }
+
     btnGuardar.parentElement.style.display = '';
     btnModificar.parentElement.style.display = 'none';
     btnCancelar.parentElement.style.display = '';
@@ -244,7 +254,8 @@ btnFlotante.addEventListener('click', () => {
 const guardar = async (e) => {
     e.preventDefault();
 
-    if (!validarFormulario(formulario, ['per_catalogo'])) {
+    // ⭐ Excluir per_foto, per_serie, per_nom2, per_ape2 de validación
+    if (!validarFormulario(formulario, ['per_foto', 'per_serie', 'per_nom2', 'per_ape2', 'per_telefono', 'per_email', 'per_direccion', 'per_dpi', 'observaciones'])) {
         Swal.fire({
             icon: 'info',
             title: 'Campos vacíos',
@@ -266,7 +277,7 @@ const guardar = async (e) => {
 
         if (codigo == 1) {
             formulario.reset();
-            previewContainer.style.display = 'none'; // ⭐ Limpiar vista previa
+            previewContainer.style.display = 'none';
             buscar();
             ocultarFormulario();
         }
@@ -325,12 +336,40 @@ const traerDatos = (e) => {
     formulario.per_tipo.value = d.per_tipo;
     formulario.observaciones.value = d.observaciones || '';
 
-    // ⭐ Mostrar foto actual si existe
+    // ⭐ Limpiar el input file (IMPORTANTE)
+    inputFoto.value = '';
+
+    // ⭐ Mostrar foto actual + mensaje informativo
+    const labelFoto = document.querySelector('label[for="per_foto"]');
+
     if (d.per_foto && d.per_foto !== 'null' && d.per_foto !== '') {
         previewImage.src = `/Escuela_BHR/public/uploads/fotos_personal/${d.per_foto}`;
         previewContainer.style.display = 'block';
+
+        // Cambiar etiqueta para informar que hay foto
+        if (labelFoto) {
+            labelFoto.innerHTML = `
+                <i class="bi bi-camera-fill"></i> Fotografía 
+                <span class="badge bg-success ms-2">
+                    <i class="bi bi-check-circle"></i> Foto actual cargada
+                </span>
+                <small class="text-muted d-block mt-2">
+                    <i class="bi bi-info-circle"></i> 
+                    <strong>Dejar vacío</strong> para mantener la foto actual, 
+                    o <strong>seleccionar nueva imagen</strong> para reemplazarla
+                </small>
+            `;
+        }
     } else {
         previewContainer.style.display = 'none';
+
+        // Restaurar etiqueta original
+        if (labelFoto) {
+            labelFoto.innerHTML = `
+                <i class="bi bi-camera-fill"></i> Fotografía
+                <small class="text-muted">Formatos permitidos: JPG, PNG (máx. 10MB)</small>
+            `;
+        }
     }
 
     // Cambiar título y mostrar formulario
@@ -359,7 +398,8 @@ const traerDatos = (e) => {
 const modificar = async (e) => {
     e.preventDefault();
 
-    if (!validarFormulario(formulario)) {
+    // ⭐ Excluir per_foto de la validación (es opcional al modificar)
+    if (!validarFormulario(formulario, ['per_foto', 'per_serie', 'per_nom2', 'per_ape2', 'per_telefono', 'per_email', 'per_direccion', 'per_dpi', 'observaciones'])) {
         Swal.fire({
             icon: 'info',
             title: 'Campos vacíos',
@@ -382,7 +422,7 @@ const modificar = async (e) => {
         if (codigo == 1) {
             formulario.reset();
             formulario.per_catalogo.removeAttribute('readonly');
-            previewContainer.style.display = 'none'; // ⭐ Limpiar vista previa
+            previewContainer.style.display = 'none';
             buscar();
             ocultarFormulario();
         }
@@ -441,7 +481,17 @@ const eliminar = async (e) => {
 const cancelar = () => {
     formulario.reset();
     formulario.per_catalogo.removeAttribute('readonly');
-    previewContainer.style.display = 'none'; // ⭐ Limpiar vista previa
+    previewContainer.style.display = 'none';
+
+    // ⭐ Restaurar etiqueta de foto a su estado original
+    const labelFoto = document.querySelector('label[for="per_foto"]');
+    if (labelFoto) {
+        labelFoto.innerHTML = `
+            <i class="bi bi-camera-fill"></i> Fotografía
+            <small class="text-muted">Formatos permitidos: JPG, PNG (máx. 10MB)</small>
+        `;
+    }
+
     ocultarFormulario();
 
     btnGuardar.parentElement.style.display = '';
@@ -450,18 +500,8 @@ const cancelar = () => {
 };
 
 // ============================================
-// ASIGNACIÓN DE EVENTOS
+// VER FOTO EN GRANDE (MODAL)
 // ============================================
-formulario.addEventListener('submit', guardar);
-btnModificar.addEventListener('click', modificar);
-btnCancelar.addEventListener('click', cancelar);
-
-// Eventos de la tabla (delegación de eventos)
-datatable.on('click', '.modificar', traerDatos);
-datatable.on('click', '.eliminar', eliminar);
-
-// Al final de src/js/personal/index.js
-
 window.verFotoGrande = (nombreFoto, catalogo) => {
     const datos = datatable.rows().data().toArray();
     const persona = datos.find(p => p.per_catalogo == catalogo);
@@ -532,6 +572,17 @@ window.verFotoGrande = (nombreFoto, catalogo) => {
         });
     }
 };
+
+// ============================================
+// ASIGNACIÓN DE EVENTOS
+// ============================================
+formulario.addEventListener('submit', guardar);
+btnModificar.addEventListener('click', modificar);
+btnCancelar.addEventListener('click', cancelar);
+
+// Eventos de la tabla (delegación de eventos)
+datatable.on('click', '.modificar', traerDatos);
+datatable.on('click', '.eliminar', eliminar);
 
 // ============================================
 // INICIALIZACIÓN
