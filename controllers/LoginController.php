@@ -30,67 +30,12 @@ class LoginController
         exit;
     }
 
-    public static function registro(Router $router)
-    {
-        isNotAuth();
-        // IMPORTANTE: Especificar el layout de autenticación
-        $router->render('auth/registro', [], 'layout_auth');
-    }
-
     public static function menu(Router $router)
     {
         isAuth();
         hasPermission(['ADMINISTRADOR', 'INSTRUCTOR']);
         // Usa el layout principal por defecto
         $router->render('pages/index', []);
-    }
-
-    public static function registroAPI()
-    {
-        header("Content-type:application/json; charset=utf-8");
-
-        $_POST['usu_nombre'] = htmlspecialchars($_POST['usu_nombre']);
-        $_POST['usu_catalogo'] = filter_var($_POST['usu_catalogo'], FILTER_SANITIZE_NUMBER_INT);
-        $_POST['usu_password'] = htmlspecialchars($_POST['usu_password']);
-        $_POST['usu_password2'] = htmlspecialchars($_POST['usu_password2']);
-
-        if ($_POST['usu_password'] != $_POST['usu_password2']) {
-            echo json_encode([
-                'codigo' => 0,
-                'mensaje' => 'Las Contraseñas no Coinciden',
-                'detalle' => 'Verifique las contraseñas ingresadas',
-            ]);
-            exit;
-        }
-
-        try {
-            $_POST['usu_password'] = password_hash($_POST['usu_password'], PASSWORD_DEFAULT);
-            $usuario = new Usuario($_POST);
-
-            if ($usuario->validarUsuarioExistente()) {
-                echo json_encode([
-                    'codigo' => 0,
-                    'mensaje' => 'Ya existe un Usuario Registrado',
-                    'detalle' => 'Verifique la información y catálogo',
-                ]);
-                exit;
-            }
-
-            $usuario->crear();
-            echo json_encode([
-                'codigo' => 1,
-                'mensaje' => 'Usuario Creado Exitosamente'
-            ]);
-            exit;
-        } catch (Exception $e) {
-            http_response_code(500);
-            echo json_encode([
-                'codigo' => 0,
-                'mensaje' => 'Error al Ingresar Usuario',
-                'detalle' => $e->getMessage(),
-            ]);
-            exit;
-        }
     }
 
     public static function loginAPI()

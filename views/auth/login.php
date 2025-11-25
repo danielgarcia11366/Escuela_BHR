@@ -20,13 +20,6 @@
             <input type="password" class="form-control" id="usu_password" name="usu_password" autocomplete="current-password" required>
         </div>
 
-        <div class="mb-3 text-center">
-            <small style="color: #718096;">
-                ¿No tienes cuenta?
-                <a href="/Escuela_BHR/registro" class="auth-link">Regístrate aquí</a>
-            </small>
-        </div>
-
         <button type="submit" class="btn btn-primary w-100">
             <i class="bi bi-box-arrow-in-right"></i> Iniciar Sesión
         </button>

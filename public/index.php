@@ -19,17 +19,23 @@ use Controllers\PromocionesController;
 use Controllers\PruebaController;
 use Controllers\RecordController;
 use Controllers\RecordControllerController;
+use Controllers\UsuariosController;
 use Model\Promociones;
 
 $router = new Router();
 $router->setBaseURL('/' . $_ENV['APP_NAME']);
 
-// RUTAS DE AUTENTICACIÓN
+// ============================================
+// RUTAS DE AUTENTICACIÓN (SIN LOGIN)
+// ============================================
 $router->get('/', [LoginController::class, 'login']);
-$router->get('/registro', [LoginController::class, 'registro']);
 $router->post('/API/login', [LoginController::class, 'loginAPI']);
 $router->get('/forbidden', [LoginController::class, 'forbidden']);
 $router->get('/logout', [LoginController::class, 'logout']);
+
+// ⚠️ ELIMINAR O COMENTAR ESTAS LÍNEAS (ya no quieres registro público)
+// $router->get('/registro', [LoginController::class, 'registro']);
+// $router->post('/API/registro', [LoginController::class, 'registroAPI']);
 
 // ============================================
 // RUTAS PROTEGIDAS (REQUIEREN LOGIN)
@@ -39,9 +45,12 @@ $router->get('/menu', [LoginController::class, 'menu']);
 // API DE ESTADÍSTICAS (PROTEGIDA)
 $router->get('/API/estadisticas', [InicioController::class, 'estadisticasAPI']);
 
+// ============================================
 // GESTIÓN DE USUARIOS (Solo Administrador)
-$router->get('/usuarios', [LoginController::class, 'usuarios']);
-$router->post('/API/usuarios/crear', [LoginController::class, 'crearUsuarioAPI']);
+// ============================================
+$router->get('/usuarios', [UsuariosController::class, 'index']);
+$router->post('/API/usuarios/crear', [UsuariosController::class, 'crearAPI']);
+$router->get('/API/usuarios/buscar', [UsuariosController::class, 'buscarAPI']); // Opcional
 
 //HISTORIAL
 $router->get('/historial', [HistorialController::class, 'index']);
@@ -74,19 +83,18 @@ $router->post('/API/personal/eliminar', [PersonalController::class, 'eliminarAPI
 
 //RECORD
 $router->get('/record', [RecordController::class, 'index']);
-$router->get('/record/historialPDF', [RecordController::class, 'historialPDF']); // ⬅️ NUEVA RUTA
+$router->get('/record/historialPDF', [RecordController::class, 'historialPDF']);
 
 //PARTICIPANTES
-$router->get('/participantes/historialPDF', [ParticipantesController::class, 'historialPDF']); // ⬅️ PRIMERO EL PDF
-$router->get('/participantes', [ParticipantesController::class, 'index']); // ⬅️ DESPUÉS LA VISTA PRINCIPAL
+$router->get('/participantes/historialPDF', [ParticipantesController::class, 'historialPDF']);
+$router->get('/participantes', [ParticipantesController::class, 'index']);
 $router->get('/API/participantes/buscar', [ParticipantesController::class, 'buscarAPI']);
 $router->post('/API/participantes/guardar', [ParticipantesController::class, 'guardarAPI']);
 $router->post('/API/participantes/modificar', [ParticipantesController::class, 'modificarAPI']);
 $router->post('/API/participantes/eliminar', [ParticipantesController::class, 'eliminarAPI']);
 $router->get('/API/participantes/buscarPersonal', [ParticipantesController::class, 'buscarPersonalAPI']);
 $router->post('/API/participantes/calcular-posicion', [ParticipantesController::class, 'calcularPosicionAPI']);
-// API para verificar si un curso emite certificación
 $router->post('/API/participantes/verificar-certificacion', [ParticipantesController::class, 'verificarCertificacionAPI']);
 
-// Comprueba y valida las rutas, que existan y les asigna las funciones del Controlador
+// Comprueba y valida las rutas
 $router->comprobarRutas();

@@ -11,6 +11,7 @@ module.exports = {
     'js/promociones/index' : './src/js/promociones/index.js',
     'js/promociones/historial' : './src/js/promociones/historial.js',
     'js/participantes/index' : './src/js/participantes/index.js',
+    'js/usuarios/index' : './src/js/usuarios/index.js',
     'js/auth/login' : './src/js/auth/login.js',
     'js/auth/registro' : './src/js/auth/registro.js',
     'js/auth/login' : './src/js/auth/login.js',

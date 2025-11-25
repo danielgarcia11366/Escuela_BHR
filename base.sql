@@ -553,6 +553,7 @@ VALUES
   (1, 1, 1);
 
 -- Asignar rol de INSTRUCTOR al usuario 2
+-- en este query permiso_usuario va el id del usuario y en rol 1 es admin y 2 es instructor
 INSERT INTO
   permiso (permiso_usuario, permiso_rol, permiso_situacion)
 VALUES

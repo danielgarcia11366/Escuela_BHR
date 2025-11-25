@@ -58,9 +58,9 @@ $nombreUsuario = $_SESSION['user']['usu_nombre'] ?? 'Usuario';
                                         <i class="bi bi-person-raised-hand"></i> Gestión de Personal
                                     </a>
                                 </li>
-                                <li>
+                                <li> <!-- ✅ Sin "nav-item" -->
                                     <a class="dropdown-item modern-dropdown-item" href="/Escuela_BHR/usuarios">
-                                        <i class="bi bi-people-fill"></i> Gestión de Usuarios
+                                        <i class="bi bi-people-fill"></i> Usuarios Sistema
                                     </a>
                                 </li>
                             </ul>
