@@ -342,7 +342,7 @@ class PromocionesController
                         <th style="border: 1px solid #ddd; padding: 10px; text-align: center; width: 10%;">CATÁLOGO</th>
                         <th style="border: 1px solid #ddd; padding: 10px; text-align: left; width: 50%;">GRADO/ARMA Y NOMBRE COMPLETO</th>
                         <th style="border: 1px solid #ddd; padding: 10px; text-align: center; width: 12%;">CALIFICACIÓN</th>
-                        <th style="border: 1px solid #ddd; padding: 10px; text-align: center; width: 10%;">POSICIÓN</th>
+                        <th style="border: 1px solid #ddd; padding: 10px; text-align: center; width: 10%;">LUGAR</th>
                         <th style="border: 1px solid #ddd; padding: 10px; text-align: center; width: 13%;">ESTADO</th>
                     </tr>
                 </thead>
