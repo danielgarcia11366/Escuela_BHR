@@ -193,7 +193,7 @@ class RecordController
             foreach ($persona as $curso) {
                 $bgColor = ($contador % 2 == 0) ? '#f8f9fa' : '#ffffff';
                 $fechaInicio = date('d/m/Y', strtotime($curso['pro_fecha_inicio']));
-                $fechaFin = date('d/m/Y', strtotime($curso['pro_fecha_fin']));
+                $fechaFin = date('d/m/Y', strtotime($curso['pro_fecha_graduacion']));
                 $calificacion = $curso['par_calificacion'] ?? '-';
 
                 // Calificación: siempre en negro

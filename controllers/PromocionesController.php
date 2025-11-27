@@ -294,9 +294,11 @@ class PromocionesController
         </div>
         ';
 
-            // Información de la promoción
+            // Información de la promoción (SIN pro_fecha_fin)
             $fechaInicio = date('d/m/Y', strtotime($infoPromocion['pro_fecha_inicio']));
-            $fechaFin = date('d/m/Y', strtotime($infoPromocion['pro_fecha_fin']));
+            $fechaGraduacion = $infoPromocion['pro_fecha_graduacion']
+                ? date('d/m/Y', strtotime($infoPromocion['pro_fecha_graduacion']))
+                : 'No definida';
             $fechaGeneracion = date('d/m/Y H:i:s');
 
             // Obtener nombre del usuario logueado
@@ -318,7 +320,7 @@ class PromocionesController
                         <strong style="color: #ff7b00;">• Fecha Inicio:</strong> ' . $fechaInicio . '
                     </td>
                     <td style="padding: 5px;">
-                        <strong style="color: #ff7b00;">• Fecha Fin:</strong> ' . $fechaFin . '
+                        <strong style="color: #ff7b00;">• Fecha Graduación:</strong> ' . $fechaGraduacion . '
                     </td>
                 </tr>
                 <tr>
@@ -374,20 +376,19 @@ class PromocionesController
                 ];
                 $estadoTexto = $estados[$part['par_estado']] ?? $part['par_estado'];
 
-                // ⭐ PUESTO ORDINAL CON COLOR (IGUAL QUE RecordController)
+                // ⭐ PUESTO ORDINAL CON COLOR
                 $puesto = $part['par_posicion'] ?? null;
                 $puestoTexto = '-';
-                $puestoColor = '#0000ff'; // azul por defecto
+                $puestoColor = '#0000ff';
 
                 if (!empty($puesto) && is_numeric($puesto)) {
                     $puestoNum = intval($puesto);
-                    $puestoTexto = numeroOrdinalCorto($puestoNum); // 🎯 Función ordinal
+                    $puestoTexto = numeroOrdinalCorto($puestoNum);
 
-                    // Color: 1-3 dorado, 4+ azul
                     if ($puestoNum >= 1 && $puestoNum <= 3) {
-                        $puestoColor = '#d4af37'; // dorado
+                        $puestoColor = '#d4af37';
                     } else {
-                        $puestoColor = '#0000ff'; // azul
+                        $puestoColor = '#0000ff';
                     }
                 }
 
@@ -396,7 +397,6 @@ class PromocionesController
                 $arma = trim($part['arma_completa'] ?? '');
                 $nombreCompleto = trim($part['nombre_completo']);
 
-                // Construir grado y arma completo
                 $gradoArmaCompleto = '';
                 if ($grado && $arma) {
                     $gradoArmaCompleto = "{$grado} {$arma}";
@@ -447,8 +447,7 @@ class PromocionesController
 
             // Salida del PDF
             $nombreArchivo = 'Participantes_' . $infoPromocion['numero_anio'] . '_' . date('YmdHis') . '.pdf';
-            $mpdf->Output($nombreArchivo, 'I'); // 'I' = inline en navegador, 'D' = descarga
-
+            $mpdf->Output($nombreArchivo, 'I');
         } catch (Exception $e) {
             error_log("Error al generar PDF: " . $e->getMessage());
             header('Location: /Escuela_BHR/promociones/historial?error=pdf');

@@ -397,21 +397,15 @@
                         </div>
                     </div>
 
-                    <!-- Fila 2: Fechas -->
+                    <!-- Fila 2: Fechas (SIN fecha fin) -->
                     <div class="row mb-3">
-                        <div class="col-md-4">
+                        <div class="col-md-6">
                             <label for="pro_fecha_inicio" class="form-label">
                                 <i class="bi bi-calendar-event"></i> Fecha Inicio *
                             </label>
                             <input type="date" name="pro_fecha_inicio" id="pro_fecha_inicio" class="form-control" required>
                         </div>
-                        <div class="col-md-4">
-                            <label for="pro_fecha_fin" class="form-label">
-                                <i class="bi bi-calendar-check"></i> Fecha Fin *
-                            </label>
-                            <input type="date" name="pro_fecha_fin" id="pro_fecha_fin" class="form-control" required>
-                        </div>
-                        <div class="col-md-4">
+                        <div class="col-md-6">
                             <label for="pro_fecha_graduacion" class="form-label">
                                 <i class="bi bi-mortarboard-fill"></i> Fecha Graduación
                             </label>
@@ -443,9 +437,9 @@
                         </div>
                     </div>
 
-                    <!-- Fila 4: Institución y Graduados -->
+                    <!-- Fila 4: Institución -->
                     <div class="row mb-3">
-                        <div class="col-md-8">
+                        <div class="col">
                             <label for="pro_institucion_imparte" class="form-label">
                                 <i class="bi bi-building"></i> Institución que imparte
                             </label>
@@ -458,18 +452,7 @@
                                 <?php endforeach ?>
                             </select>
                         </div>
-                        <div class="col-md-4">
-                            <label for="pro_cantidad_graduados" class="form-label">
-                                <i class="bi bi-people-fill"></i> Graduados
-                            </label>
-                            <input type="number" name="pro_cantidad_graduados" id="pro_cantidad_graduados"
-                                class="form-control" min="0" value="0">
-                        </div>
-                    </div>
-
-                    <!-- Fila 5: Estado -->
-                    <div class="row mb-3">
-                        <div class="col-md-12">
+                        <div class="col">
                             <label for="pro_activa" class="form-label">
                                 <i class="bi bi-check-circle"></i> Estado
                             </label>
@@ -479,7 +462,6 @@
                             </select>
                         </div>
                     </div>
-
                     <!-- Fila 6: Observaciones -->
                     <div class="row mb-3">
                         <div class="col-md-12">

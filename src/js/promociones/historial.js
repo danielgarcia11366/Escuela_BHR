@@ -66,7 +66,7 @@ const inicializarTablaHistorial = (datos) => {
             },
             {
                 title: 'Fecha Fin',
-                data: 'pro_fecha_fin',
+                data: 'pro_fecha_graduacion',
                 width: '120px',
                 className: 'text-center',
                 render: data => {

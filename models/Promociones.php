@@ -11,12 +11,10 @@ class Promociones extends ActiveRecord
         'pro_numero',
         'pro_anio',
         'pro_fecha_inicio',
-        'pro_fecha_fin',
         'pro_fecha_graduacion',
         'pro_lugar',
         'pro_pais',
         'pro_institucion_imparte',
-        'pro_cantidad_graduados',
         'pro_observaciones',
         'pro_activa'
     ];
@@ -26,12 +24,10 @@ class Promociones extends ActiveRecord
     public $pro_numero;
     public $pro_anio;
     public $pro_fecha_inicio;
-    public $pro_fecha_fin;
     public $pro_fecha_graduacion;
     public $pro_lugar;
     public $pro_pais;
     public $pro_institucion_imparte;
-    public $pro_cantidad_graduados;
     public $pro_observaciones;
     public $pro_activa;
 
@@ -42,12 +38,10 @@ class Promociones extends ActiveRecord
         $this->pro_numero = $args['pro_numero'] ?? '';
         $this->pro_anio = $args['pro_anio'] ?? date('Y');
         $this->pro_fecha_inicio = $args['pro_fecha_inicio'] ?? '';
-        $this->pro_fecha_fin = $args['pro_fecha_fin'] ?? '';
         $this->pro_fecha_graduacion = $args['pro_fecha_graduacion'] ?? null;
         $this->pro_lugar = $args['pro_lugar'] ?? '';
         $this->pro_pais = $args['pro_pais'] ?? null;
         $this->pro_institucion_imparte = $args['pro_institucion_imparte'] ?? null;
-        $this->pro_cantidad_graduados = $args['pro_cantidad_graduados'] ?? 0;
         $this->pro_observaciones = $args['pro_observaciones'] ?? '';
         $this->pro_activa = $args['pro_activa'] ?? 'S';
     }
@@ -61,7 +55,6 @@ class Promociones extends ActiveRecord
         p.pro_anio,
         CONCAT(p.pro_numero, '-', p.pro_anio) as numero_anio,
         p.pro_fecha_inicio,
-        p.pro_fecha_fin,
         p.pro_fecha_graduacion,
         p.pro_lugar,
         p.pro_observaciones,

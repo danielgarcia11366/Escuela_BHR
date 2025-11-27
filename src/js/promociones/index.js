@@ -50,9 +50,10 @@ const datatable = new DataTable('#tablaPromociones', {
             }
         },
         {
-            title: 'Fecha Fin',
-            data: 'pro_fecha_fin',
+            title: 'Fecha Graduación',
+            data: 'pro_fecha_graduacion',
             render: data => {
+                if (!data) return '<span class="text-muted">No definida</span>';
                 const fecha = new Date(data + 'T00:00:00');
                 return fecha.toLocaleDateString('es-GT');
             }
@@ -77,12 +78,10 @@ const datatable = new DataTable('#tablaPromociones', {
                     data-pro_numero="${row.pro_numero}"
                     data-pro_anio="${row.pro_anio}"
                     data-pro_fecha_inicio="${row.pro_fecha_inicio}"
-                    data-pro_fecha_fin="${row.pro_fecha_fin}"
                     data-pro_fecha_graduacion="${row.pro_fecha_graduacion || ''}"
                     data-pro_lugar="${row.pro_lugar || ''}"
                     data-pro_pais="${row.pro_pais || ''}"
                     data-pro_institucion_imparte="${row.pro_institucion_imparte || ''}"
-                    data-pro_cantidad_graduados="${row.pro_cantidad_graduados}"
                     data-pro_observaciones="${row.pro_observaciones || ''}"
                     data-pro_activa="${row.pro_activa}">
                     <i class='bi bi-pencil-square'></i>
@@ -216,18 +215,16 @@ const buscar = async () => {
 const traerDatos = (e) => {
     const d = e.currentTarget.dataset;
 
-    // Cargar todos los campos del formulario
+    // Cargar todos los campos del formulario (SIN pro_fecha_fin y pro_cantidad_graduados)
     formulario.pro_codigo.value = d.pro_codigo;
     formulario.pro_curso.value = d.pro_curso;
     formulario.pro_numero.value = d.pro_numero;
     formulario.pro_anio.value = d.pro_anio;
     formulario.pro_fecha_inicio.value = d.pro_fecha_inicio;
-    formulario.pro_fecha_fin.value = d.pro_fecha_fin;
     formulario.pro_fecha_graduacion.value = d.pro_fecha_graduacion || '';
     formulario.pro_lugar.value = d.pro_lugar || '';
     formulario.pro_pais.value = d.pro_pais || '';
     formulario.pro_institucion_imparte.value = d.pro_institucion_imparte || '';
-    formulario.pro_cantidad_graduados.value = d.pro_cantidad_graduados;
     formulario.pro_observaciones.value = d.pro_observaciones || '';
     formulario.pro_activa.value = d.pro_activa;
 
