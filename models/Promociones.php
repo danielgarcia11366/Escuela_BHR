@@ -135,7 +135,13 @@ class Promociones extends ActiveRecord
     INNER JOIN cursos c ON p.pro_curso = c.cur_codigo
     LEFT JOIN niveles n ON c.cur_nivel = n.niv_codigo
     WHERE par.par_promocion = {$pro_codigo}
-    ORDER BY m.per_ape1, m.per_ape2, m.per_nom1";
+    ORDER BY 
+        CASE 
+            WHEN par.par_posicion IS NULL THEN 1 
+            ELSE 0 
+        END,
+        CAST(par.par_posicion AS UNSIGNED) ASC,
+        m.per_ape1, m.per_ape2, m.per_nom1";
 
         return self::fetchArray($sql);
     }
