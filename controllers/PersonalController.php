@@ -13,7 +13,7 @@ class PersonalController
     public static function index(Router $router)
     {
         isAuth();
-        hasPermission(['ADMINISTRADOR']);
+        hasPermission(['ADMINISTRADOR', 'INSTRUCTOR']);
 
         $armas = Armas::obtenerarmaconQuery();
         $grados = Grados::obtenergradoconQuery();
@@ -27,7 +27,7 @@ class PersonalController
     public static function guardarAPI()
     {
         isAuthApi();
-        hasPermissionApi(['ADMINISTRADOR']);
+        hasPermissionApi(['ADMINISTRADOR', 'INSTRUCTOR']);
 
         header('Content-Type: application/json; charset=UTF-8');
 

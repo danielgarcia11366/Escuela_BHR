@@ -518,7 +518,7 @@ const eliminar = async (e) => {
             Toast.fire({ icon, title: mensaje });
         } catch (error) {
             console.error('Error al eliminar:', error);
-            Toast.fire({ icon: 'error', title: 'Error al eliminar el registro' });
+            Toast.fire({ icon: 'info', title: 'Error al eliminar el registro' });
         }
     }
 };

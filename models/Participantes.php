@@ -244,8 +244,7 @@ class Participantes extends ActiveRecord
         p.par_posicion,
         p.par_certificado_numero,
         p.par_certificado_fecha,
-        p.par_estado,
-        p.par_observaciones
+        p.par_estado
     FROM participantes p
     INNER JOIN promociones pr ON p.par_promocion = pr.pro_codigo
     INNER JOIN cursos c ON pr.pro_curso = c.cur_codigo

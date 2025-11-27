@@ -138,12 +138,43 @@ $nombreUsuario = $_SESSION['user']['usu_nombre'] ?? 'Usuario';
                         <!-- MENÚ LIMITADO PARA INSTRUCTOR -->
                         <li class="nav-item dropdown modern-dropdown">
                             <a class="nav-link dropdown-toggle modern-nav-link" href="#" data-bs-toggle="dropdown">
+                                <i class="bi bi-gear-fill"></i> Administración
+                            </a>
+                            <ul class="dropdown-menu modern-dropdown-menu">
+                                <li>
+                                    <a class="dropdown-item modern-dropdown-item" href="/Escuela_BHR/personal">
+                                        <i class="bi bi-person-raised-hand"></i> Gestión de Personal
+                                    </a>
+                                </li>
+                            </ul>
+                        </li>
+
+                        <li class="nav-item dropdown modern-dropdown">
+                            <a class="nav-link dropdown-toggle modern-nav-link" href="#" data-bs-toggle="dropdown">
+                                <i class="bi bi-journals"></i> Cursos
+                            </a>
+                            <ul class="dropdown-menu modern-dropdown-menu">
+                                <li>
+                                    <a class="dropdown-item modern-dropdown-item" href="/Escuela_BHR/cursos">
+                                        <i class="bi bi-eye-fill"></i> Gestión de Cursos
+                                    </a>
+                                </li>
+                            </ul>
+                        </li>
+
+                        <li class="nav-item dropdown modern-dropdown">
+                            <a class="nav-link dropdown-toggle modern-nav-link" href="#" data-bs-toggle="dropdown">
                                 <i class="bi bi-calendar-event"></i>Promociones
                             </a>
                             <ul class="dropdown-menu modern-dropdown-menu">
                                 <li>
-                                    <a class="dropdown-item modern-dropdown-item" href="/Escuela_BHR/nueva">
-                                        <i class="bi bi-book-half"></i>Ver Promociones
+                                    <a class="dropdown-item modern-dropdown-item" href="/Escuela_BHR/promociones">
+                                        <i class="bi bi-person-fill-add"></i>Crear Nueva Promoción
+                                    </a>
+                                </li>
+                                <li>
+                                    <a class="dropdown-item modern-dropdown-item" href="/Escuela_BHR/historial">
+                                        <i class="bi bi-book-half"></i>Historial de Promociones
                                     </a>
                                 </li>
                             </ul>
@@ -155,8 +186,13 @@ $nombreUsuario = $_SESSION['user']['usu_nombre'] ?? 'Usuario';
                             </a>
                             <ul class="dropdown-menu modern-dropdown-menu">
                                 <li>
-                                    <a class="dropdown-item modern-dropdown-item" href="/Escuela_BHR/alumnos">
-                                        <i class="bi bi-person-lines-fill"></i>Ver Alumnos
+                                    <a class="dropdown-item modern-dropdown-item" href="/Escuela_BHR/participantes">
+                                        <i class="bi bi-person-video2"></i>Asignación de Promociones
+                                    </a>
+                                </li>
+                                <li>
+                                    <a class="dropdown-item modern-dropdown-item" href="/Escuela_BHR/record">
+                                        <i class="bi bi-person-lines-fill"></i>Récord de Cursos (Por Alumno)
                                     </a>
                                 </li>
                             </ul>
@@ -167,9 +203,15 @@ $nombreUsuario = $_SESSION['user']['usu_nombre'] ?? 'Usuario';
                                 <i class="bi bi-flag-fill"></i>Reportes
                             </a>
                             <ul class="dropdown-menu modern-dropdown-menu">
+                                <!-- 
                                 <li>
                                     <a class="dropdown-item modern-dropdown-item" href="/Escuela_BHR/reporte/alumnos">
                                         <i class="bi bi-list-columns"></i>Listado por Promoción
+                                    </a>
+                                </li>-->
+                                <li>
+                                    <a class="dropdown-item modern-dropdown-item" href="/Escuela_BHR/estadisticas">
+                                        <i class="bi bi-bar-chart-fill"></i>Estadísticas
                                     </a>
                                 </li>
                             </ul>

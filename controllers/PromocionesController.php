@@ -16,7 +16,7 @@ class PromocionesController
     {
         // ⭐ PROTEGER LA VISTA
         isAuth();
-        hasPermission(['ADMINISTRADOR']);
+        hasPermission(['ADMINISTRADOR', 'INSTRUCTOR']);
 
         $instituciones = Instituciones::obtenerinstitucionQuery();
         $cursos = Cursos::obtenerCursos1();
@@ -33,7 +33,7 @@ class PromocionesController
     {
         // ⭐ PROTEGER LA API
         isAuthApi();
-        hasPermissionApi(['ADMINISTRADOR']);
+        hasPermissionApi(['ADMINISTRADOR', 'INSTRUCTOR']);
 
         header('Content-Type: application/json; charset=utf-8');
 
