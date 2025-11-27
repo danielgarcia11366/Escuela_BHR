@@ -27,7 +27,6 @@ class Personal extends ActiveRecord
         'per_tipo',
         'fecha_registro',
         'fecha_modificacion',
-        'observaciones',
         'per_foto'  // ⭐ NUEVO CAMPO
     ];
 
@@ -51,7 +50,6 @@ class Personal extends ActiveRecord
     public $per_tipo;
     public $fecha_registro;
     public $fecha_modificacion;
-    public $observaciones;
     public $per_foto;  // ⭐ NUEVA PROPIEDAD
 
     public function __construct($args = [])
@@ -76,7 +74,6 @@ class Personal extends ActiveRecord
         $this->per_tipo = $args['per_tipo'] ?? 'A';
         $this->fecha_registro = date('Y-m-d H:i:s');
         $this->fecha_modificacion = date('Y-m-d H:i:s');
-        $this->observaciones = $args['observaciones'] ?? '';
         $this->per_foto = $args['per_foto'] ?? null;  // ⭐ NUEVO
     }
 
@@ -115,7 +112,6 @@ class Personal extends ActiveRecord
             m.per_tipo,
             m.fecha_registro,
             m.fecha_modificacion,
-            m.observaciones,
             m.per_foto
         FROM mper m
         INNER JOIN grados g ON m.per_grado = g.gra_codigo

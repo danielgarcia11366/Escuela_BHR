@@ -334,7 +334,6 @@ const traerDatos = (e) => {
     formulario.per_tipo_doc.value = d.per_tipo_doc || 'DPI';
     formulario.per_estado.value = d.per_estado;
     formulario.per_tipo.value = d.per_tipo;
-    formulario.observaciones.value = d.observaciones || '';
 
     // ⭐ Limpiar el input file (IMPORTANTE)
     inputFoto.value = '';
@@ -398,7 +397,7 @@ const traerDatos = (e) => {
 const modificar = async (e) => {
     e.preventDefault();
 
-    // ⭐ Excluir per_foto de la validación (es opcional al modificar)
+    // Validación
     if (!validarFormulario(formulario, ['per_foto', 'per_serie', 'per_nom2', 'per_ape2', 'per_telefono', 'per_email', 'per_direccion', 'per_dpi', 'observaciones'])) {
         Swal.fire({
             icon: 'info',
@@ -409,21 +408,35 @@ const modificar = async (e) => {
     }
 
     try {
-        // ⭐ Usar FormData para enviar archivos
         const body = new FormData(formulario);
+        const catalogo = body.get('per_catalogo');
+
+        // ⭐ Verificar si se seleccionó una nueva foto
+        const hayNuevaFoto = inputFoto.files.length > 0;
 
         const url = "/Escuela_BHR/API/personal/modificar";
         const respuesta = await fetch(url, { method: 'POST', body });
         const data = await respuesta.json();
 
-        const { codigo, mensaje } = data;
+        const { codigo, mensaje, nueva_foto, per_catalogo } = data;
         let icon = codigo == 1 ? 'success' : 'error';
 
         if (codigo == 1) {
+            // ⭐ Si hubo cambio de foto, actualizar en la tabla
+            if (nueva_foto && hayNuevaFoto) {
+                console.log('✅ Actualizando foto en tabla:', nueva_foto);
+                actualizarFotoEnTabla(per_catalogo || catalogo, nueva_foto);
+            }
+
             formulario.reset();
             formulario.per_catalogo.removeAttribute('readonly');
             previewContainer.style.display = 'none';
-            buscar();
+
+            // ⭐ Recargar tabla después de un pequeño delay (para dar tiempo a que se actualice la imagen)
+            setTimeout(() => {
+                buscar();
+            }, 300);
+
             ocultarFormulario();
         }
 
@@ -431,6 +444,41 @@ const modificar = async (e) => {
     } catch (error) {
         console.error('Error al modificar:', error);
         Toast.fire({ icon: 'error', title: 'Error al modificar el registro' });
+    }
+};
+
+// ============================================
+// ⭐ NUEVA FUNCIÓN: Actualizar foto en la tabla sin recargar
+// ============================================
+const actualizarFotoEnTabla = (catalogo, nombreFoto) => {
+    // Buscar la imagen en la tabla usando el atributo onclick
+    const imgEnTabla = document.querySelector(`img[onclick*="verFotoGrande"][onclick*="'${catalogo}'"]`);
+
+    if (imgEnTabla) {
+        // ⭐ Agregar timestamp para forzar recarga y evitar caché
+        const timestamp = new Date().getTime();
+        const nuevaUrl = `/Escuela_BHR/public/uploads/fotos_personal/${nombreFoto}?v=${timestamp}`;
+
+        // Actualizar src de la imagen
+        imgEnTabla.src = nuevaUrl;
+
+        // ⭐ Actualizar el atributo onclick para que el modal también use la nueva foto
+        imgEnTabla.setAttribute('onclick', `verFotoGrande('${nombreFoto}', '${catalogo}')`);
+
+        console.log('✅ Foto actualizada exitosamente en la tabla');
+        console.log('   Catálogo:', catalogo);
+        console.log('   Nueva URL:', nuevaUrl);
+
+        // ⭐ Animación visual para confirmar el cambio
+        imgEnTabla.style.transform = 'scale(1.1)';
+        imgEnTabla.style.transition = 'transform 0.3s ease';
+
+        setTimeout(() => {
+            imgEnTabla.style.transform = 'scale(1)';
+        }, 300);
+
+    } else {
+        console.warn('⚠️ No se encontró la imagen en la tabla para el catálogo:', catalogo);
     }
 };
 

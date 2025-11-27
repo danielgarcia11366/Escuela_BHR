@@ -103,7 +103,6 @@ class Promociones extends ActiveRecord
         par.par_certificado_numero,
         par.par_certificado_fecha,
         par.par_estado,
-        par.par_observaciones,
         m.per_catalogo,
         m.per_serie,
         TRIM(CONCAT(

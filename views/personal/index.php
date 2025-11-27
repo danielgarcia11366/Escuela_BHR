@@ -581,16 +581,6 @@
                         </div>
                     </div>
 
-                    <!-- Fila 12: Observaciones (era la 11) -->
-                    <div class="row mb-3">
-                        <div class="col-md-12">
-                            <label for="observaciones" class="form-label">
-                                <i class="bi bi-chat-left-text"></i> Observaciones
-                            </label>
-                            <textarea name="observaciones" id="observaciones" class="form-control" rows="3"></textarea>
-                        </div>
-                    </div>
-
                     <!-- Botones -->
                     <div class="row">
                         <div class="col" id="contenedorBtnGuardar">
