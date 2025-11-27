@@ -16,7 +16,6 @@ class Participantes extends ActiveRecord
         'par_certificado_numero',
         'par_certificado_fecha',
         'par_estado',
-        'par_observaciones',
         'fecha_registro'
     ];
 
@@ -28,7 +27,6 @@ class Participantes extends ActiveRecord
     public $par_certificado_numero;
     public $par_certificado_fecha;
     public $par_estado;
-    public $par_observaciones;
     public $fecha_registro;
 
     public function __construct($args = [])
@@ -41,7 +39,6 @@ class Participantes extends ActiveRecord
         $this->par_certificado_numero = $args['par_certificado_numero'] ?? '';
         $this->par_certificado_fecha = $args['par_certificado_fecha'] ?? null;
         $this->par_estado = $args['par_estado'] ?? 'C';
-        $this->par_observaciones = $args['par_observaciones'] ?? '';
         $this->fecha_registro = $args['fecha_registro'] ?? date('Y-m-d H:i:s');
     }
 

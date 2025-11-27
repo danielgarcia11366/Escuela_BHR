@@ -284,15 +284,15 @@ class PromocionesController
 
             // Header del PDF
             $header = '
-            <div style="text-align: center; border-bottom: 3px solid #ff7b00; padding-bottom: 5px; margin-bottom: 10px;">
-                <h1 style="color: #1a1a1a; margin: 0; font-size: 28px; font-weight: bold;">
-                    LISTADO DE PARTICIPANTES
-                </h1>
-                <h2 style="color: #ff7b00; margin: 5px 0; font-size: 22px; font-weight: 600;">
-                    Curso ' . htmlspecialchars($infoPromocion['curso_nombre']) . ' - ' . htmlspecialchars($infoPromocion['nivel_nombre']) . ' - Promoción ' . htmlspecialchars($infoPromocion['numero_anio']) . '
-                </h2>
-            </div>
-            ';
+        <div style="text-align: center; border-bottom: 3px solid #ff7b00; padding-bottom: 5px; margin-bottom: 10px;">
+            <h1 style="color: #1a1a1a; margin: 0; font-size: 28px; font-weight: bold;">
+                LISTADO DE PARTICIPANTES
+            </h1>
+            <h2 style="color: #ff7b00; margin: 5px 0; font-size: 22px; font-weight: 600;">
+                Curso ' . htmlspecialchars($infoPromocion['curso_nombre']) . ' - ' . htmlspecialchars($infoPromocion['nivel_nombre']) . ' - Promoción ' . htmlspecialchars($infoPromocion['numero_anio']) . '
+            </h2>
+        </div>
+        ';
 
             // Información de la promoción
             $fechaInicio = date('d/m/Y', strtotime($infoPromocion['pro_fecha_inicio']));
@@ -303,50 +303,50 @@ class PromocionesController
             $nombreUsuario = $_SESSION['user']['usu_nombre'] ?? 'Sistema';
 
             $infoBox = '
-            <div style="background: #f8f9fa; border: 2px solid #ff7b00; border-radius: 10px; padding: 15px; margin-bottom: 20px;">
-                <table style="width: 100%; font-size: 18px; color: #333;">
-                    <tr>
-                        <td style="padding: 5px;">
-                            <strong style="color: #ff7b00;">• Lugar:</strong> ' . htmlspecialchars($infoPromocion['pro_lugar']) . '
-                        </td>
-                        <td style="padding: 5px;">
-                            <strong style="color: #ff7b00;">• País:</strong> ' . htmlspecialchars($infoPromocion['pais_nombre']) . '
-                        </td>
-                    </tr>
-                    <tr>
-                        <td style="padding: 5px;">
-                            <strong style="color: #ff7b00;">• Fecha Inicio:</strong> ' . $fechaInicio . '
-                        </td>
-                        <td style="padding: 5px;">
-                            <strong style="color: #ff7b00;">• Fecha Fin:</strong> ' . $fechaFin . '
-                        </td>
-                    </tr>
-                    <tr>
-                        <td style="padding: 5px;">
-                            <strong style="color: #ff7b00;">• Institución:</strong> ' . htmlspecialchars($infoPromocion['institucion_nombre']) . '
-                        </td>
-                        <td style="padding: 5px;">
-                            <strong style="color: #ff7b00;">• Total Participantes:</strong> ' . count($participantes) . '
-                        </td>
-                    </tr>
-                </table>
-            </div>
-            ';
+        <div style="background: #f8f9fa; border: 2px solid #ff7b00; border-radius: 10px; padding: 15px; margin-bottom: 20px;">
+            <table style="width: 100%; font-size: 18px; color: #333;">
+                <tr>
+                    <td style="padding: 5px;">
+                        <strong style="color: #ff7b00;">• Lugar:</strong> ' . htmlspecialchars($infoPromocion['pro_lugar']) . '
+                    </td>
+                    <td style="padding: 5px;">
+                        <strong style="color: #ff7b00;">• País:</strong> ' . htmlspecialchars($infoPromocion['pais_nombre']) . '
+                    </td>
+                </tr>
+                <tr>
+                    <td style="padding: 5px;">
+                        <strong style="color: #ff7b00;">• Fecha Inicio:</strong> ' . $fechaInicio . '
+                    </td>
+                    <td style="padding: 5px;">
+                        <strong style="color: #ff7b00;">• Fecha Fin:</strong> ' . $fechaFin . '
+                    </td>
+                </tr>
+                <tr>
+                    <td style="padding: 5px;">
+                        <strong style="color: #ff7b00;">• Institución:</strong> ' . htmlspecialchars($infoPromocion['institucion_nombre']) . '
+                    </td>
+                    <td style="padding: 5px;">
+                        <strong style="color: #ff7b00;">• Total Participantes:</strong> ' . count($participantes) . '
+                    </td>
+                </tr>
+            </table>
+        </div>
+        ';
 
             // Tabla de participantes
             $tabla = '
-            <table style="width: 100%; border-collapse: collapse; font-size: 15px; margin-top: 10px;">
-                <thead>
-                    <tr style="background: linear-gradient(135deg, #ff8400ff 0%, #197f00ff 100%); color: white;">
-                        <th style="border: 1px solid #ddd; padding: 10px; text-align: center; width: 5%;">#</th>
-                        <th style="border: 1px solid #ddd; padding: 10px; text-align: center; width: 10%;">CATÁLOGO</th>
-                        <th style="border: 1px solid #ddd; padding: 10px; text-align: left; width: 50%;">GRADO/ARMA Y NOMBRE COMPLETO</th>
-                        <th style="border: 1px solid #ddd; padding: 10px; text-align: center; width: 12%;">CALIFICACIÓN</th>
-                        <th style="border: 1px solid #ddd; padding: 10px; text-align: center; width: 10%;">LUGAR</th>
-                        <th style="border: 1px solid #ddd; padding: 10px; text-align: center; width: 13%;">ESTADO</th>
-                    </tr>
-                </thead>
-                <tbody>';
+        <table style="width: 100%; border-collapse: collapse; font-size: 15px; margin-top: 10px;">
+            <thead>
+                <tr style="background: linear-gradient(135deg, #ff8400ff 0%, #197f00ff 100%); color: white;">
+                    <th style="border: 1px solid #ddd; padding: 10px; text-align: center; width: 5%;">#</th>
+                    <th style="border: 1px solid #ddd; padding: 10px; text-align: center; width: 10%;">CATÁLOGO</th>
+                    <th style="border: 1px solid #ddd; padding: 10px; text-align: left; width: 50%;">GRADO/ARMA Y NOMBRE COMPLETO</th>
+                    <th style="border: 1px solid #ddd; padding: 10px; text-align: center; width: 12%;">CALIFICACIÓN</th>
+                    <th style="border: 1px solid #ddd; padding: 10px; text-align: center; width: 10%;">LUGAR</th>
+                    <th style="border: 1px solid #ddd; padding: 10px; text-align: center; width: 13%;">ESTADO</th>
+                </tr>
+            </thead>
+            <tbody>';
 
             // Agregar participantes
             $contador = 1;
@@ -356,7 +356,7 @@ class PromocionesController
 
                 // Color según calificación
                 $calificacion = $part['par_calificacion'] ?? '';
-                $calColor = '##000000';
+                $calColor = '#000000';
                 if ($calificacion !== '' && $calificacion !== null) {
                     $calNum = floatval($calificacion);
                     if ($calNum >= 90) $calColor = '#28a745';
@@ -373,6 +373,23 @@ class PromocionesController
                     'D' => 'Desertor'
                 ];
                 $estadoTexto = $estados[$part['par_estado']] ?? $part['par_estado'];
+
+                // ⭐ PUESTO ORDINAL CON COLOR (IGUAL QUE RecordController)
+                $puesto = $part['par_posicion'] ?? null;
+                $puestoTexto = '-';
+                $puestoColor = '#0000ff'; // azul por defecto
+
+                if (!empty($puesto) && is_numeric($puesto)) {
+                    $puestoNum = intval($puesto);
+                    $puestoTexto = numeroOrdinalCorto($puestoNum); // 🎯 Función ordinal
+
+                    // Color: 1-3 dorado, 4+ azul
+                    if ($puestoNum >= 1 && $puestoNum <= 3) {
+                        $puestoColor = '#d4af37'; // dorado
+                    } else {
+                        $puestoColor = '#0000ff'; // azul
+                    }
+                }
 
                 // Combinar grado/arma completo con nombre
                 $grado = trim($part['grado_completo'] ?? '');
@@ -392,16 +409,17 @@ class PromocionesController
                 $nombreConGrado = $gradoArmaCompleto ? "<strong>{$gradoArmaCompleto}</strong><br/>{$nombreCompleto}" : $nombreCompleto;
 
                 $tabla .= '
-                <tr style="background: ' . $bgColor . ';">
-                    <td style="border: 1px solid #ddd; padding: 8px; text-align: center; font-weight: bold;">' . $contador . '</td>
-                    <td style="border: 1px solid #ddd; padding: 8px; text-align: center; font-weight: bold; color: #ff7b00;">' . htmlspecialchars($part['per_catalogo']) . '</td>
-                    <td style="border: 1px solid #ddd; padding: 8px;">' . $nombreConGrado . '</td>
-                    <td style="border: 1px solid #ddd; padding: 8px; text-align: center; font-weight: bold; color: ' . $calColor . ';">' .
+            <tr style="background: ' . $bgColor . ';">
+                <td style="border: 1px solid #ddd; padding: 8px; text-align: center; font-weight: bold;">' . $contador . '</td>
+                <td style="border: 1px solid #ddd; padding: 8px; text-align: center; font-weight: bold; color: #ff7b00;">' . htmlspecialchars($part['per_catalogo']) . '</td>
+                <td style="border: 1px solid #ddd; padding: 8px;">' . $nombreConGrado . '</td>
+                <td style="border: 1px solid #ddd; padding: 8px; text-align: center; font-weight: bold; color: ' . $calColor . ';">' .
                     ($calificacion !== '' ? number_format(floatval($calificacion), 2) : '-') .
                     '</td>
-                    <td style="border: 1px solid #ddd; padding: 8px; text-align: center;">' . ($part['par_posicion'] ?? '-') . '</td>
-                    <td style="border: 1px solid #ddd; padding: 8px; text-align: center; font-size: 15px;">' . $estadoTexto . '</td>
-                </tr>';
+                <td style="border: 1px solid #ddd; padding: 8px; text-align: center; font-weight: bold; color: ' . $puestoColor . ';">' .
+                    htmlspecialchars($puestoTexto) . ' Lugar</td>
+                <td style="border: 1px solid #ddd; padding: 8px; text-align: center; font-size: 15px;">' . $estadoTexto . '</td>
+            </tr>';
 
                 $contador++;
             }
@@ -410,18 +428,18 @@ class PromocionesController
 
             // Footer
             $footer = '
-            <div style="margin-top: 30px; padding-top: 15px; border-top: 2px solid #ddd; font-size: 9px; color: #666;">
-                <table style="width: 100%;">
-                    <tr>
-                        <td style="text-align: left;">
-                            Generado el: ' . $fechaGeneracion . '
-                        </td>
-                        <td style="text-align: right;">
-                            Usuario: ' . htmlspecialchars($nombreUsuario) . '
-                        </td>
-                    </tr>
-                </table>
-            </div>';
+        <div style="margin-top: 30px; padding-top: 15px; border-top: 2px solid #ddd; font-size: 9px; color: #666;">
+            <table style="width: 100%;">
+                <tr>
+                    <td style="text-align: left;">
+                        Generado el: ' . $fechaGeneracion . '
+                    </td>
+                    <td style="text-align: right;">
+                        Usuario: ' . htmlspecialchars($nombreUsuario) . '
+                    </td>
+                </tr>
+            </table>
+        </div>';
 
             // Escribir contenido
             $html = $header . $infoBox . $tabla . $footer;
@@ -436,6 +454,4 @@ class PromocionesController
             header('Location: /Escuela_BHR/promociones/historial?error=pdf');
         }
     }
-
-    
 }
