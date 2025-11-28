@@ -46,7 +46,7 @@
                         <ul class="dropdown-menu modern-dropdown-menu">
                             <li>
                                 <a class="dropdown-item modern-dropdown-item" href="/Escuela_BHR/personal">
-                                    <i class="bi bi-person-raised-hand"></i> Gestión de Personal
+                                    <i class="bi bi-person-raised-hand"></i> Instructores
                                 </a>
                             </li>
                         </ul>

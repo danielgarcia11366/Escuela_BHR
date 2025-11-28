@@ -40,12 +40,6 @@ $nombreUsuario = $_SESSION['user']['usu_nombre'] ?? 'Usuario';
 
             <div class="collapse navbar-collapse" id="navbarContent">
                 <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                    <li class="nav-item">
-                        <a class="nav-link modern-nav-link" href="/Escuela_BHR/menu">
-                            <i class="bi bi-house-fill"></i>Inicio
-                        </a>
-                    </li>
-
                     <?php if ($isAdmin): ?>
                         <!-- MENÚ COMPLETO PARA ADMINISTRADOR -->
                         <li class="nav-item dropdown modern-dropdown">
@@ -53,14 +47,27 @@ $nombreUsuario = $_SESSION['user']['usu_nombre'] ?? 'Usuario';
                                 <i class="bi bi-gear-fill"></i> Administración
                             </a>
                             <ul class="dropdown-menu modern-dropdown-menu">
+                                <li> <!-- ✅ Sin "nav-item" -->
+                                    <a class="dropdown-item modern-dropdown-item" href="/Escuela_BHR/usuarios">
+                                        <i class="bi bi-people-fill"></i> Usuarios Sistema
+                                    </a>
+                                </li>
+                            </ul>
+                        </li>
+                        <!-- MENÚ COMPLETO PARA ADMINISTRADOR -->
+                        <li class="nav-item dropdown modern-dropdown">
+                            <a class="nav-link dropdown-toggle modern-nav-link" href="#" data-bs-toggle="dropdown">
+                                <i class="bi bi-gear-fill"></i> Gestión de Personal
+                            </a>
+                            <ul class="dropdown-menu modern-dropdown-menu">
                                 <li>
                                     <a class="dropdown-item modern-dropdown-item" href="/Escuela_BHR/personal">
-                                        <i class="bi bi-person-raised-hand"></i> Gestión de Personal
+                                        <i class="bi bi-person-raised-hand"></i> Instructores
                                     </a>
                                 </li>
                                 <li> <!-- ✅ Sin "nav-item" -->
                                     <a class="dropdown-item modern-dropdown-item" href="/Escuela_BHR/usuarios">
-                                        <i class="bi bi-people-fill"></i> Usuarios Sistema
+                                        <i class="bi bi-people-fill"></i> Alumnos BHR
                                     </a>
                                 </li>
                             </ul>
