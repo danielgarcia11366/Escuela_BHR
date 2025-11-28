@@ -87,6 +87,87 @@ class Personal extends ActiveRecord
         return $atributos;
     }
 
+
+
+    public static function obtenerInstructores()
+
+    {
+        $sql = "SELECT 
+    m.per_catalogo,
+    m.per_serie,
+    m.per_grado,
+    m.per_arma,
+    m.per_nom1,
+    m.per_nom2,
+    m.per_ape1,
+    m.per_ape2,
+    CONCAT_WS(' ', m.per_nom1, m.per_nom2, m.per_ape1, m.per_ape2) AS nombre_completo,
+    CONCAT(g.gra_desc_lg, ' de ', a.arm_desc_lg) AS grado_arma,
+    m.per_telefono,
+    m.per_sexo,
+    m.per_fec_nac,
+    m.per_nac_lugar,
+    m.per_dpi,
+    m.per_tipo_doc,
+    m.per_email,
+    m.per_direccion,
+    m.per_estado,
+    m.per_tipo,
+    m.fecha_registro,
+    m.fecha_modificacion,
+    m.per_foto
+FROM mper m
+INNER JOIN grados g ON m.per_grado = g.gra_codigo
+INNER JOIN armas a ON m.per_arma = a.arm_codigo
+WHERE m.per_tipo IN ('I', 'J')
+ORDER BY 
+    CASE 
+        WHEN m.per_tipo = 'J' THEN 1
+        WHEN m.per_tipo = 'I' THEN 2
+    END,
+    m.per_catalogo DESC";
+
+        return self::fetchArray($sql);
+    }
+
+
+    public static function obtenerAlumnos()
+    {
+        $sql = "SELECT 
+    m.per_catalogo,
+    m.per_serie,
+    m.per_grado,
+    m.per_arma,
+    m.per_nom1,
+    m.per_nom2,
+    m.per_ape1,
+    m.per_ape2,
+    CONCAT_WS(' ', m.per_nom1, m.per_nom2, m.per_ape1, m.per_ape2) AS nombre_completo,
+    CONCAT(g.gra_desc_lg, ' de ', a.arm_desc_lg) AS grado_arma,
+    m.per_telefono,
+    m.per_sexo,
+    m.per_fec_nac,
+    m.per_nac_lugar,
+    m.per_dpi,
+    m.per_tipo_doc,
+    m.per_email,
+    m.per_direccion,
+    m.per_estado,
+    m.per_tipo,
+    m.fecha_registro,
+    m.fecha_modificacion,
+    m.per_foto
+FROM mper m
+INNER JOIN grados g ON m.per_grado = g.gra_codigo
+INNER JOIN armas a ON m.per_arma = a.arm_codigo
+WHERE m.per_tipo = 'A'
+ORDER BY m.per_catalogo DESC";
+
+        return self::fetchArray($sql);
+    }
+
+
+
     public static function obtenerPersonal()
     {
         $sql = "SELECT 

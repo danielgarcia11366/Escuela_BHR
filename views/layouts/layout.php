@@ -61,12 +61,12 @@ $nombreUsuario = $_SESSION['user']['usu_nombre'] ?? 'Usuario';
                             </a>
                             <ul class="dropdown-menu modern-dropdown-menu">
                                 <li>
-                                    <a class="dropdown-item modern-dropdown-item" href="/Escuela_BHR/personal">
+                                    <a class="dropdown-item modern-dropdown-item" href="/Escuela_BHR/instructores">
                                         <i class="bi bi-person-raised-hand"></i> Instructores
                                     </a>
                                 </li>
                                 <li> <!-- ✅ Sin "nav-item" -->
-                                    <a class="dropdown-item modern-dropdown-item" href="/Escuela_BHR/usuarios">
+                                    <a class="dropdown-item modern-dropdown-item" href="/Escuela_BHR/alumnosbhr">
                                         <i class="bi bi-people-fill"></i> Alumnos BHR
                                     </a>
                                 </li>

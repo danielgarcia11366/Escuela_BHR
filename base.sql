@@ -39,22 +39,13 @@ CREATE TABLE `grados` (
   `gra_demeritos` smallint DEFAULT NULL COMMENT 'Deméritos permitidos',
   `estado` char(1) DEFAULT 'A' COMMENT 'A=Activo, I=Inactivo',
   `fecha_creacion` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  `gra_categoria` varchar(20) NOT NULL DEFAULT 'Tropa',
   PRIMARY KEY (`gra_codigo`),
   KEY `gra_asc` (`gra_asc`),
   CONSTRAINT `grados_ibfk_1` FOREIGN KEY (`gra_asc`) REFERENCES `grados` (`gra_codigo`),
-  CONSTRAINT `grados_chk_1` CHECK (
-    (
-      `gra_clase` in (
-        _utf8mb4 '1',
-        _utf8mb4 '2',
-        _utf8mb4 '3',
-        _utf8mb4 '4',
-        _utf8mb4 '5',
-        _utf8mb4 '6'
-      )
-    )
-  )
-) ENGINE = InnoDB AUTO_INCREMENT = 17 DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = 'Catálogo de grados militares' --==================INSTITUCIONES===================================
+  CONSTRAINT `grados_chk_1` CHECK ((`gra_clase` in (_utf8mb4'1',_utf8mb4'2',_utf8mb4'3',_utf8mb4'4',_utf8mb4'5',_utf8mb4'6')))
+) ENGINE=InnoDB AUTO_INCREMENT=22 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='Catálogo de grados militares';
+
 CREATE TABLE `instituciones` (
   `inst_codigo` smallint NOT NULL AUTO_INCREMENT,
   `inst_nombre` varchar(100) NOT NULL COMMENT 'Cruz Roja, CONRED, etc.',

@@ -622,4 +622,4 @@
 </div>
 
 <!-- JS del módulo -->
-<script src="build/js/personal/index.js" type="module"></script>
+<script src="build/js/instructores/index.js" type="module"></script>

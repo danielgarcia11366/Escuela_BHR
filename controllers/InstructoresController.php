@@ -8,7 +8,7 @@ use Model\Armas;
 use Model\Grados;
 use MVC\Router;
 
-class PersonalController
+class InstructoresController
 {
     public static function index(Router $router)
     {
@@ -18,7 +18,7 @@ class PersonalController
         $armas = Armas::obtenerarmaconQuery();
         $grados = Grados::obtenergradoconQuery();
 
-        $router->render('personal/index', [
+        $router->render('instructores/index', [
             'armas' => $armas,
             'grados' => $grados
         ]);
@@ -153,7 +153,7 @@ class PersonalController
         header('Content-Type: application/json; charset=UTF-8');
 
         try {
-            $personal = Personal::obtenerPersonal();
+            $personal = Personal::obtenerInstructores();
 
             http_response_code(200);
             echo json_encode([

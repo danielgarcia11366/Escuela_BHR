@@ -12,6 +12,7 @@ use Controllers\AppController;
 use Controllers\CursosController;
 use Controllers\HistorialController;
 use Controllers\InicioController;
+use Controllers\InstructoresController;
 use Controllers\LoginController;
 use Controllers\ParticipantesController;
 use Controllers\PersonalController;
@@ -75,11 +76,11 @@ $router->get('/promociones/historial', [PromocionesController::class, 'historial
 $router->get('/promociones/pdf', [PromocionesController::class, 'generarPDFParticipantes']);
 
 //PERSONAL
-$router->get('/personal', [PersonalController::class, 'index']);
-$router->get('/API/personal/buscar', [PersonalController::class, 'buscarAPI']);
-$router->post('/API/personal/guardar', [PersonalController::class, 'guardarAPI']);
-$router->post('/API/personal/modificar', [PersonalController::class, 'modificarAPI']);
-$router->post('/API/personal/eliminar', [PersonalController::class, 'eliminarAPI']);
+$router->get('/instructores', [InstructoresController::class, 'index']);
+$router->get('/API/instructores/buscar', [InstructoresController::class, 'buscarAPI']);
+$router->post('/API/instructores/guardar', [InstructoresController::class, 'guardarAPI']);
+$router->post('/API/instructores/modificar', [InstructoresController::class, 'modificarAPI']);
+$router->post('/API/instructores/eliminar', [InstructoresController::class, 'eliminarAPI']);
 
 //RECORD
 $router->get('/record', [RecordController::class, 'index']);
